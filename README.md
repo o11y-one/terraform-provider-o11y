@@ -20,7 +20,7 @@ Configuration may be supplied directly or with environment variables:
 
 | Attribute | Environment | Required | Notes |
 | --- | --- | --- | --- |
-| `endpoint` | `O11Y_ENDPOINT` | yes | HTTPS gRPC origin, for example `https://api.example.com:4317` |
+| `endpoint` | `O11Y_ENDPOINT` | yes | O11y.one gRPC API origin: `https://grpc.o11y.one` |
 | `token` | `O11Y_TOKEN` | yes | Sensitive O11y.one platform API token sent as `x-o11y-key`; the provider never logs it |
 | `tenant_id` | `O11Y_TENANT_ID` | yes | Tenant UUID sent as `x-o11y-tenant-id` |
 | `org_id` | `O11Y_ORG_ID` | yes | Organization UUID sent as `x-o11y-org-id` |

@@ -6,7 +6,7 @@ Live acceptance tests must use a disposable tenant and organization:
 
 ```shell
 export O11Y_ACC=1
-export O11Y_ENDPOINT='https://api.example.com:4317'
+export O11Y_ENDPOINT='https://grpc.o11y.one'
 export O11Y_TOKEN='...'
 export O11Y_TENANT_ID='...'
 export O11Y_ORG_ID='...'

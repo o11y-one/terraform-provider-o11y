@@ -48,7 +48,7 @@ func (p *o11yProvider) Metadata(_ context.Context, _ provider.MetadataRequest, r
 
 func (p *o11yProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = providerschema.Schema{Attributes: map[string]providerschema.Attribute{
-		"endpoint":                providerschema.StringAttribute{Optional: true, Description: "O11y.one gRPC endpoint origin. Defaults to O11Y_ENDPOINT."},
+		"endpoint":                providerschema.StringAttribute{Optional: true, Description: "O11y.one gRPC API origin, https://grpc.o11y.one. Defaults to O11Y_ENDPOINT."},
 		"token":                   providerschema.StringAttribute{Optional: true, Sensitive: true, Description: "O11y.one bearer token. Defaults to O11Y_TOKEN."},
 		"tenant_id":               providerschema.StringAttribute{Optional: true, Description: "Tenant UUID. Defaults to O11Y_TENANT_ID."},
 		"org_id":                  providerschema.StringAttribute{Optional: true, Description: "Organization UUID. Defaults to O11Y_ORG_ID."},
