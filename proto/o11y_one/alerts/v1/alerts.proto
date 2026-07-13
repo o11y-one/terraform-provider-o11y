@@ -1,0 +1,583 @@
+syntax = "proto3";
+
+package o11y_one.alerts.v1;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+enum AlertClassV1 {
+  ALERT_CLASS_V1_UNSPECIFIED = 0;
+  ALERT_CLASS_V1_OUTCOME = 1;
+  ALERT_CLASS_V1_BUDGET = 2;
+  ALERT_CLASS_V1_SYMPTOM = 3;
+  ALERT_CLASS_V1_SYSTEM = 4;
+}
+
+enum AlertModeV1 {
+  ALERT_MODE_V1_UNSPECIFIED = 0;
+  ALERT_MODE_V1_SHADOW = 1;
+  ALERT_MODE_V1_NOTIFY = 2;
+  ALERT_MODE_V1_DISABLED = 3;
+}
+
+enum AlertSeverityV1 {
+  ALERT_SEVERITY_V1_UNSPECIFIED = 0;
+  ALERT_SEVERITY_V1_INFO = 1;
+  ALERT_SEVERITY_V1_WARNING = 2;
+  ALERT_SEVERITY_V1_CRITICAL = 3;
+}
+
+enum AlertDestinationKindV1 {
+  ALERT_DESTINATION_KIND_V1_UNSPECIFIED = 0;
+  ALERT_DESTINATION_KIND_V1_EMAIL = 1;
+  ALERT_DESTINATION_KIND_V1_WEBHOOK = 2;
+  ALERT_DESTINATION_KIND_V1_SLACK = 3;
+  ALERT_DESTINATION_KIND_V1_PAGERDUTY = 4;
+}
+
+message AlertDefinitionV1 {
+  string id = 1;
+  string tenant_id = 2;
+  string org_id = 3;
+  string slug = 4;
+  string name = 5;
+  string description = 6;
+  AlertClassV1 class = 7;
+  AlertModeV1 mode = 8;
+  AlertSeverityV1 severity = 9;
+  google.protobuf.Struct scope = 10;
+  google.protobuf.Struct owner = 11;
+  google.protobuf.Struct action = 12;
+  google.protobuf.Struct evaluation_settings = 13;
+  google.protobuf.Struct sample_guard = 14;
+  string current_revision_id = 15;
+  google.protobuf.Timestamp created_at = 16;
+  google.protobuf.Timestamp updated_at = 17;
+  string detector_kind = 18;
+  google.protobuf.Struct recipe_config = 19;
+  int64 evaluation_interval_seconds = 20;
+}
+
+message AlertInstanceV1 {
+  string id = 1;
+  string definition_id = 2;
+  string instance_key = 3;
+  string dedupe_key = 4;
+  string condition_state = 5;
+  string lifecycle_state = 6;
+  string routing_state = 7;
+  AlertSeverityV1 severity = 8;
+  string state_reason = 9;
+  string last_eval_run_id = 10;
+  string last_detector_result_id = 11;
+  google.protobuf.Timestamp first_firing_at = 12;
+  google.protobuf.Timestamp last_state_change_at = 13;
+  google.protobuf.Timestamp resolved_at = 14;
+}
+
+message AlertEvalRunV1 {
+  string id = 1;
+  string definition_id = 2;
+  string revision_id = 3;
+  string state = 4;
+  string worker_id = 5;
+  google.protobuf.Timestamp scheduled_for = 6;
+  google.protobuf.Timestamp started_at = 7;
+  google.protobuf.Timestamp finished_at = 8;
+  string error_message = 9;
+  google.protobuf.Struct facts_summary = 10;
+  google.protobuf.Struct metadata = 11;
+}
+
+message AlertStateEventV1 {
+  string id = 1;
+  string instance_id = 2;
+  string definition_id = 3;
+  string eval_run_id = 4;
+  string from_condition_state = 5;
+  string to_condition_state = 6;
+  string from_lifecycle_state = 7;
+  string to_lifecycle_state = 8;
+  string from_routing_state = 9;
+  string to_routing_state = 10;
+  string reason = 11;
+  google.protobuf.Timestamp occurred_at = 12;
+}
+
+message AlertPreviewRunV1 {
+  string id = 1;
+  string definition_id = 2;
+  string revision_id = 3;
+  int32 predicted_firing_count = 4;
+  int32 predicted_notification_count = 5;
+  google.protobuf.Struct sample_guard_result = 6;
+  google.protobuf.Value evidence_refs = 7;
+  google.protobuf.Value activation_blockers = 8;
+  google.protobuf.Struct result = 9;
+  google.protobuf.Timestamp created_at = 10;
+}
+
+message AlertDeliveryHistoryV1 {
+  string id = 1;
+  string notification_event_id = 2;
+  string event_type = 3;
+  string destination_id = 4;
+  AlertDestinationKindV1 destination_kind = 5;
+  string destination_key = 6;
+  string status = 7;
+  int32 attempts = 8;
+  string last_error = 9;
+  string provider_message_id = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+  string definition_id = 13;
+  string revision_id = 14;
+  string instance_id = 15;
+  string incident_id = 16;
+  repeated AlertDeliveryAttemptV1 attempt_history = 17;
+}
+
+message AlertDeliveryAttemptV1 {
+  int32 attempt_number = 1;
+  string status = 2;
+  int32 provider_status_code = 3;
+  string provider_message_id = 4;
+  string error_class = 5;
+  string error_message = 6;
+  int32 elapsed_ms = 7;
+  google.protobuf.Timestamp attempted_at = 8;
+}
+
+message AlertDestinationV1 {
+  string id = 1;
+  string destination_key = 2;
+  string name = 3;
+  AlertDestinationKindV1 kind = 4;
+  bool enabled = 5;
+  google.protobuf.Struct config = 6;
+  google.protobuf.Struct secret_refs = 7;
+  google.protobuf.Timestamp last_tested_at = 8;
+  google.protobuf.Timestamp created_at = 9;
+  google.protobuf.Timestamp updated_at = 10;
+}
+
+message AlertNotificationPolicyV1 {
+  string id = 1;
+  string policy_key = 2;
+  string name = 3;
+  bool enabled = 4;
+  google.protobuf.Struct config = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}
+
+message AlertMaintenanceWindowV1 {
+  string id = 1;
+  string window_key = 2;
+  string name = 3;
+  google.protobuf.Struct scope = 4;
+  google.protobuf.Timestamp starts_at = 5;
+  google.protobuf.Timestamp ends_at = 6;
+}
+
+message AlertSilenceV1 {
+  string id = 1;
+  string silence_key = 2;
+  google.protobuf.Struct matcher = 3;
+  string reason = 4;
+  google.protobuf.Timestamp starts_at = 5;
+  google.protobuf.Timestamp ends_at = 6;
+}
+
+message AlertRecipeBaseV1 {
+  string org_id = 1;
+  string slug = 2;
+  string name = 3;
+  string description = 4;
+  AlertSeverityV1 severity = 5;
+  google.protobuf.Struct scope = 6;
+  google.protobuf.Struct owner = 7;
+  google.protobuf.Struct action = 8;
+  google.protobuf.Struct evaluation_settings = 9;
+  google.protobuf.Struct sample_guard = 10;
+  string idempotency_key = 11;
+  int64 evaluation_interval_seconds = 12;
+}
+
+message CreateAgentQualityRegressionAlertRequest {
+  AlertRecipeBaseV1 base = 1;
+  google.protobuf.Struct recipe_config = 2;
+}
+
+message CreateCostPerSuccessAlertRequest {
+  AlertRecipeBaseV1 base = 1;
+  google.protobuf.Struct recipe_config = 2;
+}
+
+message CreateSloBurnAlertRequest {
+  AlertRecipeBaseV1 base = 1;
+  google.protobuf.Struct recipe_config = 2;
+}
+
+message CreateAdvancedSignalAlertRequest {
+  AlertRecipeBaseV1 base = 1;
+  google.protobuf.Struct condition = 2;
+}
+
+message CreateAlertDefinitionResponse {
+  AlertDefinitionV1 definition = 1;
+  string revision_id = 2;
+  string schedule_id = 3;
+}
+
+message GetAlertDefinitionRequest {
+  string id = 1;
+}
+
+message DeleteAlertDefinitionRequest {
+  string id = 1;
+  string idempotency_key = 2;
+}
+
+message GetAlertResourceRequest {
+  string id = 1;
+  string org_id = 2;
+}
+
+message ListAlertDefinitionsRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ListAlertDefinitionsResponse {
+  repeated AlertDefinitionV1 items = 1;
+  int64 total_count = 2;
+}
+
+message UpdateShadowAlertRequest {
+  string definition_id = 1;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Struct owner = 4;
+  google.protobuf.Struct action = 5;
+  google.protobuf.Struct evaluation_settings = 6;
+  google.protobuf.Struct sample_guard = 7;
+  string idempotency_key = 8;
+  optional int64 evaluation_interval_seconds = 9;
+}
+
+message ActivateNotifyModeRequest {
+  string definition_id = 1;
+  string confirmation = 2;
+  string audit_reason = 3;
+  string idempotency_key = 4;
+}
+
+message ListActiveAlertInstancesRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ListActiveAlertInstancesResponse {
+  repeated AlertInstanceV1 items = 1;
+  int64 total_count = 2;
+}
+
+message AlertIdRequest {
+  string definition_id = 1;
+  int32 limit = 2;
+}
+
+message AlertInstanceIdRequest {
+  string instance_id = 1;
+  int32 limit = 2;
+}
+
+message ListAlertEvalHistoryResponse {
+  repeated AlertEvalRunV1 items = 1;
+}
+
+message ListAlertStateHistoryResponse {
+  repeated AlertStateEventV1 items = 1;
+}
+
+message GetIncidentCandidateRequest {
+  string incident_key = 1;
+  string definition_id = 2;
+}
+
+message GetIncidentCandidateResponse {
+  google.protobuf.Struct incident = 1;
+}
+
+message ExplainWhyFiredRequest {
+  string instance_id = 1;
+}
+
+message ExplainWhyFiredResponse {
+  google.protobuf.Struct explanation = 1;
+}
+
+message AcknowledgeAlertRequest {
+  string instance_id = 1;
+  string reason = 2;
+  string idempotency_key = 3;
+}
+
+message PauseAlertRequest {
+  string definition_id = 1;
+  string reason = 2;
+  string idempotency_key = 3;
+}
+
+message ResumeAlertRequest {
+  string definition_id = 1;
+  string revision_id = 2;
+  string reason = 3;
+  string idempotency_key = 4;
+}
+
+message AlertMutationResponse {
+  bool ok = 1;
+  string resource_id = 2;
+  string message = 3;
+}
+
+message PreviewAlertRequest {
+  string definition_id = 1;
+  string idempotency_key = 2;
+}
+
+message PreviewAlertResponse {
+  AlertPreviewRunV1 preview = 1;
+}
+
+message ListPreviewHistoryResponse {
+  repeated AlertPreviewRunV1 items = 1;
+}
+
+message UpsertDestinationRequest {
+  string id = 1;
+  string destination_key = 2;
+  string name = 3;
+  AlertDestinationKindV1 kind = 4;
+  bool enabled = 5;
+  google.protobuf.Struct config = 6;
+  google.protobuf.Struct secret_refs = 7;
+  string idempotency_key = 8;
+}
+
+message ListDestinationsRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ListDestinationsResponse {
+  repeated AlertDestinationV1 items = 1;
+}
+
+message DeleteDestinationRequest {
+  string id = 1;
+  string idempotency_key = 2;
+}
+
+message UpsertNotificationPolicyRequest {
+  string id = 1;
+  string policy_key = 2;
+  string name = 3;
+  bool enabled = 4;
+  google.protobuf.Struct config = 5;
+  string idempotency_key = 6;
+}
+
+message ListNotificationPoliciesResponse {
+  repeated AlertNotificationPolicyV1 items = 1;
+}
+
+message ListOperatorResourcesRequest {
+  string org_id = 1;
+  int32 limit = 2;
+  int32 offset = 3;
+}
+
+message DeleteOperatorResourceRequest {
+  string org_id = 1;
+  string id = 2;
+  string idempotency_key = 3;
+}
+
+message ListMaintenanceWindowsResponse { repeated AlertMaintenanceWindowV1 items = 1; }
+message ListSilencesResponse { repeated AlertSilenceV1 items = 1; }
+
+message UpsertMaintenanceWindowRequest {
+  string id = 1;
+  string window_key = 2;
+  string name = 3;
+  google.protobuf.Struct scope = 4;
+  google.protobuf.Timestamp starts_at = 5;
+  google.protobuf.Timestamp ends_at = 6;
+  string idempotency_key = 7;
+}
+
+message UpsertSilenceRequest {
+  string id = 1;
+  string silence_key = 2;
+  google.protobuf.Struct matcher = 3;
+  string reason = 4;
+  google.protobuf.Timestamp starts_at = 5;
+  google.protobuf.Timestamp ends_at = 6;
+  string idempotency_key = 7;
+  string org_id = 8;
+}
+
+message TestDestinationRequest {
+  string destination_id = 1;
+  string idempotency_key = 2;
+}
+
+message TestDestinationResponse {
+  bool ok = 1;
+  string status = 2;
+  string provider_message_id = 3;
+}
+
+message PutDestinationSecretRequest {
+  string destination_id = 1;
+  string secret_ref = 2;
+  string plaintext = 3;
+  string idempotency_key = 4;
+  string provenance_request_id = 5;
+}
+
+message RevokeDestinationSecretRequest {
+  string destination_id = 1;
+  string secret_ref = 2;
+  string provenance_request_id = 3;
+  string idempotency_key = 4;
+}
+
+message ListDestinationSecretsRequest {
+  string destination_id = 1;
+}
+
+message DestinationSecretMetadataV1 {
+  int64 version = 1;
+  string algorithm = 2;
+  string key_id = 3;
+  google.protobuf.Timestamp activated_at = 4;
+  google.protobuf.Timestamp revoked_at = 5;
+  google.protobuf.Timestamp created_at = 6;
+  string secret_ref = 7;
+  string id = 8;
+}
+
+message PutDestinationSecretResponse {
+  DestinationSecretMetadataV1 metadata = 1;
+}
+
+message RevokeDestinationSecretResponse {
+  bool revoked = 1;
+}
+
+message ListDestinationSecretsResponse {
+  repeated DestinationSecretMetadataV1 items = 1;
+}
+
+message GetDeliveryHistoryRequest {
+  string instance_id = 1;
+  string definition_id = 2;
+  int32 limit = 3;
+  string org_id = 4;
+}
+
+message GetDeliveryHistoryResponse {
+  repeated AlertDeliveryHistoryV1 items = 1;
+}
+
+message TriggerCanaryRequest {
+  string idempotency_key = 1;
+}
+
+message TriggerCanaryResponse {
+  bool ok = 1;
+  string canary_run_id = 2;
+  string delivery_outbox_id = 3;
+  string receipt = 4;
+  string status = 5;
+  repeated string delivery_outbox_ids = 6;
+}
+
+message GetCanaryRunRequest { string canary_run_id = 1; }
+
+message EnsureMetaAlertsRequest { string org_id = 1; }
+
+message EnsureMetaAlertsResponse { repeated AlertDefinitionV1 definitions = 1; }
+
+message GetAlertMetaHealthRequest {}
+
+message GetAlertMetaHealthResponse {
+  google.protobuf.Struct health = 1;
+}
+
+service AlertDefinitionService {
+  rpc CreateAgentQualityRegressionAlert(CreateAgentQualityRegressionAlertRequest) returns (CreateAlertDefinitionResponse);
+  rpc CreateCostPerSuccessAlert(CreateCostPerSuccessAlertRequest) returns (CreateAlertDefinitionResponse);
+  rpc CreateSloBurnAlert(CreateSloBurnAlertRequest) returns (CreateAlertDefinitionResponse);
+  rpc CreateAdvancedSignalAlert(CreateAdvancedSignalAlertRequest) returns (CreateAlertDefinitionResponse);
+  rpc GetDefinition(GetAlertDefinitionRequest) returns (AlertDefinitionV1);
+  rpc ListDefinitions(ListAlertDefinitionsRequest) returns (ListAlertDefinitionsResponse);
+  rpc UpdateShadow(UpdateShadowAlertRequest) returns (AlertDefinitionV1);
+  rpc DeleteDefinition(DeleteAlertDefinitionRequest) returns (AlertMutationResponse);
+}
+
+service AlertRuntimeService {
+  rpc ListActiveInstances(ListActiveAlertInstancesRequest) returns (ListActiveAlertInstancesResponse);
+  rpc GetIncidentCandidate(GetIncidentCandidateRequest) returns (GetIncidentCandidateResponse);
+  rpc ListEvalHistory(AlertIdRequest) returns (ListAlertEvalHistoryResponse);
+  rpc ListStateHistory(AlertInstanceIdRequest) returns (ListAlertStateHistoryResponse);
+  rpc ExplainWhyFired(ExplainWhyFiredRequest) returns (ExplainWhyFiredResponse);
+  rpc Acknowledge(AcknowledgeAlertRequest) returns (AlertMutationResponse);
+  rpc Pause(PauseAlertRequest) returns (AlertMutationResponse);
+  rpc Resume(ResumeAlertRequest) returns (AlertMutationResponse);
+}
+
+service AlertNotificationService {
+  rpc CreateDestination(UpsertDestinationRequest) returns (AlertDestinationV1);
+  rpc UpdateDestination(UpsertDestinationRequest) returns (AlertDestinationV1);
+  rpc DeleteDestination(DeleteDestinationRequest) returns (AlertMutationResponse);
+  rpc GetDestination(GetAlertResourceRequest) returns (AlertDestinationV1);
+  rpc ListDestinations(ListDestinationsRequest) returns (ListDestinationsResponse);
+  rpc CreateNotificationPolicy(UpsertNotificationPolicyRequest) returns (AlertNotificationPolicyV1);
+  rpc UpdateNotificationPolicy(UpsertNotificationPolicyRequest) returns (AlertNotificationPolicyV1);
+  rpc GetNotificationPolicy(GetAlertResourceRequest) returns (AlertNotificationPolicyV1);
+  rpc ListNotificationPolicies(ListOperatorResourcesRequest) returns (ListNotificationPoliciesResponse);
+  rpc DeleteNotificationPolicy(DeleteOperatorResourceRequest) returns (AlertMutationResponse);
+  rpc CreateMaintenanceWindow(UpsertMaintenanceWindowRequest) returns (AlertMaintenanceWindowV1);
+  rpc UpdateMaintenanceWindow(UpsertMaintenanceWindowRequest) returns (AlertMaintenanceWindowV1);
+  rpc GetMaintenanceWindow(GetAlertResourceRequest) returns (AlertMaintenanceWindowV1);
+  rpc ListMaintenanceWindows(ListOperatorResourcesRequest) returns (ListMaintenanceWindowsResponse);
+  rpc DeleteMaintenanceWindow(DeleteOperatorResourceRequest) returns (AlertMutationResponse);
+  rpc CreateSilence(UpsertSilenceRequest) returns (AlertSilenceV1);
+  rpc UpdateSilence(UpsertSilenceRequest) returns (AlertSilenceV1);
+  rpc GetSilence(GetAlertResourceRequest) returns (AlertSilenceV1);
+  rpc ListSilences(ListOperatorResourcesRequest) returns (ListSilencesResponse);
+  rpc DeleteSilence(DeleteOperatorResourceRequest) returns (AlertMutationResponse);
+  rpc TestDestination(TestDestinationRequest) returns (TestDestinationResponse);
+  rpc PutDestinationSecret(PutDestinationSecretRequest) returns (PutDestinationSecretResponse);
+  rpc RevokeDestinationSecret(RevokeDestinationSecretRequest) returns (RevokeDestinationSecretResponse);
+  rpc ListDestinationSecrets(ListDestinationSecretsRequest) returns (ListDestinationSecretsResponse);
+  rpc GetDeliveryHistory(GetDeliveryHistoryRequest) returns (GetDeliveryHistoryResponse);
+}
+
+service AlertPreviewService {
+  rpc PreviewAlert(PreviewAlertRequest) returns (PreviewAlertResponse);
+  rpc ListPreviewHistory(AlertIdRequest) returns (ListPreviewHistoryResponse);
+  rpc ActivateNotifyMode(ActivateNotifyModeRequest) returns (AlertDefinitionV1);
+}
+
+service AlertCanaryService {
+  rpc TriggerCanary(TriggerCanaryRequest) returns (TriggerCanaryResponse);
+  rpc GetCanaryRun(GetCanaryRunRequest) returns (TriggerCanaryResponse);
+  rpc EnsureMetaAlerts(EnsureMetaAlertsRequest) returns (EnsureMetaAlertsResponse);
+  rpc GetMetaHealth(GetAlertMetaHealthRequest) returns (GetAlertMetaHealthResponse);
+}
