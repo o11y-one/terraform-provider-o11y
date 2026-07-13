@@ -60,6 +60,7 @@ Destination, policy, and alert imports use exact `Get*` RPCs. Alert readback inc
 
 ```shell
 ./scripts/generate.sh
+./scripts/generate-docs.sh
 gofmt -w .
 go test ./...
 go vet ./...
@@ -68,3 +69,10 @@ go vet ./...
 The checked-in protobuf source is copied verbatim from `o11y-api/proto/o11y_one/alerts/v1/alerts.proto`. Generator versions are pinned in `scripts/generate.sh`; Go modules are pinned in `go.mod` and `go.sum`.
 
 See [docs/backend-api-gaps.md](docs/backend-api-gaps.md) for lifecycle limitations and [docs/acceptance-testing.md](docs/acceptance-testing.md) for the live API test contract.
+
+## Releases
+
+Signed, cross-platform GitHub releases are produced from semantic version tags
+and indexed by both Terraform Registry and OpenTofu Registry. See
+[docs/releasing.md](docs/releasing.md) for one-time registry onboarding, signing
+key setup, and the repeatable release procedure.
