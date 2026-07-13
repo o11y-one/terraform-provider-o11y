@@ -1,0 +1,508 @@
+package provider
+
+import (
+	"context"
+	"net"
+	"sync"
+	"testing"
+	"time"
+
+	"github.com/o11y-one/terraform-provider-o11y/internal/client"
+	alertsv1 "github.com/o11y-one/terraform-provider-o11y/internal/gen/proto/o11y_one/alerts/v1"
+	"github.com/o11y-one/terraform-provider-o11y/internal/idempotency"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
+	"google.golang.org/grpc/test/bufconn"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/structpb"
+)
+
+type alertTestServer struct {
+	alertsv1.UnimplementedAlertDefinitionServiceServer
+	alertsv1.UnimplementedAlertRuntimeServiceServer
+	alertsv1.UnimplementedAlertNotificationServiceServer
+	alertsv1.UnimplementedAlertPreviewServiceServer
+	mu           sync.Mutex
+	destinations map[string]*alertsv1.AlertDestinationV1
+	policies     map[string]*alertsv1.AlertNotificationPolicyV1
+	definitions  map[string]*alertsv1.AlertDefinitionV1
+	windows      map[string]*alertsv1.AlertMaintenanceWindowV1
+	silences     map[string]*alertsv1.AlertSilenceV1
+	idempotent   map[string]string
+	next         int
+}
+
+const testTenantID = "019f430f-90d4-74c3-95b7-9120db366252"
+const testOrgID = "019f430f-90d4-74c3-95b7-9120db366253"
+
+func newAlertTestServer() *alertTestServer {
+	return &alertTestServer{destinations: map[string]*alertsv1.AlertDestinationV1{}, policies: map[string]*alertsv1.AlertNotificationPolicyV1{}, definitions: map[string]*alertsv1.AlertDefinitionV1{}, windows: map[string]*alertsv1.AlertMaintenanceWindowV1{}, silences: map[string]*alertsv1.AlertSilenceV1{}, idempotent: map[string]string{}}
+}
+func (s *alertTestServer) authorize(ctx context.Context) error {
+	md, _ := metadata.FromIncomingContext(ctx)
+	if first(md.Get("x-o11y-key")) != "test-token" || len(md.Get("authorization")) != 0 || first(md.Get("x-o11y-tenant-id")) != testTenantID || first(md.Get("x-o11y-org-id")) != testOrgID {
+		return status.Error(codes.PermissionDenied, "invalid provider scope")
+	}
+	return nil
+}
+func first(values []string) string {
+	if len(values) == 0 {
+		return ""
+	}
+	return values[0]
+}
+func (s *alertTestServer) id(prefix, key string) string {
+	if id := s.idempotent[key]; id != "" {
+		return id
+	}
+	s.next++
+	id := prefix + "-" + string(rune('0'+s.next))
+	s.idempotent[key] = id
+	return id
+}
+
+func (s *alertTestServer) CreateDestination(ctx context.Context, req *alertsv1.UpsertDestinationRequest) (*alertsv1.AlertDestinationV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	id := s.id("destination", req.IdempotencyKey)
+	item := &alertsv1.AlertDestinationV1{Id: id, DestinationKey: req.DestinationKey, Name: req.Name, Kind: req.Kind, Enabled: req.Enabled, Config: req.Config, SecretRefs: req.SecretRefs}
+	s.destinations[id] = item
+	return item, nil
+}
+func (s *alertTestServer) UpdateDestination(ctx context.Context, req *alertsv1.UpsertDestinationRequest) (*alertsv1.AlertDestinationV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.destinations[req.Id] == nil {
+		return nil, status.Error(codes.NotFound, "destination")
+	}
+	item := &alertsv1.AlertDestinationV1{Id: req.Id, DestinationKey: req.DestinationKey, Name: req.Name, Kind: req.Kind, Enabled: req.Enabled, Config: req.Config, SecretRefs: req.SecretRefs}
+	s.destinations[req.Id] = item
+	return item, nil
+}
+func (s *alertTestServer) ListDestinations(ctx context.Context, req *alertsv1.ListDestinationsRequest) (*alertsv1.ListDestinationsResponse, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	items := make([]*alertsv1.AlertDestinationV1, 0, len(s.destinations))
+	for _, v := range s.destinations {
+		items = append(items, v)
+	}
+	start, end := pageBounds(len(items), req.Offset, req.Limit)
+	out := &alertsv1.ListDestinationsResponse{Items: items[start:end]}
+	return out, nil
+}
+func (s *alertTestServer) GetDestination(ctx context.Context, req *alertsv1.GetAlertResourceRequest) (*alertsv1.AlertDestinationV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	item := s.destinations[req.Id]
+	if item == nil {
+		return nil, status.Error(codes.NotFound, "destination")
+	}
+	return item, nil
+}
+func (s *alertTestServer) DeleteDestination(ctx context.Context, req *alertsv1.DeleteDestinationRequest) (*alertsv1.AlertMutationResponse, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	delete(s.destinations, req.Id)
+	return &alertsv1.AlertMutationResponse{Ok: true, ResourceId: req.Id}, nil
+}
+func (s *alertTestServer) CreateNotificationPolicy(ctx context.Context, req *alertsv1.UpsertNotificationPolicyRequest) (*alertsv1.AlertNotificationPolicyV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	id := s.id("policy", req.IdempotencyKey)
+	item := &alertsv1.AlertNotificationPolicyV1{Id: id, PolicyKey: req.PolicyKey, Name: req.Name, Enabled: req.Enabled, Config: req.Config}
+	s.policies[id] = item
+	return item, nil
+}
+func (s *alertTestServer) UpdateNotificationPolicy(ctx context.Context, req *alertsv1.UpsertNotificationPolicyRequest) (*alertsv1.AlertNotificationPolicyV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.policies[req.Id] == nil {
+		return nil, status.Error(codes.NotFound, "policy")
+	}
+	item := &alertsv1.AlertNotificationPolicyV1{Id: req.Id, PolicyKey: req.PolicyKey, Name: req.Name, Enabled: req.Enabled, Config: req.Config}
+	s.policies[req.Id] = item
+	return item, nil
+}
+func (s *alertTestServer) ListNotificationPolicies(ctx context.Context, req *alertsv1.ListOperatorResourcesRequest) (*alertsv1.ListNotificationPoliciesResponse, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	items := make([]*alertsv1.AlertNotificationPolicyV1, 0, len(s.policies))
+	for _, v := range s.policies {
+		items = append(items, v)
+	}
+	start, end := pageBounds(len(items), req.Offset, req.Limit)
+	out := &alertsv1.ListNotificationPoliciesResponse{Items: items[start:end]}
+	return out, nil
+}
+func (s *alertTestServer) GetNotificationPolicy(ctx context.Context, req *alertsv1.GetAlertResourceRequest) (*alertsv1.AlertNotificationPolicyV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	item := s.policies[req.Id]
+	if item == nil {
+		return nil, status.Error(codes.NotFound, "policy")
+	}
+	return item, nil
+}
+
+func pageBounds(length int, offset, limit int32) (int, int) {
+	start := int(offset)
+	if start > length {
+		start = length
+	}
+	if limit <= 0 {
+		return start, length
+	}
+	end := start + int(limit)
+	if end > length {
+		end = length
+	}
+	return start, end
+}
+func (s *alertTestServer) DeleteNotificationPolicy(ctx context.Context, req *alertsv1.DeleteOperatorResourceRequest) (*alertsv1.AlertMutationResponse, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	delete(s.policies, req.Id)
+	return &alertsv1.AlertMutationResponse{Ok: true, ResourceId: req.Id}, nil
+}
+
+func (s *alertTestServer) CreateMaintenanceWindow(ctx context.Context, req *alertsv1.UpsertMaintenanceWindowRequest) (*alertsv1.AlertMaintenanceWindowV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	id := s.id("window", req.IdempotencyKey)
+	item := &alertsv1.AlertMaintenanceWindowV1{Id: id, WindowKey: req.WindowKey, Name: req.Name, Scope: req.Scope, StartsAt: req.StartsAt, EndsAt: req.EndsAt}
+	s.windows[id] = item
+	return item, nil
+}
+func (s *alertTestServer) UpdateMaintenanceWindow(ctx context.Context, req *alertsv1.UpsertMaintenanceWindowRequest) (*alertsv1.AlertMaintenanceWindowV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.windows[req.Id] == nil {
+		return nil, status.Error(codes.NotFound, "window")
+	}
+	item := &alertsv1.AlertMaintenanceWindowV1{Id: req.Id, WindowKey: req.WindowKey, Name: req.Name, Scope: req.Scope, StartsAt: req.StartsAt, EndsAt: req.EndsAt}
+	s.windows[req.Id] = item
+	return item, nil
+}
+func (s *alertTestServer) GetMaintenanceWindow(ctx context.Context, req *alertsv1.GetAlertResourceRequest) (*alertsv1.AlertMaintenanceWindowV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	item := s.windows[req.Id]
+	if item == nil {
+		return nil, status.Error(codes.NotFound, "window")
+	}
+	return item, nil
+}
+func (s *alertTestServer) DeleteMaintenanceWindow(ctx context.Context, req *alertsv1.DeleteOperatorResourceRequest) (*alertsv1.AlertMutationResponse, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	delete(s.windows, req.Id)
+	return &alertsv1.AlertMutationResponse{Ok: true, ResourceId: req.Id}, nil
+}
+func (s *alertTestServer) CreateSilence(ctx context.Context, req *alertsv1.UpsertSilenceRequest) (*alertsv1.AlertSilenceV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	id := s.id("silence", req.IdempotencyKey)
+	item := &alertsv1.AlertSilenceV1{Id: id, SilenceKey: req.SilenceKey, Matcher: req.Matcher, Reason: req.Reason, StartsAt: req.StartsAt, EndsAt: req.EndsAt}
+	s.silences[id] = item
+	return item, nil
+}
+func (s *alertTestServer) UpdateSilence(ctx context.Context, req *alertsv1.UpsertSilenceRequest) (*alertsv1.AlertSilenceV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.silences[req.Id] == nil {
+		return nil, status.Error(codes.NotFound, "silence")
+	}
+	item := &alertsv1.AlertSilenceV1{Id: req.Id, SilenceKey: req.SilenceKey, Matcher: req.Matcher, Reason: req.Reason, StartsAt: req.StartsAt, EndsAt: req.EndsAt}
+	s.silences[req.Id] = item
+	return item, nil
+}
+func (s *alertTestServer) GetSilence(ctx context.Context, req *alertsv1.GetAlertResourceRequest) (*alertsv1.AlertSilenceV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	item := s.silences[req.Id]
+	if item == nil {
+		return nil, status.Error(codes.NotFound, "silence")
+	}
+	return item, nil
+}
+func (s *alertTestServer) DeleteSilence(ctx context.Context, req *alertsv1.DeleteOperatorResourceRequest) (*alertsv1.AlertMutationResponse, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	delete(s.silences, req.Id)
+	return &alertsv1.AlertMutationResponse{Ok: true, ResourceId: req.Id}, nil
+}
+
+func (s *alertTestServer) createAlert(ctx context.Context, base *alertsv1.AlertRecipeBaseV1, detectorKind string, recipeConfig *structpb.Struct) (*alertsv1.CreateAlertDefinitionResponse, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	id := s.id("alert", base.IdempotencyKey)
+	item := &alertsv1.AlertDefinitionV1{Id: id, TenantId: testTenantID, OrgId: base.OrgId, Slug: base.Slug, Name: base.Name, Description: base.Description, Severity: base.Severity, Mode: alertsv1.AlertModeV1_ALERT_MODE_V1_SHADOW, Scope: base.Scope, Owner: base.Owner, Action: base.Action, EvaluationSettings: base.EvaluationSettings, SampleGuard: base.SampleGuard, CurrentRevisionId: "revision-1", DetectorKind: detectorKind, RecipeConfig: recipeConfig, EvaluationIntervalSeconds: base.EvaluationIntervalSeconds}
+	s.definitions[id] = item
+	return &alertsv1.CreateAlertDefinitionResponse{Definition: item, RevisionId: "revision-1"}, nil
+}
+func (s *alertTestServer) CreateAgentQualityRegressionAlert(ctx context.Context, req *alertsv1.CreateAgentQualityRegressionAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
+	return s.createAlert(ctx, req.Base, "agent_quality_regression", req.RecipeConfig)
+}
+func (s *alertTestServer) CreateCostPerSuccessAlert(ctx context.Context, req *alertsv1.CreateCostPerSuccessAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
+	return s.createAlert(ctx, req.Base, "cost_per_success_regression", req.RecipeConfig)
+}
+func (s *alertTestServer) CreateSloBurnAlert(ctx context.Context, req *alertsv1.CreateSloBurnAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
+	return s.createAlert(ctx, req.Base, "slo_burn", req.RecipeConfig)
+}
+func (s *alertTestServer) CreateAdvancedSignalAlert(ctx context.Context, req *alertsv1.CreateAdvancedSignalAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
+	return s.createAlert(ctx, req.Base, "advanced_signal", req.Condition)
+}
+func (s *alertTestServer) DeleteDefinition(ctx context.Context, req *alertsv1.DeleteAlertDefinitionRequest) (*alertsv1.AlertMutationResponse, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	delete(s.definitions, req.Id)
+	return &alertsv1.AlertMutationResponse{Ok: true, ResourceId: req.Id}, nil
+}
+func (s *alertTestServer) GetDefinition(ctx context.Context, req *alertsv1.GetAlertDefinitionRequest) (*alertsv1.AlertDefinitionV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.definitions[req.Id] == nil {
+		return nil, status.Error(codes.NotFound, "alert")
+	}
+	return s.definitions[req.Id], nil
+}
+func (s *alertTestServer) UpdateShadow(ctx context.Context, req *alertsv1.UpdateShadowAlertRequest) (*alertsv1.AlertDefinitionV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	item := s.definitions[req.DefinitionId]
+	if item == nil {
+		return nil, status.Error(codes.NotFound, "alert")
+	}
+	item.Name = req.Name
+	item.Description = req.Description
+	item.Owner = req.Owner
+	item.Action = req.Action
+	item.EvaluationSettings = req.EvaluationSettings
+	if req.EvaluationIntervalSeconds != nil {
+		item.EvaluationIntervalSeconds = req.GetEvaluationIntervalSeconds()
+	}
+	item.SampleGuard = req.SampleGuard
+	item.CurrentRevisionId = "revision-updated"
+	response := proto.Clone(item).(*alertsv1.AlertDefinitionV1)
+	response.RecipeConfig = nil
+	return response, nil
+}
+func (s *alertTestServer) Pause(ctx context.Context, req *alertsv1.PauseAlertRequest) (*alertsv1.AlertMutationResponse, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.definitions[req.DefinitionId].Mode = alertsv1.AlertModeV1_ALERT_MODE_V1_DISABLED
+	return &alertsv1.AlertMutationResponse{Ok: true}, nil
+}
+func (s *alertTestServer) Resume(ctx context.Context, req *alertsv1.ResumeAlertRequest) (*alertsv1.AlertMutationResponse, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.definitions[req.DefinitionId].Mode = alertsv1.AlertModeV1_ALERT_MODE_V1_SHADOW
+	return &alertsv1.AlertMutationResponse{Ok: true}, nil
+}
+func (s *alertTestServer) PreviewAlert(ctx context.Context, req *alertsv1.PreviewAlertRequest) (*alertsv1.PreviewAlertResponse, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	return &alertsv1.PreviewAlertResponse{Preview: &alertsv1.AlertPreviewRunV1{Id: "preview-1", DefinitionId: req.DefinitionId, PredictedFiringCount: 2, PredictedNotificationCount: 0, Result: &structpb.Struct{}}}, nil
+}
+
+func testClient(t *testing.T, token string) (*client.Client, func()) {
+	t.Helper()
+	listener := bufconn.Listen(1024 * 1024)
+	grpcServer := grpc.NewServer()
+	service := newAlertTestServer()
+	alertsv1.RegisterAlertDefinitionServiceServer(grpcServer, service)
+	alertsv1.RegisterAlertRuntimeServiceServer(grpcServer, service)
+	alertsv1.RegisterAlertNotificationServiceServer(grpcServer, service)
+	alertsv1.RegisterAlertPreviewServiceServer(grpcServer, service)
+	go func() { _ = grpcServer.Serve(listener) }()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	conn, err := grpc.DialContext(ctx, "bufnet", grpc.WithContextDialer(func(context.Context, string) (net.Conn, error) { return listener.Dial() }), grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	if err != nil {
+		t.Fatal(err)
+	}
+	c := client.FromConn(conn, client.Config{Token: token, TenantID: testTenantID, OrgID: testOrgID, RequestTimeout: time.Second})
+	return c, func() { _ = c.Close(); grpcServer.Stop(); _ = listener.Close() }
+}
+
+func TestControlledGRPCLifecycle(t *testing.T) {
+	c, cleanup := testClient(t, "test-token")
+	defer cleanup()
+	ctx, cancel := c.Context(context.Background())
+	defer cancel()
+	config, _ := structpb.NewStruct(map[string]any{"url": "https://hooks.example.test"})
+	refs, _ := structpb.NewStruct(map[string]any{"authorization": "secret:webhook"})
+	key := idempotency.Key(c.TenantID(), c.OrgID(), "destination", "create", "primary")
+	request := &alertsv1.UpsertDestinationRequest{DestinationKey: "primary", Name: "Primary", Kind: alertsv1.AlertDestinationKindV1_ALERT_DESTINATION_KIND_V1_WEBHOOK, Enabled: true, Config: config, SecretRefs: refs, IdempotencyKey: key}
+	firstDestination, err := c.Notifications.CreateDestination(ctx, request)
+	if err != nil {
+		t.Fatal(err)
+	}
+	secondDestination, err := c.Notifications.CreateDestination(ctx, request)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if firstDestination.Id != secondDestination.Id {
+		t.Fatal("idempotent destination create changed id")
+	}
+	request.Id = firstDestination.Id
+	request.Name = "Updated"
+	if _, err = c.Notifications.UpdateDestination(ctx, request); err != nil {
+		t.Fatal(err)
+	}
+	readDestination, err := c.Notifications.GetDestination(ctx, &alertsv1.GetAlertResourceRequest{Id: firstDestination.Id, OrgId: testOrgID})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if readDestination.Name != "Updated" {
+		t.Fatal("authoritative destination read failed for import")
+	}
+	if _, err = c.Notifications.DeleteDestination(ctx, &alertsv1.DeleteDestinationRequest{Id: firstDestination.Id, IdempotencyKey: "delete"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = c.Notifications.GetDestination(ctx, &alertsv1.GetAlertResourceRequest{Id: firstDestination.Id, OrgId: testOrgID}); status.Code(err) != codes.NotFound {
+		t.Fatal("deleted destination remained in drift lookup")
+	}
+	routes, _ := structpb.NewStruct(map[string]any{"routes": []any{map[string]any{"destination_key": "primary"}}})
+	policy, err := c.Notifications.CreateNotificationPolicy(ctx, &alertsv1.UpsertNotificationPolicyRequest{PolicyKey: "default", Name: "Default", Enabled: true, Config: routes, IdempotencyKey: "policy-create"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	policy.Name = "Updated"
+	if _, err = c.Notifications.UpdateNotificationPolicy(ctx, &alertsv1.UpsertNotificationPolicyRequest{Id: policy.Id, PolicyKey: policy.PolicyKey, Name: policy.Name, Enabled: true, Config: routes, IdempotencyKey: "policy-update"}); err != nil {
+		t.Fatal(err)
+	}
+	readPolicy, err := c.Notifications.GetNotificationPolicy(ctx, &alertsv1.GetAlertResourceRequest{Id: policy.Id, OrgId: testOrgID})
+	if err != nil || readPolicy.Name != "Updated" {
+		t.Fatal("policy import lookup failed")
+	}
+	if _, err = c.Notifications.DeleteNotificationPolicy(ctx, &alertsv1.DeleteOperatorResourceRequest{OrgId: testOrgID, Id: policy.Id, IdempotencyKey: "policy-delete"}); err != nil {
+		t.Fatal(err)
+	}
+	base := &alertsv1.AlertRecipeBaseV1{OrgId: testOrgID, Slug: "quality", Name: "Quality", Severity: alertsv1.AlertSeverityV1_ALERT_SEVERITY_V1_WARNING, Scope: &structpb.Struct{}, Owner: &structpb.Struct{}, Action: &structpb.Struct{}, EvaluationSettings: &structpb.Struct{}, SampleGuard: &structpb.Struct{}, IdempotencyKey: "alert-quality"}
+	quality, err := c.Definitions.CreateAgentQualityRegressionAlert(ctx, &alertsv1.CreateAgentQualityRegressionAlertRequest{Base: base, RecipeConfig: &structpb.Struct{}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	base.IdempotencyKey = "alert-cost"
+	if _, err = c.Definitions.CreateCostPerSuccessAlert(ctx, &alertsv1.CreateCostPerSuccessAlertRequest{Base: base, RecipeConfig: &structpb.Struct{}}); err != nil {
+		t.Fatal(err)
+	}
+	base.IdempotencyKey = "alert-slo"
+	if _, err = c.Definitions.CreateSloBurnAlert(ctx, &alertsv1.CreateSloBurnAlertRequest{Base: base, RecipeConfig: &structpb.Struct{}}); err != nil {
+		t.Fatal(err)
+	}
+	base.IdempotencyKey = "alert-symptom"
+	if _, err = c.Definitions.CreateAdvancedSignalAlert(ctx, &alertsv1.CreateAdvancedSignalAlertRequest{Base: base, Condition: &structpb.Struct{}}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = c.Definitions.UpdateShadow(ctx, &alertsv1.UpdateShadowAlertRequest{DefinitionId: quality.Definition.Id, Name: "Updated quality", Owner: &structpb.Struct{}, Action: &structpb.Struct{}, EvaluationSettings: &structpb.Struct{}, SampleGuard: &structpb.Struct{}, IdempotencyKey: "alert-update"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = c.Runtime.Pause(ctx, &alertsv1.PauseAlertRequest{DefinitionId: quality.Definition.Id, IdempotencyKey: "pause"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = c.Runtime.Resume(ctx, &alertsv1.ResumeAlertRequest{DefinitionId: quality.Definition.Id, RevisionId: "revision-1", IdempotencyKey: "resume"}); err != nil {
+		t.Fatal(err)
+	}
+	preview, err := c.Previews.PreviewAlert(ctx, &alertsv1.PreviewAlertRequest{DefinitionId: quality.Definition.Id, IdempotencyKey: "preview"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if preview.Preview.PredictedNotificationCount != 0 {
+		t.Fatal("shadow preview predicted notifications")
+	}
+	if _, err = c.Definitions.DeleteDefinition(ctx, &alertsv1.DeleteAlertDefinitionRequest{Id: quality.Definition.Id, IdempotencyKey: "alert-delete"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err = c.Definitions.GetDefinition(ctx, &alertsv1.GetAlertDefinitionRequest{Id: quality.Definition.Id}); status.Code(err) != codes.NotFound {
+		t.Fatal("deleted alert remained readable")
+	}
+}
+
+func TestControlledGRPCPermissionDenied(t *testing.T) {
+	c, cleanup := testClient(t, "wrong-token")
+	defer cleanup()
+	ctx, cancel := c.Context(context.Background())
+	defer cancel()
+	_, err := c.Notifications.ListDestinations(ctx, &alertsv1.ListDestinationsRequest{})
+	if status.Code(err) != codes.PermissionDenied {
+		t.Fatalf("got %v, want permission denied", err)
+	}
+}
