@@ -677,6 +677,113 @@ func (AlertNotificationRouteBehaviorV1) EnumDescriptor() ([]byte, []int) {
 	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{11}
 }
 
+type AlertContactStatusV1 int32
+
+const (
+	AlertContactStatusV1_ALERT_CONTACT_STATUS_V1_UNSPECIFIED AlertContactStatusV1 = 0
+	AlertContactStatusV1_ALERT_CONTACT_STATUS_V1_PENDING     AlertContactStatusV1 = 1
+	AlertContactStatusV1_ALERT_CONTACT_STATUS_V1_VERIFIED    AlertContactStatusV1 = 2
+	AlertContactStatusV1_ALERT_CONTACT_STATUS_V1_DISABLED    AlertContactStatusV1 = 3
+	AlertContactStatusV1_ALERT_CONTACT_STATUS_V1_ARCHIVED    AlertContactStatusV1 = 4
+)
+
+// Enum value maps for AlertContactStatusV1.
+var (
+	AlertContactStatusV1_name = map[int32]string{
+		0: "ALERT_CONTACT_STATUS_V1_UNSPECIFIED",
+		1: "ALERT_CONTACT_STATUS_V1_PENDING",
+		2: "ALERT_CONTACT_STATUS_V1_VERIFIED",
+		3: "ALERT_CONTACT_STATUS_V1_DISABLED",
+		4: "ALERT_CONTACT_STATUS_V1_ARCHIVED",
+	}
+	AlertContactStatusV1_value = map[string]int32{
+		"ALERT_CONTACT_STATUS_V1_UNSPECIFIED": 0,
+		"ALERT_CONTACT_STATUS_V1_PENDING":     1,
+		"ALERT_CONTACT_STATUS_V1_VERIFIED":    2,
+		"ALERT_CONTACT_STATUS_V1_DISABLED":    3,
+		"ALERT_CONTACT_STATUS_V1_ARCHIVED":    4,
+	}
+)
+
+func (x AlertContactStatusV1) Enum() *AlertContactStatusV1 {
+	p := new(AlertContactStatusV1)
+	*p = x
+	return p
+}
+
+func (x AlertContactStatusV1) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AlertContactStatusV1) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_enumTypes[12].Descriptor()
+}
+
+func (AlertContactStatusV1) Type() protoreflect.EnumType {
+	return &file_proto_o11y_one_alerts_v1_alerts_proto_enumTypes[12]
+}
+
+func (x AlertContactStatusV1) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AlertContactStatusV1.Descriptor instead.
+func (AlertContactStatusV1) EnumDescriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{12}
+}
+
+type AlertNotificationGroupMemberKindV1 int32
+
+const (
+	AlertNotificationGroupMemberKindV1_ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_UNSPECIFIED AlertNotificationGroupMemberKindV1 = 0
+	AlertNotificationGroupMemberKindV1_ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_CONTACT     AlertNotificationGroupMemberKindV1 = 1
+	AlertNotificationGroupMemberKindV1_ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_DESTINATION AlertNotificationGroupMemberKindV1 = 2
+	AlertNotificationGroupMemberKindV1_ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_GROUP       AlertNotificationGroupMemberKindV1 = 3
+)
+
+// Enum value maps for AlertNotificationGroupMemberKindV1.
+var (
+	AlertNotificationGroupMemberKindV1_name = map[int32]string{
+		0: "ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_UNSPECIFIED",
+		1: "ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_CONTACT",
+		2: "ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_DESTINATION",
+		3: "ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_GROUP",
+	}
+	AlertNotificationGroupMemberKindV1_value = map[string]int32{
+		"ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_UNSPECIFIED": 0,
+		"ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_CONTACT":     1,
+		"ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_DESTINATION": 2,
+		"ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_GROUP":       3,
+	}
+)
+
+func (x AlertNotificationGroupMemberKindV1) Enum() *AlertNotificationGroupMemberKindV1 {
+	p := new(AlertNotificationGroupMemberKindV1)
+	*p = x
+	return p
+}
+
+func (x AlertNotificationGroupMemberKindV1) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AlertNotificationGroupMemberKindV1) Descriptor() protoreflect.EnumDescriptor {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_enumTypes[13].Descriptor()
+}
+
+func (AlertNotificationGroupMemberKindV1) Type() protoreflect.EnumType {
+	return &file_proto_o11y_one_alerts_v1_alerts_proto_enumTypes[13]
+}
+
+func (x AlertNotificationGroupMemberKindV1) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AlertNotificationGroupMemberKindV1.Descriptor instead.
+func (AlertNotificationGroupMemberKindV1) EnumDescriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{13}
+}
+
 type AlertDefinitionLifecycleActionV1 int32
 
 const (
@@ -713,11 +820,11 @@ func (x AlertDefinitionLifecycleActionV1) String() string {
 }
 
 func (AlertDefinitionLifecycleActionV1) Descriptor() protoreflect.EnumDescriptor {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_enumTypes[12].Descriptor()
+	return file_proto_o11y_one_alerts_v1_alerts_proto_enumTypes[14].Descriptor()
 }
 
 func (AlertDefinitionLifecycleActionV1) Type() protoreflect.EnumType {
-	return &file_proto_o11y_one_alerts_v1_alerts_proto_enumTypes[12]
+	return &file_proto_o11y_one_alerts_v1_alerts_proto_enumTypes[14]
 }
 
 func (x AlertDefinitionLifecycleActionV1) Number() protoreflect.EnumNumber {
@@ -726,7 +833,7 @@ func (x AlertDefinitionLifecycleActionV1) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AlertDefinitionLifecycleActionV1.Descriptor instead.
 func (AlertDefinitionLifecycleActionV1) EnumDescriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{12}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{14}
 }
 
 type AlertOwnerRefV1 struct {
@@ -7081,6 +7188,8 @@ type AlertNotificationRouteTargetV1 struct {
 	//
 	//	*AlertNotificationRouteTargetV1_DestinationId
 	//	*AlertNotificationRouteTargetV1_DestinationKey
+	//	*AlertNotificationRouteTargetV1_GroupId
+	//	*AlertNotificationRouteTargetV1_GroupKey
 	Target        isAlertNotificationRouteTargetV1_Target `protobuf_oneof:"target"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -7141,6 +7250,24 @@ func (x *AlertNotificationRouteTargetV1) GetDestinationKey() string {
 	return ""
 }
 
+func (x *AlertNotificationRouteTargetV1) GetGroupId() string {
+	if x != nil {
+		if x, ok := x.Target.(*AlertNotificationRouteTargetV1_GroupId); ok {
+			return x.GroupId
+		}
+	}
+	return ""
+}
+
+func (x *AlertNotificationRouteTargetV1) GetGroupKey() string {
+	if x != nil {
+		if x, ok := x.Target.(*AlertNotificationRouteTargetV1_GroupKey); ok {
+			return x.GroupKey
+		}
+	}
+	return ""
+}
+
 type isAlertNotificationRouteTargetV1_Target interface {
 	isAlertNotificationRouteTargetV1_Target()
 }
@@ -7153,9 +7280,21 @@ type AlertNotificationRouteTargetV1_DestinationKey struct {
 	DestinationKey string `protobuf:"bytes,2,opt,name=destination_key,json=destinationKey,proto3,oneof"`
 }
 
+type AlertNotificationRouteTargetV1_GroupId struct {
+	GroupId string `protobuf:"bytes,3,opt,name=group_id,json=groupId,proto3,oneof"`
+}
+
+type AlertNotificationRouteTargetV1_GroupKey struct {
+	GroupKey string `protobuf:"bytes,4,opt,name=group_key,json=groupKey,proto3,oneof"`
+}
+
 func (*AlertNotificationRouteTargetV1_DestinationId) isAlertNotificationRouteTargetV1_Target() {}
 
 func (*AlertNotificationRouteTargetV1_DestinationKey) isAlertNotificationRouteTargetV1_Target() {}
+
+func (*AlertNotificationRouteTargetV1_GroupId) isAlertNotificationRouteTargetV1_Target() {}
+
+func (*AlertNotificationRouteTargetV1_GroupKey) isAlertNotificationRouteTargetV1_Target() {}
 
 type AlertNotificationRouteV1 struct {
 	state         protoimpl.MessageState           `protogen:"open.v1"`
@@ -11229,6 +11368,1502 @@ func (x *DeleteDestinationRequest) GetIdempotencyKey() string {
 	return ""
 }
 
+type AlertContactV1 struct {
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	Id                    string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ContactKey            string                 `protobuf:"bytes,2,opt,name=contact_key,json=contactKey,proto3" json:"contact_key,omitempty"`
+	DisplayName           string                 `protobuf:"bytes,3,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Email                 string                 `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
+	Status                AlertContactStatusV1   `protobuf:"varint,5,opt,name=status,proto3,enum=o11y_one.alerts.v1.AlertContactStatusV1" json:"status,omitempty"`
+	Generation            int64                  `protobuf:"varint,6,opt,name=generation,proto3" json:"generation,omitempty"`
+	VerifiedGeneration    int64                  `protobuf:"varint,7,opt,name=verified_generation,json=verifiedGeneration,proto3" json:"verified_generation,omitempty"`
+	Revision              int64                  `protobuf:"varint,8,opt,name=revision,proto3" json:"revision,omitempty"`
+	DeliveryDestinationId string                 `protobuf:"bytes,9,opt,name=delivery_destination_id,json=deliveryDestinationId,proto3" json:"delivery_destination_id,omitempty"`
+	ArchivedAt            *timestamppb.Timestamp `protobuf:"bytes,10,opt,name=archived_at,json=archivedAt,proto3" json:"archived_at,omitempty"`
+	CreatedAt             *timestamppb.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt             *timestamppb.Timestamp `protobuf:"bytes,12,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *AlertContactV1) Reset() {
+	*x = AlertContactV1{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[129]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AlertContactV1) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AlertContactV1) ProtoMessage() {}
+
+func (x *AlertContactV1) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[129]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AlertContactV1.ProtoReflect.Descriptor instead.
+func (*AlertContactV1) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{129}
+}
+
+func (x *AlertContactV1) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *AlertContactV1) GetContactKey() string {
+	if x != nil {
+		return x.ContactKey
+	}
+	return ""
+}
+
+func (x *AlertContactV1) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *AlertContactV1) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *AlertContactV1) GetStatus() AlertContactStatusV1 {
+	if x != nil {
+		return x.Status
+	}
+	return AlertContactStatusV1_ALERT_CONTACT_STATUS_V1_UNSPECIFIED
+}
+
+func (x *AlertContactV1) GetGeneration() int64 {
+	if x != nil {
+		return x.Generation
+	}
+	return 0
+}
+
+func (x *AlertContactV1) GetVerifiedGeneration() int64 {
+	if x != nil {
+		return x.VerifiedGeneration
+	}
+	return 0
+}
+
+func (x *AlertContactV1) GetRevision() int64 {
+	if x != nil {
+		return x.Revision
+	}
+	return 0
+}
+
+func (x *AlertContactV1) GetDeliveryDestinationId() string {
+	if x != nil {
+		return x.DeliveryDestinationId
+	}
+	return ""
+}
+
+func (x *AlertContactV1) GetArchivedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ArchivedAt
+	}
+	return nil
+}
+
+func (x *AlertContactV1) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *AlertContactV1) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+type UpsertAlertContactRequest struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	ContactKey       string                 `protobuf:"bytes,2,opt,name=contact_key,json=contactKey,proto3" json:"contact_key,omitempty"`
+	DisplayName      string                 `protobuf:"bytes,3,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Email            string                 `protobuf:"bytes,4,opt,name=email,proto3" json:"email,omitempty"`
+	ExpectedRevision *int64                 `protobuf:"varint,5,opt,name=expected_revision,json=expectedRevision,proto3,oneof" json:"expected_revision,omitempty"`
+	IdempotencyKey   string                 `protobuf:"bytes,6,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
+	OrgId            string                 `protobuf:"bytes,7,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *UpsertAlertContactRequest) Reset() {
+	*x = UpsertAlertContactRequest{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[130]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpsertAlertContactRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpsertAlertContactRequest) ProtoMessage() {}
+
+func (x *UpsertAlertContactRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[130]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpsertAlertContactRequest.ProtoReflect.Descriptor instead.
+func (*UpsertAlertContactRequest) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{130}
+}
+
+func (x *UpsertAlertContactRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *UpsertAlertContactRequest) GetContactKey() string {
+	if x != nil {
+		return x.ContactKey
+	}
+	return ""
+}
+
+func (x *UpsertAlertContactRequest) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *UpsertAlertContactRequest) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *UpsertAlertContactRequest) GetExpectedRevision() int64 {
+	if x != nil && x.ExpectedRevision != nil {
+		return *x.ExpectedRevision
+	}
+	return 0
+}
+
+func (x *UpsertAlertContactRequest) GetIdempotencyKey() string {
+	if x != nil {
+		return x.IdempotencyKey
+	}
+	return ""
+}
+
+func (x *UpsertAlertContactRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+type ListAlertContactsRequest struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	OrgId           string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	IncludeArchived bool                   `protobuf:"varint,2,opt,name=include_archived,json=includeArchived,proto3" json:"include_archived,omitempty"`
+	Limit           int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset          int32                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ListAlertContactsRequest) Reset() {
+	*x = ListAlertContactsRequest{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[131]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListAlertContactsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAlertContactsRequest) ProtoMessage() {}
+
+func (x *ListAlertContactsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[131]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAlertContactsRequest.ProtoReflect.Descriptor instead.
+func (*ListAlertContactsRequest) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{131}
+}
+
+func (x *ListAlertContactsRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *ListAlertContactsRequest) GetIncludeArchived() bool {
+	if x != nil {
+		return x.IncludeArchived
+	}
+	return false
+}
+
+func (x *ListAlertContactsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListAlertContactsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type ListAlertContactsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Items         []*AlertContactV1      `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListAlertContactsResponse) Reset() {
+	*x = ListAlertContactsResponse{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[132]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListAlertContactsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAlertContactsResponse) ProtoMessage() {}
+
+func (x *ListAlertContactsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[132]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAlertContactsResponse.ProtoReflect.Descriptor instead.
+func (*ListAlertContactsResponse) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{132}
+}
+
+func (x *ListAlertContactsResponse) GetItems() []*AlertContactV1 {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+type SetAlertContactArchivedRequest struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	OrgId            string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	ContactId        string                 `protobuf:"bytes,2,opt,name=contact_id,json=contactId,proto3" json:"contact_id,omitempty"`
+	ExpectedRevision int64                  `protobuf:"varint,3,opt,name=expected_revision,json=expectedRevision,proto3" json:"expected_revision,omitempty"`
+	Archived         bool                   `protobuf:"varint,4,opt,name=archived,proto3" json:"archived,omitempty"`
+	Reason           string                 `protobuf:"bytes,5,opt,name=reason,proto3" json:"reason,omitempty"`
+	IdempotencyKey   string                 `protobuf:"bytes,6,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *SetAlertContactArchivedRequest) Reset() {
+	*x = SetAlertContactArchivedRequest{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[133]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetAlertContactArchivedRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetAlertContactArchivedRequest) ProtoMessage() {}
+
+func (x *SetAlertContactArchivedRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[133]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetAlertContactArchivedRequest.ProtoReflect.Descriptor instead.
+func (*SetAlertContactArchivedRequest) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{133}
+}
+
+func (x *SetAlertContactArchivedRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *SetAlertContactArchivedRequest) GetContactId() string {
+	if x != nil {
+		return x.ContactId
+	}
+	return ""
+}
+
+func (x *SetAlertContactArchivedRequest) GetExpectedRevision() int64 {
+	if x != nil {
+		return x.ExpectedRevision
+	}
+	return 0
+}
+
+func (x *SetAlertContactArchivedRequest) GetArchived() bool {
+	if x != nil {
+		return x.Archived
+	}
+	return false
+}
+
+func (x *SetAlertContactArchivedRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *SetAlertContactArchivedRequest) GetIdempotencyKey() string {
+	if x != nil {
+		return x.IdempotencyKey
+	}
+	return ""
+}
+
+type BeginAlertContactVerificationRequest struct {
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	OrgId              string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	ContactId          string                 `protobuf:"bytes,2,opt,name=contact_id,json=contactId,proto3" json:"contact_id,omitempty"`
+	ExpectedGeneration int64                  `protobuf:"varint,3,opt,name=expected_generation,json=expectedGeneration,proto3" json:"expected_generation,omitempty"`
+	IdempotencyKey     string                 `protobuf:"bytes,4,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *BeginAlertContactVerificationRequest) Reset() {
+	*x = BeginAlertContactVerificationRequest{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[134]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BeginAlertContactVerificationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BeginAlertContactVerificationRequest) ProtoMessage() {}
+
+func (x *BeginAlertContactVerificationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[134]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BeginAlertContactVerificationRequest.ProtoReflect.Descriptor instead.
+func (*BeginAlertContactVerificationRequest) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{134}
+}
+
+func (x *BeginAlertContactVerificationRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *BeginAlertContactVerificationRequest) GetContactId() string {
+	if x != nil {
+		return x.ContactId
+	}
+	return ""
+}
+
+func (x *BeginAlertContactVerificationRequest) GetExpectedGeneration() int64 {
+	if x != nil {
+		return x.ExpectedGeneration
+	}
+	return 0
+}
+
+func (x *BeginAlertContactVerificationRequest) GetIdempotencyKey() string {
+	if x != nil {
+		return x.IdempotencyKey
+	}
+	return ""
+}
+
+type BeginAlertContactVerificationResponse struct {
+	state             protoimpl.MessageState `protogen:"open.v1"`
+	VerificationId    string                 `protobuf:"bytes,1,opt,name=verification_id,json=verificationId,proto3" json:"verification_id,omitempty"`
+	ContactGeneration int64                  `protobuf:"varint,2,opt,name=contact_generation,json=contactGeneration,proto3" json:"contact_generation,omitempty"`
+	Status            string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
+	ExpiresAt         *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=expires_at,json=expiresAt,proto3" json:"expires_at,omitempty"`
+	unknownFields     protoimpl.UnknownFields
+	sizeCache         protoimpl.SizeCache
+}
+
+func (x *BeginAlertContactVerificationResponse) Reset() {
+	*x = BeginAlertContactVerificationResponse{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[135]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BeginAlertContactVerificationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BeginAlertContactVerificationResponse) ProtoMessage() {}
+
+func (x *BeginAlertContactVerificationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[135]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BeginAlertContactVerificationResponse.ProtoReflect.Descriptor instead.
+func (*BeginAlertContactVerificationResponse) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{135}
+}
+
+func (x *BeginAlertContactVerificationResponse) GetVerificationId() string {
+	if x != nil {
+		return x.VerificationId
+	}
+	return ""
+}
+
+func (x *BeginAlertContactVerificationResponse) GetContactGeneration() int64 {
+	if x != nil {
+		return x.ContactGeneration
+	}
+	return 0
+}
+
+func (x *BeginAlertContactVerificationResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *BeginAlertContactVerificationResponse) GetExpiresAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ExpiresAt
+	}
+	return nil
+}
+
+type ConfirmAlertContactVerificationRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrgId          string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	VerificationId string                 `protobuf:"bytes,2,opt,name=verification_id,json=verificationId,proto3" json:"verification_id,omitempty"`
+	Token          string                 `protobuf:"bytes,3,opt,name=token,proto3" json:"token,omitempty"`
+	IdempotencyKey string                 `protobuf:"bytes,4,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ConfirmAlertContactVerificationRequest) Reset() {
+	*x = ConfirmAlertContactVerificationRequest{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[136]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ConfirmAlertContactVerificationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ConfirmAlertContactVerificationRequest) ProtoMessage() {}
+
+func (x *ConfirmAlertContactVerificationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[136]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ConfirmAlertContactVerificationRequest.ProtoReflect.Descriptor instead.
+func (*ConfirmAlertContactVerificationRequest) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{136}
+}
+
+func (x *ConfirmAlertContactVerificationRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *ConfirmAlertContactVerificationRequest) GetVerificationId() string {
+	if x != nil {
+		return x.VerificationId
+	}
+	return ""
+}
+
+func (x *ConfirmAlertContactVerificationRequest) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *ConfirmAlertContactVerificationRequest) GetIdempotencyKey() string {
+	if x != nil {
+		return x.IdempotencyKey
+	}
+	return ""
+}
+
+type AlertNotificationGroupMemberV1 struct {
+	state         protoimpl.MessageState             `protogen:"open.v1"`
+	Id            string                             `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Kind          AlertNotificationGroupMemberKindV1 `protobuf:"varint,2,opt,name=kind,proto3,enum=o11y_one.alerts.v1.AlertNotificationGroupMemberKindV1" json:"kind,omitempty"`
+	MemberId      string                             `protobuf:"bytes,3,opt,name=member_id,json=memberId,proto3" json:"member_id,omitempty"`
+	Position      int32                              `protobuf:"varint,4,opt,name=position,proto3" json:"position,omitempty"`
+	Enabled       bool                               `protobuf:"varint,5,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AlertNotificationGroupMemberV1) Reset() {
+	*x = AlertNotificationGroupMemberV1{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[137]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AlertNotificationGroupMemberV1) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AlertNotificationGroupMemberV1) ProtoMessage() {}
+
+func (x *AlertNotificationGroupMemberV1) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[137]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AlertNotificationGroupMemberV1.ProtoReflect.Descriptor instead.
+func (*AlertNotificationGroupMemberV1) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{137}
+}
+
+func (x *AlertNotificationGroupMemberV1) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *AlertNotificationGroupMemberV1) GetKind() AlertNotificationGroupMemberKindV1 {
+	if x != nil {
+		return x.Kind
+	}
+	return AlertNotificationGroupMemberKindV1_ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_UNSPECIFIED
+}
+
+func (x *AlertNotificationGroupMemberV1) GetMemberId() string {
+	if x != nil {
+		return x.MemberId
+	}
+	return ""
+}
+
+func (x *AlertNotificationGroupMemberV1) GetPosition() int32 {
+	if x != nil {
+		return x.Position
+	}
+	return 0
+}
+
+func (x *AlertNotificationGroupMemberV1) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+type AlertNotificationGroupV1 struct {
+	state         protoimpl.MessageState            `protogen:"open.v1"`
+	Id            string                            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	GroupKey      string                            `protobuf:"bytes,2,opt,name=group_key,json=groupKey,proto3" json:"group_key,omitempty"`
+	Name          string                            `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Enabled       bool                              `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Revision      int64                             `protobuf:"varint,5,opt,name=revision,proto3" json:"revision,omitempty"`
+	ArchivedAt    *timestamppb.Timestamp            `protobuf:"bytes,6,opt,name=archived_at,json=archivedAt,proto3" json:"archived_at,omitempty"`
+	Members       []*AlertNotificationGroupMemberV1 `protobuf:"bytes,7,rep,name=members,proto3" json:"members,omitempty"`
+	CreatedAt     *timestamppb.Timestamp            `protobuf:"bytes,8,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamppb.Timestamp            `protobuf:"bytes,9,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AlertNotificationGroupV1) Reset() {
+	*x = AlertNotificationGroupV1{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[138]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AlertNotificationGroupV1) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AlertNotificationGroupV1) ProtoMessage() {}
+
+func (x *AlertNotificationGroupV1) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[138]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AlertNotificationGroupV1.ProtoReflect.Descriptor instead.
+func (*AlertNotificationGroupV1) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{138}
+}
+
+func (x *AlertNotificationGroupV1) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *AlertNotificationGroupV1) GetGroupKey() string {
+	if x != nil {
+		return x.GroupKey
+	}
+	return ""
+}
+
+func (x *AlertNotificationGroupV1) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *AlertNotificationGroupV1) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *AlertNotificationGroupV1) GetRevision() int64 {
+	if x != nil {
+		return x.Revision
+	}
+	return 0
+}
+
+func (x *AlertNotificationGroupV1) GetArchivedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.ArchivedAt
+	}
+	return nil
+}
+
+func (x *AlertNotificationGroupV1) GetMembers() []*AlertNotificationGroupMemberV1 {
+	if x != nil {
+		return x.Members
+	}
+	return nil
+}
+
+func (x *AlertNotificationGroupV1) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *AlertNotificationGroupV1) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+type UpsertAlertNotificationGroupRequest struct {
+	state            protoimpl.MessageState            `protogen:"open.v1"`
+	Id               string                            `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	GroupKey         string                            `protobuf:"bytes,2,opt,name=group_key,json=groupKey,proto3" json:"group_key,omitempty"`
+	Name             string                            `protobuf:"bytes,3,opt,name=name,proto3" json:"name,omitempty"`
+	Enabled          bool                              `protobuf:"varint,4,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	ExpectedRevision *int64                            `protobuf:"varint,5,opt,name=expected_revision,json=expectedRevision,proto3,oneof" json:"expected_revision,omitempty"`
+	Members          []*AlertNotificationGroupMemberV1 `protobuf:"bytes,6,rep,name=members,proto3" json:"members,omitempty"`
+	IdempotencyKey   string                            `protobuf:"bytes,7,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
+	OrgId            string                            `protobuf:"bytes,8,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *UpsertAlertNotificationGroupRequest) Reset() {
+	*x = UpsertAlertNotificationGroupRequest{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[139]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpsertAlertNotificationGroupRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpsertAlertNotificationGroupRequest) ProtoMessage() {}
+
+func (x *UpsertAlertNotificationGroupRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[139]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpsertAlertNotificationGroupRequest.ProtoReflect.Descriptor instead.
+func (*UpsertAlertNotificationGroupRequest) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{139}
+}
+
+func (x *UpsertAlertNotificationGroupRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *UpsertAlertNotificationGroupRequest) GetGroupKey() string {
+	if x != nil {
+		return x.GroupKey
+	}
+	return ""
+}
+
+func (x *UpsertAlertNotificationGroupRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *UpsertAlertNotificationGroupRequest) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *UpsertAlertNotificationGroupRequest) GetExpectedRevision() int64 {
+	if x != nil && x.ExpectedRevision != nil {
+		return *x.ExpectedRevision
+	}
+	return 0
+}
+
+func (x *UpsertAlertNotificationGroupRequest) GetMembers() []*AlertNotificationGroupMemberV1 {
+	if x != nil {
+		return x.Members
+	}
+	return nil
+}
+
+func (x *UpsertAlertNotificationGroupRequest) GetIdempotencyKey() string {
+	if x != nil {
+		return x.IdempotencyKey
+	}
+	return ""
+}
+
+func (x *UpsertAlertNotificationGroupRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+type ListAlertNotificationGroupsRequest struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	OrgId           string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	IncludeArchived bool                   `protobuf:"varint,2,opt,name=include_archived,json=includeArchived,proto3" json:"include_archived,omitempty"`
+	Limit           int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset          int32                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ListAlertNotificationGroupsRequest) Reset() {
+	*x = ListAlertNotificationGroupsRequest{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[140]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListAlertNotificationGroupsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAlertNotificationGroupsRequest) ProtoMessage() {}
+
+func (x *ListAlertNotificationGroupsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[140]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAlertNotificationGroupsRequest.ProtoReflect.Descriptor instead.
+func (*ListAlertNotificationGroupsRequest) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{140}
+}
+
+func (x *ListAlertNotificationGroupsRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *ListAlertNotificationGroupsRequest) GetIncludeArchived() bool {
+	if x != nil {
+		return x.IncludeArchived
+	}
+	return false
+}
+
+func (x *ListAlertNotificationGroupsRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *ListAlertNotificationGroupsRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type ListAlertNotificationGroupsResponse struct {
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Items         []*AlertNotificationGroupV1 `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListAlertNotificationGroupsResponse) Reset() {
+	*x = ListAlertNotificationGroupsResponse{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[141]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListAlertNotificationGroupsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListAlertNotificationGroupsResponse) ProtoMessage() {}
+
+func (x *ListAlertNotificationGroupsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[141]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListAlertNotificationGroupsResponse.ProtoReflect.Descriptor instead.
+func (*ListAlertNotificationGroupsResponse) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{141}
+}
+
+func (x *ListAlertNotificationGroupsResponse) GetItems() []*AlertNotificationGroupV1 {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
+type SetAlertNotificationGroupArchivedRequest struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	OrgId            string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	GroupId          string                 `protobuf:"bytes,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	ExpectedRevision int64                  `protobuf:"varint,3,opt,name=expected_revision,json=expectedRevision,proto3" json:"expected_revision,omitempty"`
+	Archived         bool                   `protobuf:"varint,4,opt,name=archived,proto3" json:"archived,omitempty"`
+	Reason           string                 `protobuf:"bytes,5,opt,name=reason,proto3" json:"reason,omitempty"`
+	IdempotencyKey   string                 `protobuf:"bytes,6,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *SetAlertNotificationGroupArchivedRequest) Reset() {
+	*x = SetAlertNotificationGroupArchivedRequest{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[142]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SetAlertNotificationGroupArchivedRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SetAlertNotificationGroupArchivedRequest) ProtoMessage() {}
+
+func (x *SetAlertNotificationGroupArchivedRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[142]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SetAlertNotificationGroupArchivedRequest.ProtoReflect.Descriptor instead.
+func (*SetAlertNotificationGroupArchivedRequest) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{142}
+}
+
+func (x *SetAlertNotificationGroupArchivedRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *SetAlertNotificationGroupArchivedRequest) GetGroupId() string {
+	if x != nil {
+		return x.GroupId
+	}
+	return ""
+}
+
+func (x *SetAlertNotificationGroupArchivedRequest) GetExpectedRevision() int64 {
+	if x != nil {
+		return x.ExpectedRevision
+	}
+	return 0
+}
+
+func (x *SetAlertNotificationGroupArchivedRequest) GetArchived() bool {
+	if x != nil {
+		return x.Archived
+	}
+	return false
+}
+
+func (x *SetAlertNotificationGroupArchivedRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *SetAlertNotificationGroupArchivedRequest) GetIdempotencyKey() string {
+	if x != nil {
+		return x.IdempotencyKey
+	}
+	return ""
+}
+
+type PurgeAlertNotificationGroupRequest struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	OrgId          string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	GroupId        string                 `protobuf:"bytes,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	Reason         string                 `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
+	IdempotencyKey string                 `protobuf:"bytes,4,opt,name=idempotency_key,json=idempotencyKey,proto3" json:"idempotency_key,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *PurgeAlertNotificationGroupRequest) Reset() {
+	*x = PurgeAlertNotificationGroupRequest{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[143]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PurgeAlertNotificationGroupRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PurgeAlertNotificationGroupRequest) ProtoMessage() {}
+
+func (x *PurgeAlertNotificationGroupRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[143]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PurgeAlertNotificationGroupRequest.ProtoReflect.Descriptor instead.
+func (*PurgeAlertNotificationGroupRequest) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{143}
+}
+
+func (x *PurgeAlertNotificationGroupRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *PurgeAlertNotificationGroupRequest) GetGroupId() string {
+	if x != nil {
+		return x.GroupId
+	}
+	return ""
+}
+
+func (x *PurgeAlertNotificationGroupRequest) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *PurgeAlertNotificationGroupRequest) GetIdempotencyKey() string {
+	if x != nil {
+		return x.IdempotencyKey
+	}
+	return ""
+}
+
+type GetAlertNotificationGroupUsageRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrgId         string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	GroupId       string                 `protobuf:"bytes,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetAlertNotificationGroupUsageRequest) Reset() {
+	*x = GetAlertNotificationGroupUsageRequest{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[144]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetAlertNotificationGroupUsageRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetAlertNotificationGroupUsageRequest) ProtoMessage() {}
+
+func (x *GetAlertNotificationGroupUsageRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[144]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetAlertNotificationGroupUsageRequest.ProtoReflect.Descriptor instead.
+func (*GetAlertNotificationGroupUsageRequest) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{144}
+}
+
+func (x *GetAlertNotificationGroupUsageRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *GetAlertNotificationGroupUsageRequest) GetGroupId() string {
+	if x != nil {
+		return x.GroupId
+	}
+	return ""
+}
+
+type AlertNotificationGroupUsageV1 struct {
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	PolicyRouteIds []string               `protobuf:"bytes,1,rep,name=policy_route_ids,json=policyRouteIds,proto3" json:"policy_route_ids,omitempty"`
+	ParentGroupIds []string               `protobuf:"bytes,2,rep,name=parent_group_ids,json=parentGroupIds,proto3" json:"parent_group_ids,omitempty"`
+	CanPurge       bool                   `protobuf:"varint,3,opt,name=can_purge,json=canPurge,proto3" json:"can_purge,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *AlertNotificationGroupUsageV1) Reset() {
+	*x = AlertNotificationGroupUsageV1{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[145]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AlertNotificationGroupUsageV1) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AlertNotificationGroupUsageV1) ProtoMessage() {}
+
+func (x *AlertNotificationGroupUsageV1) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[145]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AlertNotificationGroupUsageV1.ProtoReflect.Descriptor instead.
+func (*AlertNotificationGroupUsageV1) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{145}
+}
+
+func (x *AlertNotificationGroupUsageV1) GetPolicyRouteIds() []string {
+	if x != nil {
+		return x.PolicyRouteIds
+	}
+	return nil
+}
+
+func (x *AlertNotificationGroupUsageV1) GetParentGroupIds() []string {
+	if x != nil {
+		return x.ParentGroupIds
+	}
+	return nil
+}
+
+func (x *AlertNotificationGroupUsageV1) GetCanPurge() bool {
+	if x != nil {
+		return x.CanPurge
+	}
+	return false
+}
+
+type PreviewAlertNotificationGroupExpansionRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	OrgId         string                 `protobuf:"bytes,1,opt,name=org_id,json=orgId,proto3" json:"org_id,omitempty"`
+	GroupId       string                 `protobuf:"bytes,2,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PreviewAlertNotificationGroupExpansionRequest) Reset() {
+	*x = PreviewAlertNotificationGroupExpansionRequest{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[146]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PreviewAlertNotificationGroupExpansionRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PreviewAlertNotificationGroupExpansionRequest) ProtoMessage() {}
+
+func (x *PreviewAlertNotificationGroupExpansionRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[146]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PreviewAlertNotificationGroupExpansionRequest.ProtoReflect.Descriptor instead.
+func (*PreviewAlertNotificationGroupExpansionRequest) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{146}
+}
+
+func (x *PreviewAlertNotificationGroupExpansionRequest) GetOrgId() string {
+	if x != nil {
+		return x.OrgId
+	}
+	return ""
+}
+
+func (x *PreviewAlertNotificationGroupExpansionRequest) GetGroupId() string {
+	if x != nil {
+		return x.GroupId
+	}
+	return ""
+}
+
+type AlertNotificationRecipientV1 struct {
+	state           protoimpl.MessageState             `protogen:"open.v1"`
+	DestinationId   string                             `protobuf:"bytes,1,opt,name=destination_id,json=destinationId,proto3" json:"destination_id,omitempty"`
+	DestinationKey  string                             `protobuf:"bytes,2,opt,name=destination_key,json=destinationKey,proto3" json:"destination_key,omitempty"`
+	DestinationKind AlertDestinationKindV1             `protobuf:"varint,3,opt,name=destination_kind,json=destinationKind,proto3,enum=o11y_one.alerts.v1.AlertDestinationKindV1" json:"destination_kind,omitempty"`
+	SourceKind      AlertNotificationGroupMemberKindV1 `protobuf:"varint,4,opt,name=source_kind,json=sourceKind,proto3,enum=o11y_one.alerts.v1.AlertNotificationGroupMemberKindV1" json:"source_kind,omitempty"`
+	SourceId        string                             `protobuf:"bytes,5,opt,name=source_id,json=sourceId,proto3" json:"source_id,omitempty"`
+	Verified        bool                               `protobuf:"varint,6,opt,name=verified,proto3" json:"verified,omitempty"`
+	Enabled         bool                               `protobuf:"varint,7,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *AlertNotificationRecipientV1) Reset() {
+	*x = AlertNotificationRecipientV1{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[147]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AlertNotificationRecipientV1) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AlertNotificationRecipientV1) ProtoMessage() {}
+
+func (x *AlertNotificationRecipientV1) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[147]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AlertNotificationRecipientV1.ProtoReflect.Descriptor instead.
+func (*AlertNotificationRecipientV1) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{147}
+}
+
+func (x *AlertNotificationRecipientV1) GetDestinationId() string {
+	if x != nil {
+		return x.DestinationId
+	}
+	return ""
+}
+
+func (x *AlertNotificationRecipientV1) GetDestinationKey() string {
+	if x != nil {
+		return x.DestinationKey
+	}
+	return ""
+}
+
+func (x *AlertNotificationRecipientV1) GetDestinationKind() AlertDestinationKindV1 {
+	if x != nil {
+		return x.DestinationKind
+	}
+	return AlertDestinationKindV1_ALERT_DESTINATION_KIND_V1_UNSPECIFIED
+}
+
+func (x *AlertNotificationRecipientV1) GetSourceKind() AlertNotificationGroupMemberKindV1 {
+	if x != nil {
+		return x.SourceKind
+	}
+	return AlertNotificationGroupMemberKindV1_ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_UNSPECIFIED
+}
+
+func (x *AlertNotificationRecipientV1) GetSourceId() string {
+	if x != nil {
+		return x.SourceId
+	}
+	return ""
+}
+
+func (x *AlertNotificationRecipientV1) GetVerified() bool {
+	if x != nil {
+		return x.Verified
+	}
+	return false
+}
+
+func (x *AlertNotificationRecipientV1) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+type PreviewAlertNotificationGroupExpansionResponse struct {
+	state         protoimpl.MessageState          `protogen:"open.v1"`
+	GroupId       string                          `protobuf:"bytes,1,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	Recipients    []*AlertNotificationRecipientV1 `protobuf:"bytes,2,rep,name=recipients,proto3" json:"recipients,omitempty"`
+	Diagnostics   []string                        `protobuf:"bytes,3,rep,name=diagnostics,proto3" json:"diagnostics,omitempty"`
+	Truncated     bool                            `protobuf:"varint,4,opt,name=truncated,proto3" json:"truncated,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *PreviewAlertNotificationGroupExpansionResponse) Reset() {
+	*x = PreviewAlertNotificationGroupExpansionResponse{}
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[148]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *PreviewAlertNotificationGroupExpansionResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*PreviewAlertNotificationGroupExpansionResponse) ProtoMessage() {}
+
+func (x *PreviewAlertNotificationGroupExpansionResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[148]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use PreviewAlertNotificationGroupExpansionResponse.ProtoReflect.Descriptor instead.
+func (*PreviewAlertNotificationGroupExpansionResponse) Descriptor() ([]byte, []int) {
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{148}
+}
+
+func (x *PreviewAlertNotificationGroupExpansionResponse) GetGroupId() string {
+	if x != nil {
+		return x.GroupId
+	}
+	return ""
+}
+
+func (x *PreviewAlertNotificationGroupExpansionResponse) GetRecipients() []*AlertNotificationRecipientV1 {
+	if x != nil {
+		return x.Recipients
+	}
+	return nil
+}
+
+func (x *PreviewAlertNotificationGroupExpansionResponse) GetDiagnostics() []string {
+	if x != nil {
+		return x.Diagnostics
+	}
+	return nil
+}
+
+func (x *PreviewAlertNotificationGroupExpansionResponse) GetTruncated() bool {
+	if x != nil {
+		return x.Truncated
+	}
+	return false
+}
+
 type UpsertNotificationPolicyRequest struct {
 	state            protoimpl.MessageState           `protogen:"open.v1"`
 	Id               string                           `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -11245,7 +12880,7 @@ type UpsertNotificationPolicyRequest struct {
 
 func (x *UpsertNotificationPolicyRequest) Reset() {
 	*x = UpsertNotificationPolicyRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[129]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[149]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11257,7 +12892,7 @@ func (x *UpsertNotificationPolicyRequest) String() string {
 func (*UpsertNotificationPolicyRequest) ProtoMessage() {}
 
 func (x *UpsertNotificationPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[129]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[149]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11270,7 +12905,7 @@ func (x *UpsertNotificationPolicyRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertNotificationPolicyRequest.ProtoReflect.Descriptor instead.
 func (*UpsertNotificationPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{129}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{149}
 }
 
 func (x *UpsertNotificationPolicyRequest) GetId() string {
@@ -11339,7 +12974,7 @@ type ValidateNotificationPolicyRequest struct {
 
 func (x *ValidateNotificationPolicyRequest) Reset() {
 	*x = ValidateNotificationPolicyRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[130]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[150]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11351,7 +12986,7 @@ func (x *ValidateNotificationPolicyRequest) String() string {
 func (*ValidateNotificationPolicyRequest) ProtoMessage() {}
 
 func (x *ValidateNotificationPolicyRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[130]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[150]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11364,7 +12999,7 @@ func (x *ValidateNotificationPolicyRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use ValidateNotificationPolicyRequest.ProtoReflect.Descriptor instead.
 func (*ValidateNotificationPolicyRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{130}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{150}
 }
 
 func (x *ValidateNotificationPolicyRequest) GetPolicyId() string {
@@ -11392,7 +13027,7 @@ type ValidateNotificationPolicyResponse struct {
 
 func (x *ValidateNotificationPolicyResponse) Reset() {
 	*x = ValidateNotificationPolicyResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[131]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[151]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11404,7 +13039,7 @@ func (x *ValidateNotificationPolicyResponse) String() string {
 func (*ValidateNotificationPolicyResponse) ProtoMessage() {}
 
 func (x *ValidateNotificationPolicyResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[131]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[151]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11417,7 +13052,7 @@ func (x *ValidateNotificationPolicyResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use ValidateNotificationPolicyResponse.ProtoReflect.Descriptor instead.
 func (*ValidateNotificationPolicyResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{131}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{151}
 }
 
 func (x *ValidateNotificationPolicyResponse) GetValid() bool {
@@ -11456,7 +13091,7 @@ type AlertRoutingSubjectV1 struct {
 
 func (x *AlertRoutingSubjectV1) Reset() {
 	*x = AlertRoutingSubjectV1{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[132]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[152]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11468,7 +13103,7 @@ func (x *AlertRoutingSubjectV1) String() string {
 func (*AlertRoutingSubjectV1) ProtoMessage() {}
 
 func (x *AlertRoutingSubjectV1) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[132]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[152]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11481,7 +13116,7 @@ func (x *AlertRoutingSubjectV1) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AlertRoutingSubjectV1.ProtoReflect.Descriptor instead.
 func (*AlertRoutingSubjectV1) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{132}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{152}
 }
 
 func (x *AlertRoutingSubjectV1) GetAlertClass() string {
@@ -11546,7 +13181,7 @@ type PreviewNotificationRouteRequest struct {
 
 func (x *PreviewNotificationRouteRequest) Reset() {
 	*x = PreviewNotificationRouteRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[133]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[153]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11558,7 +13193,7 @@ func (x *PreviewNotificationRouteRequest) String() string {
 func (*PreviewNotificationRouteRequest) ProtoMessage() {}
 
 func (x *PreviewNotificationRouteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[133]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[153]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11571,7 +13206,7 @@ func (x *PreviewNotificationRouteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PreviewNotificationRouteRequest.ProtoReflect.Descriptor instead.
 func (*PreviewNotificationRouteRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{133}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{153}
 }
 
 func (x *PreviewNotificationRouteRequest) GetDefinitionId() string {
@@ -11623,13 +13258,15 @@ type AlertRouteEvaluationV1 struct {
 	Stopped                      bool                                `protobuf:"varint,10,opt,name=stopped,proto3" json:"stopped,omitempty"`
 	Reason                       string                              `protobuf:"bytes,11,opt,name=reason,proto3" json:"reason,omitempty"`
 	DestinationVerificationState AlertDestinationVerificationStateV1 `protobuf:"varint,12,opt,name=destination_verification_state,json=destinationVerificationState,proto3,enum=o11y_one.alerts.v1.AlertDestinationVerificationStateV1" json:"destination_verification_state,omitempty"`
+	GroupId                      string                              `protobuf:"bytes,13,opt,name=group_id,json=groupId,proto3" json:"group_id,omitempty"`
+	ExpandedDestinationIds       []string                            `protobuf:"bytes,14,rep,name=expanded_destination_ids,json=expandedDestinationIds,proto3" json:"expanded_destination_ids,omitempty"`
 	unknownFields                protoimpl.UnknownFields
 	sizeCache                    protoimpl.SizeCache
 }
 
 func (x *AlertRouteEvaluationV1) Reset() {
 	*x = AlertRouteEvaluationV1{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[134]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[154]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11641,7 +13278,7 @@ func (x *AlertRouteEvaluationV1) String() string {
 func (*AlertRouteEvaluationV1) ProtoMessage() {}
 
 func (x *AlertRouteEvaluationV1) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[134]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[154]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11654,7 +13291,7 @@ func (x *AlertRouteEvaluationV1) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AlertRouteEvaluationV1.ProtoReflect.Descriptor instead.
 func (*AlertRouteEvaluationV1) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{134}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{154}
 }
 
 func (x *AlertRouteEvaluationV1) GetRouteId() string {
@@ -11741,6 +13378,20 @@ func (x *AlertRouteEvaluationV1) GetDestinationVerificationState() AlertDestinat
 	return AlertDestinationVerificationStateV1_ALERT_DESTINATION_VERIFICATION_STATE_V1_UNSPECIFIED
 }
 
+func (x *AlertRouteEvaluationV1) GetGroupId() string {
+	if x != nil {
+		return x.GroupId
+	}
+	return ""
+}
+
+func (x *AlertRouteEvaluationV1) GetExpandedDestinationIds() []string {
+	if x != nil {
+		return x.ExpandedDestinationIds
+	}
+	return nil
+}
+
 type PreviewNotificationRouteResponse struct {
 	state                  protoimpl.MessageState    `protogen:"open.v1"`
 	DefinitionId           string                    `protobuf:"bytes,1,opt,name=definition_id,json=definitionId,proto3" json:"definition_id,omitempty"`
@@ -11758,7 +13409,7 @@ type PreviewNotificationRouteResponse struct {
 
 func (x *PreviewNotificationRouteResponse) Reset() {
 	*x = PreviewNotificationRouteResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[135]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[155]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11770,7 +13421,7 @@ func (x *PreviewNotificationRouteResponse) String() string {
 func (*PreviewNotificationRouteResponse) ProtoMessage() {}
 
 func (x *PreviewNotificationRouteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[135]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[155]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11783,7 +13434,7 @@ func (x *PreviewNotificationRouteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PreviewNotificationRouteResponse.ProtoReflect.Descriptor instead.
 func (*PreviewNotificationRouteResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{135}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{155}
 }
 
 func (x *PreviewNotificationRouteResponse) GetDefinitionId() string {
@@ -11862,7 +13513,7 @@ type PreviewNotificationPayloadRequest struct {
 
 func (x *PreviewNotificationPayloadRequest) Reset() {
 	*x = PreviewNotificationPayloadRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[136]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[156]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11874,7 +13525,7 @@ func (x *PreviewNotificationPayloadRequest) String() string {
 func (*PreviewNotificationPayloadRequest) ProtoMessage() {}
 
 func (x *PreviewNotificationPayloadRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[136]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[156]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11887,7 +13538,7 @@ func (x *PreviewNotificationPayloadRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use PreviewNotificationPayloadRequest.ProtoReflect.Descriptor instead.
 func (*PreviewNotificationPayloadRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{136}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{156}
 }
 
 func (x *PreviewNotificationPayloadRequest) GetDefinitionId() string {
@@ -11941,7 +13592,7 @@ type PreviewNotificationPayloadResponse struct {
 
 func (x *PreviewNotificationPayloadResponse) Reset() {
 	*x = PreviewNotificationPayloadResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[137]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[157]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -11953,7 +13604,7 @@ func (x *PreviewNotificationPayloadResponse) String() string {
 func (*PreviewNotificationPayloadResponse) ProtoMessage() {}
 
 func (x *PreviewNotificationPayloadResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[137]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[157]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -11966,7 +13617,7 @@ func (x *PreviewNotificationPayloadResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use PreviewNotificationPayloadResponse.ProtoReflect.Descriptor instead.
 func (*PreviewNotificationPayloadResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{137}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{157}
 }
 
 func (x *PreviewNotificationPayloadResponse) GetDestinationId() string {
@@ -12036,7 +13687,7 @@ type GetActivationReadinessRequest struct {
 
 func (x *GetActivationReadinessRequest) Reset() {
 	*x = GetActivationReadinessRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[138]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[158]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12048,7 +13699,7 @@ func (x *GetActivationReadinessRequest) String() string {
 func (*GetActivationReadinessRequest) ProtoMessage() {}
 
 func (x *GetActivationReadinessRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[138]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[158]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12061,7 +13712,7 @@ func (x *GetActivationReadinessRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActivationReadinessRequest.ProtoReflect.Descriptor instead.
 func (*GetActivationReadinessRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{138}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{158}
 }
 
 func (x *GetActivationReadinessRequest) GetDefinitionId() string {
@@ -12098,7 +13749,7 @@ type AlertActivationBlockerV1 struct {
 
 func (x *AlertActivationBlockerV1) Reset() {
 	*x = AlertActivationBlockerV1{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[139]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[159]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12110,7 +13761,7 @@ func (x *AlertActivationBlockerV1) String() string {
 func (*AlertActivationBlockerV1) ProtoMessage() {}
 
 func (x *AlertActivationBlockerV1) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[139]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[159]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12123,7 +13774,7 @@ func (x *AlertActivationBlockerV1) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AlertActivationBlockerV1.ProtoReflect.Descriptor instead.
 func (*AlertActivationBlockerV1) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{139}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{159}
 }
 
 func (x *AlertActivationBlockerV1) GetCode() string {
@@ -12177,7 +13828,7 @@ type GetActivationReadinessResponse struct {
 
 func (x *GetActivationReadinessResponse) Reset() {
 	*x = GetActivationReadinessResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[140]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[160]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12189,7 +13840,7 @@ func (x *GetActivationReadinessResponse) String() string {
 func (*GetActivationReadinessResponse) ProtoMessage() {}
 
 func (x *GetActivationReadinessResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[140]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[160]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12202,7 +13853,7 @@ func (x *GetActivationReadinessResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetActivationReadinessResponse.ProtoReflect.Descriptor instead.
 func (*GetActivationReadinessResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{140}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{160}
 }
 
 func (x *GetActivationReadinessResponse) GetReady() bool {
@@ -12270,7 +13921,7 @@ type ListNotificationPoliciesResponse struct {
 
 func (x *ListNotificationPoliciesResponse) Reset() {
 	*x = ListNotificationPoliciesResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[141]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[161]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12282,7 +13933,7 @@ func (x *ListNotificationPoliciesResponse) String() string {
 func (*ListNotificationPoliciesResponse) ProtoMessage() {}
 
 func (x *ListNotificationPoliciesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[141]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[161]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12295,7 +13946,7 @@ func (x *ListNotificationPoliciesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListNotificationPoliciesResponse.ProtoReflect.Descriptor instead.
 func (*ListNotificationPoliciesResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{141}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{161}
 }
 
 func (x *ListNotificationPoliciesResponse) GetItems() []*AlertNotificationPolicyV1 {
@@ -12316,7 +13967,7 @@ type ListOperatorResourcesRequest struct {
 
 func (x *ListOperatorResourcesRequest) Reset() {
 	*x = ListOperatorResourcesRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[142]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[162]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12328,7 +13979,7 @@ func (x *ListOperatorResourcesRequest) String() string {
 func (*ListOperatorResourcesRequest) ProtoMessage() {}
 
 func (x *ListOperatorResourcesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[142]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[162]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12341,7 +13992,7 @@ func (x *ListOperatorResourcesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListOperatorResourcesRequest.ProtoReflect.Descriptor instead.
 func (*ListOperatorResourcesRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{142}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{162}
 }
 
 func (x *ListOperatorResourcesRequest) GetOrgId() string {
@@ -12376,7 +14027,7 @@ type DeleteOperatorResourceRequest struct {
 
 func (x *DeleteOperatorResourceRequest) Reset() {
 	*x = DeleteOperatorResourceRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[143]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[163]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12388,7 +14039,7 @@ func (x *DeleteOperatorResourceRequest) String() string {
 func (*DeleteOperatorResourceRequest) ProtoMessage() {}
 
 func (x *DeleteOperatorResourceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[143]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[163]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12401,7 +14052,7 @@ func (x *DeleteOperatorResourceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteOperatorResourceRequest.ProtoReflect.Descriptor instead.
 func (*DeleteOperatorResourceRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{143}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{163}
 }
 
 func (x *DeleteOperatorResourceRequest) GetOrgId() string {
@@ -12434,7 +14085,7 @@ type ListMaintenanceWindowsResponse struct {
 
 func (x *ListMaintenanceWindowsResponse) Reset() {
 	*x = ListMaintenanceWindowsResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[144]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[164]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12446,7 +14097,7 @@ func (x *ListMaintenanceWindowsResponse) String() string {
 func (*ListMaintenanceWindowsResponse) ProtoMessage() {}
 
 func (x *ListMaintenanceWindowsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[144]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[164]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12459,7 +14110,7 @@ func (x *ListMaintenanceWindowsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListMaintenanceWindowsResponse.ProtoReflect.Descriptor instead.
 func (*ListMaintenanceWindowsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{144}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{164}
 }
 
 func (x *ListMaintenanceWindowsResponse) GetItems() []*AlertMaintenanceWindowV1 {
@@ -12478,7 +14129,7 @@ type ListSilencesResponse struct {
 
 func (x *ListSilencesResponse) Reset() {
 	*x = ListSilencesResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[145]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[165]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12490,7 +14141,7 @@ func (x *ListSilencesResponse) String() string {
 func (*ListSilencesResponse) ProtoMessage() {}
 
 func (x *ListSilencesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[145]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[165]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12503,7 +14154,7 @@ func (x *ListSilencesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListSilencesResponse.ProtoReflect.Descriptor instead.
 func (*ListSilencesResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{145}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{165}
 }
 
 func (x *ListSilencesResponse) GetItems() []*AlertSilenceV1 {
@@ -12529,7 +14180,7 @@ type UpsertMaintenanceWindowRequest struct {
 
 func (x *UpsertMaintenanceWindowRequest) Reset() {
 	*x = UpsertMaintenanceWindowRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[146]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[166]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12541,7 +14192,7 @@ func (x *UpsertMaintenanceWindowRequest) String() string {
 func (*UpsertMaintenanceWindowRequest) ProtoMessage() {}
 
 func (x *UpsertMaintenanceWindowRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[146]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[166]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12554,7 +14205,7 @@ func (x *UpsertMaintenanceWindowRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertMaintenanceWindowRequest.ProtoReflect.Descriptor instead.
 func (*UpsertMaintenanceWindowRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{146}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{166}
 }
 
 func (x *UpsertMaintenanceWindowRequest) GetId() string {
@@ -12629,7 +14280,7 @@ type UpsertSilenceRequest struct {
 
 func (x *UpsertSilenceRequest) Reset() {
 	*x = UpsertSilenceRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[147]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[167]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12641,7 +14292,7 @@ func (x *UpsertSilenceRequest) String() string {
 func (*UpsertSilenceRequest) ProtoMessage() {}
 
 func (x *UpsertSilenceRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[147]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[167]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12654,7 +14305,7 @@ func (x *UpsertSilenceRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpsertSilenceRequest.ProtoReflect.Descriptor instead.
 func (*UpsertSilenceRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{147}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{167}
 }
 
 func (x *UpsertSilenceRequest) GetId() string {
@@ -12723,7 +14374,7 @@ type TestDestinationRequest struct {
 
 func (x *TestDestinationRequest) Reset() {
 	*x = TestDestinationRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[148]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[168]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12735,7 +14386,7 @@ func (x *TestDestinationRequest) String() string {
 func (*TestDestinationRequest) ProtoMessage() {}
 
 func (x *TestDestinationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[148]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[168]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12748,7 +14399,7 @@ func (x *TestDestinationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TestDestinationRequest.ProtoReflect.Descriptor instead.
 func (*TestDestinationRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{148}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{168}
 }
 
 func (x *TestDestinationRequest) GetDestinationId() string {
@@ -12776,7 +14427,7 @@ type TestDestinationResponse struct {
 
 func (x *TestDestinationResponse) Reset() {
 	*x = TestDestinationResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[149]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[169]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12788,7 +14439,7 @@ func (x *TestDestinationResponse) String() string {
 func (*TestDestinationResponse) ProtoMessage() {}
 
 func (x *TestDestinationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[149]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[169]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12801,7 +14452,7 @@ func (x *TestDestinationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TestDestinationResponse.ProtoReflect.Descriptor instead.
 func (*TestDestinationResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{149}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{169}
 }
 
 func (x *TestDestinationResponse) GetOk() bool {
@@ -12838,7 +14489,7 @@ type PutDestinationSecretRequest struct {
 
 func (x *PutDestinationSecretRequest) Reset() {
 	*x = PutDestinationSecretRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[150]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[170]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12850,7 +14501,7 @@ func (x *PutDestinationSecretRequest) String() string {
 func (*PutDestinationSecretRequest) ProtoMessage() {}
 
 func (x *PutDestinationSecretRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[150]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[170]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12863,7 +14514,7 @@ func (x *PutDestinationSecretRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutDestinationSecretRequest.ProtoReflect.Descriptor instead.
 func (*PutDestinationSecretRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{150}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{170}
 }
 
 func (x *PutDestinationSecretRequest) GetDestinationId() string {
@@ -12913,7 +14564,7 @@ type RevokeDestinationSecretRequest struct {
 
 func (x *RevokeDestinationSecretRequest) Reset() {
 	*x = RevokeDestinationSecretRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[151]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[171]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12925,7 +14576,7 @@ func (x *RevokeDestinationSecretRequest) String() string {
 func (*RevokeDestinationSecretRequest) ProtoMessage() {}
 
 func (x *RevokeDestinationSecretRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[151]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[171]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -12938,7 +14589,7 @@ func (x *RevokeDestinationSecretRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeDestinationSecretRequest.ProtoReflect.Descriptor instead.
 func (*RevokeDestinationSecretRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{151}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{171}
 }
 
 func (x *RevokeDestinationSecretRequest) GetDestinationId() string {
@@ -12978,7 +14629,7 @@ type ListDestinationSecretsRequest struct {
 
 func (x *ListDestinationSecretsRequest) Reset() {
 	*x = ListDestinationSecretsRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[152]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[172]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -12990,7 +14641,7 @@ func (x *ListDestinationSecretsRequest) String() string {
 func (*ListDestinationSecretsRequest) ProtoMessage() {}
 
 func (x *ListDestinationSecretsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[152]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[172]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13003,7 +14654,7 @@ func (x *ListDestinationSecretsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDestinationSecretsRequest.ProtoReflect.Descriptor instead.
 func (*ListDestinationSecretsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{152}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{172}
 }
 
 func (x *ListDestinationSecretsRequest) GetDestinationId() string {
@@ -13029,7 +14680,7 @@ type DestinationSecretMetadataV1 struct {
 
 func (x *DestinationSecretMetadataV1) Reset() {
 	*x = DestinationSecretMetadataV1{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[153]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[173]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13041,7 +14692,7 @@ func (x *DestinationSecretMetadataV1) String() string {
 func (*DestinationSecretMetadataV1) ProtoMessage() {}
 
 func (x *DestinationSecretMetadataV1) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[153]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[173]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13054,7 +14705,7 @@ func (x *DestinationSecretMetadataV1) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DestinationSecretMetadataV1.ProtoReflect.Descriptor instead.
 func (*DestinationSecretMetadataV1) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{153}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{173}
 }
 
 func (x *DestinationSecretMetadataV1) GetVersion() int64 {
@@ -13122,7 +14773,7 @@ type PutDestinationSecretResponse struct {
 
 func (x *PutDestinationSecretResponse) Reset() {
 	*x = PutDestinationSecretResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[154]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[174]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13134,7 +14785,7 @@ func (x *PutDestinationSecretResponse) String() string {
 func (*PutDestinationSecretResponse) ProtoMessage() {}
 
 func (x *PutDestinationSecretResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[154]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[174]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13147,7 +14798,7 @@ func (x *PutDestinationSecretResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutDestinationSecretResponse.ProtoReflect.Descriptor instead.
 func (*PutDestinationSecretResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{154}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{174}
 }
 
 func (x *PutDestinationSecretResponse) GetMetadata() *DestinationSecretMetadataV1 {
@@ -13166,7 +14817,7 @@ type RevokeDestinationSecretResponse struct {
 
 func (x *RevokeDestinationSecretResponse) Reset() {
 	*x = RevokeDestinationSecretResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[155]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[175]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13178,7 +14829,7 @@ func (x *RevokeDestinationSecretResponse) String() string {
 func (*RevokeDestinationSecretResponse) ProtoMessage() {}
 
 func (x *RevokeDestinationSecretResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[155]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[175]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13191,7 +14842,7 @@ func (x *RevokeDestinationSecretResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RevokeDestinationSecretResponse.ProtoReflect.Descriptor instead.
 func (*RevokeDestinationSecretResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{155}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{175}
 }
 
 func (x *RevokeDestinationSecretResponse) GetRevoked() bool {
@@ -13210,7 +14861,7 @@ type ListDestinationSecretsResponse struct {
 
 func (x *ListDestinationSecretsResponse) Reset() {
 	*x = ListDestinationSecretsResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[156]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[176]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13222,7 +14873,7 @@ func (x *ListDestinationSecretsResponse) String() string {
 func (*ListDestinationSecretsResponse) ProtoMessage() {}
 
 func (x *ListDestinationSecretsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[156]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[176]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13235,7 +14886,7 @@ func (x *ListDestinationSecretsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListDestinationSecretsResponse.ProtoReflect.Descriptor instead.
 func (*ListDestinationSecretsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{156}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{176}
 }
 
 func (x *ListDestinationSecretsResponse) GetItems() []*DestinationSecretMetadataV1 {
@@ -13257,7 +14908,7 @@ type GetDeliveryHistoryRequest struct {
 
 func (x *GetDeliveryHistoryRequest) Reset() {
 	*x = GetDeliveryHistoryRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[157]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[177]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13269,7 +14920,7 @@ func (x *GetDeliveryHistoryRequest) String() string {
 func (*GetDeliveryHistoryRequest) ProtoMessage() {}
 
 func (x *GetDeliveryHistoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[157]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[177]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13282,7 +14933,7 @@ func (x *GetDeliveryHistoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDeliveryHistoryRequest.ProtoReflect.Descriptor instead.
 func (*GetDeliveryHistoryRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{157}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{177}
 }
 
 func (x *GetDeliveryHistoryRequest) GetInstanceId() string {
@@ -13322,7 +14973,7 @@ type GetDeliveryHistoryResponse struct {
 
 func (x *GetDeliveryHistoryResponse) Reset() {
 	*x = GetDeliveryHistoryResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[158]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[178]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13334,7 +14985,7 @@ func (x *GetDeliveryHistoryResponse) String() string {
 func (*GetDeliveryHistoryResponse) ProtoMessage() {}
 
 func (x *GetDeliveryHistoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[158]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[178]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13347,7 +14998,7 @@ func (x *GetDeliveryHistoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDeliveryHistoryResponse.ProtoReflect.Descriptor instead.
 func (*GetDeliveryHistoryResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{158}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{178}
 }
 
 func (x *GetDeliveryHistoryResponse) GetItems() []*AlertDeliveryHistoryV1 {
@@ -13375,7 +15026,7 @@ type ListAlertDeliveriesRequest struct {
 
 func (x *ListAlertDeliveriesRequest) Reset() {
 	*x = ListAlertDeliveriesRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[159]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[179]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13387,7 +15038,7 @@ func (x *ListAlertDeliveriesRequest) String() string {
 func (*ListAlertDeliveriesRequest) ProtoMessage() {}
 
 func (x *ListAlertDeliveriesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[159]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[179]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13400,7 +15051,7 @@ func (x *ListAlertDeliveriesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAlertDeliveriesRequest.ProtoReflect.Descriptor instead.
 func (*ListAlertDeliveriesRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{159}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{179}
 }
 
 func (x *ListAlertDeliveriesRequest) GetLimit() int32 {
@@ -13483,7 +15134,7 @@ type ListAlertDeliveriesResponse struct {
 
 func (x *ListAlertDeliveriesResponse) Reset() {
 	*x = ListAlertDeliveriesResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[160]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[180]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13495,7 +15146,7 @@ func (x *ListAlertDeliveriesResponse) String() string {
 func (*ListAlertDeliveriesResponse) ProtoMessage() {}
 
 func (x *ListAlertDeliveriesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[160]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[180]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13508,7 +15159,7 @@ func (x *ListAlertDeliveriesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAlertDeliveriesResponse.ProtoReflect.Descriptor instead.
 func (*ListAlertDeliveriesResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{160}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{180}
 }
 
 func (x *ListAlertDeliveriesResponse) GetItems() []*AlertDeliveryV1 {
@@ -13534,7 +15185,7 @@ type GetAlertDeliveryRequest struct {
 
 func (x *GetAlertDeliveryRequest) Reset() {
 	*x = GetAlertDeliveryRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[161]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[181]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13546,7 +15197,7 @@ func (x *GetAlertDeliveryRequest) String() string {
 func (*GetAlertDeliveryRequest) ProtoMessage() {}
 
 func (x *GetAlertDeliveryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[161]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[181]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13559,7 +15210,7 @@ func (x *GetAlertDeliveryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlertDeliveryRequest.ProtoReflect.Descriptor instead.
 func (*GetAlertDeliveryRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{161}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{181}
 }
 
 func (x *GetAlertDeliveryRequest) GetDeliveryId() string {
@@ -13578,7 +15229,7 @@ type GetAlertDeliveryResponse struct {
 
 func (x *GetAlertDeliveryResponse) Reset() {
 	*x = GetAlertDeliveryResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[162]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[182]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13590,7 +15241,7 @@ func (x *GetAlertDeliveryResponse) String() string {
 func (*GetAlertDeliveryResponse) ProtoMessage() {}
 
 func (x *GetAlertDeliveryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[162]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[182]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13603,7 +15254,7 @@ func (x *GetAlertDeliveryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlertDeliveryResponse.ProtoReflect.Descriptor instead.
 func (*GetAlertDeliveryResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{162}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{182}
 }
 
 func (x *GetAlertDeliveryResponse) GetDelivery() *AlertDeliveryV1 {
@@ -13645,7 +15296,7 @@ type AlertDeliveryV1 struct {
 
 func (x *AlertDeliveryV1) Reset() {
 	*x = AlertDeliveryV1{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[163]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[183]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13657,7 +15308,7 @@ func (x *AlertDeliveryV1) String() string {
 func (*AlertDeliveryV1) ProtoMessage() {}
 
 func (x *AlertDeliveryV1) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[163]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[183]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13670,7 +15321,7 @@ func (x *AlertDeliveryV1) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AlertDeliveryV1.ProtoReflect.Descriptor instead.
 func (*AlertDeliveryV1) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{163}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{183}
 }
 
 func (x *AlertDeliveryV1) GetId() string {
@@ -13858,7 +15509,7 @@ type ListAlertAuditRequest struct {
 
 func (x *ListAlertAuditRequest) Reset() {
 	*x = ListAlertAuditRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[164]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[184]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13870,7 +15521,7 @@ func (x *ListAlertAuditRequest) String() string {
 func (*ListAlertAuditRequest) ProtoMessage() {}
 
 func (x *ListAlertAuditRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[164]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[184]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13883,7 +15534,7 @@ func (x *ListAlertAuditRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAlertAuditRequest.ProtoReflect.Descriptor instead.
 func (*ListAlertAuditRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{164}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{184}
 }
 
 func (x *ListAlertAuditRequest) GetLimit() int32 {
@@ -13970,7 +15621,7 @@ type AlertAuditEventV1 struct {
 
 func (x *AlertAuditEventV1) Reset() {
 	*x = AlertAuditEventV1{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[165]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[185]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -13982,7 +15633,7 @@ func (x *AlertAuditEventV1) String() string {
 func (*AlertAuditEventV1) ProtoMessage() {}
 
 func (x *AlertAuditEventV1) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[165]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[185]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -13995,7 +15646,7 @@ func (x *AlertAuditEventV1) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AlertAuditEventV1.ProtoReflect.Descriptor instead.
 func (*AlertAuditEventV1) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{165}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{185}
 }
 
 func (x *AlertAuditEventV1) GetId() string {
@@ -14099,7 +15750,7 @@ type ListAlertAuditResponse struct {
 
 func (x *ListAlertAuditResponse) Reset() {
 	*x = ListAlertAuditResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[166]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[186]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14111,7 +15762,7 @@ func (x *ListAlertAuditResponse) String() string {
 func (*ListAlertAuditResponse) ProtoMessage() {}
 
 func (x *ListAlertAuditResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[166]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[186]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14124,7 +15775,7 @@ func (x *ListAlertAuditResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAlertAuditResponse.ProtoReflect.Descriptor instead.
 func (*ListAlertAuditResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{166}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{186}
 }
 
 func (x *ListAlertAuditResponse) GetItems() []*AlertAuditEventV1 {
@@ -14150,7 +15801,7 @@ type GetAlertAuditRequest struct {
 
 func (x *GetAlertAuditRequest) Reset() {
 	*x = GetAlertAuditRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[167]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[187]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14162,7 +15813,7 @@ func (x *GetAlertAuditRequest) String() string {
 func (*GetAlertAuditRequest) ProtoMessage() {}
 
 func (x *GetAlertAuditRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[167]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[187]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14175,7 +15826,7 @@ func (x *GetAlertAuditRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlertAuditRequest.ProtoReflect.Descriptor instead.
 func (*GetAlertAuditRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{167}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{187}
 }
 
 func (x *GetAlertAuditRequest) GetAuditEventId() string {
@@ -14194,7 +15845,7 @@ type GetAlertAuditResponse struct {
 
 func (x *GetAlertAuditResponse) Reset() {
 	*x = GetAlertAuditResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[168]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[188]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14206,7 +15857,7 @@ func (x *GetAlertAuditResponse) String() string {
 func (*GetAlertAuditResponse) ProtoMessage() {}
 
 func (x *GetAlertAuditResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[168]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[188]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14219,7 +15870,7 @@ func (x *GetAlertAuditResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlertAuditResponse.ProtoReflect.Descriptor instead.
 func (*GetAlertAuditResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{168}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{188}
 }
 
 func (x *GetAlertAuditResponse) GetEvent() *AlertAuditEventV1 {
@@ -14238,7 +15889,7 @@ type PreviewAlertSuppressionRequest struct {
 
 func (x *PreviewAlertSuppressionRequest) Reset() {
 	*x = PreviewAlertSuppressionRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[169]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[189]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14250,7 +15901,7 @@ func (x *PreviewAlertSuppressionRequest) String() string {
 func (*PreviewAlertSuppressionRequest) ProtoMessage() {}
 
 func (x *PreviewAlertSuppressionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[169]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[189]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14263,7 +15914,7 @@ func (x *PreviewAlertSuppressionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PreviewAlertSuppressionRequest.ProtoReflect.Descriptor instead.
 func (*PreviewAlertSuppressionRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{169}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{189}
 }
 
 func (x *PreviewAlertSuppressionRequest) GetMatcher() *structpb.Struct {
@@ -14291,7 +15942,7 @@ type PreviewAlertSuppressionResponse struct {
 
 func (x *PreviewAlertSuppressionResponse) Reset() {
 	*x = PreviewAlertSuppressionResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[170]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[190]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14303,7 +15954,7 @@ func (x *PreviewAlertSuppressionResponse) String() string {
 func (*PreviewAlertSuppressionResponse) ProtoMessage() {}
 
 func (x *PreviewAlertSuppressionResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[170]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[190]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14316,7 +15967,7 @@ func (x *PreviewAlertSuppressionResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PreviewAlertSuppressionResponse.ProtoReflect.Descriptor instead.
 func (*PreviewAlertSuppressionResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{170}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{190}
 }
 
 func (x *PreviewAlertSuppressionResponse) GetMatchedRuleCount() int64 {
@@ -14398,7 +16049,7 @@ type TriggerCanaryRequest struct {
 
 func (x *TriggerCanaryRequest) Reset() {
 	*x = TriggerCanaryRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[171]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[191]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14410,7 +16061,7 @@ func (x *TriggerCanaryRequest) String() string {
 func (*TriggerCanaryRequest) ProtoMessage() {}
 
 func (x *TriggerCanaryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[171]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[191]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14423,7 +16074,7 @@ func (x *TriggerCanaryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TriggerCanaryRequest.ProtoReflect.Descriptor instead.
 func (*TriggerCanaryRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{171}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{191}
 }
 
 func (x *TriggerCanaryRequest) GetIdempotencyKey() string {
@@ -14447,7 +16098,7 @@ type TriggerCanaryResponse struct {
 
 func (x *TriggerCanaryResponse) Reset() {
 	*x = TriggerCanaryResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[172]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[192]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14459,7 +16110,7 @@ func (x *TriggerCanaryResponse) String() string {
 func (*TriggerCanaryResponse) ProtoMessage() {}
 
 func (x *TriggerCanaryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[172]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[192]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14472,7 +16123,7 @@ func (x *TriggerCanaryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TriggerCanaryResponse.ProtoReflect.Descriptor instead.
 func (*TriggerCanaryResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{172}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{192}
 }
 
 func (x *TriggerCanaryResponse) GetOk() bool {
@@ -14526,7 +16177,7 @@ type GetCanaryRunRequest struct {
 
 func (x *GetCanaryRunRequest) Reset() {
 	*x = GetCanaryRunRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[173]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[193]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14538,7 +16189,7 @@ func (x *GetCanaryRunRequest) String() string {
 func (*GetCanaryRunRequest) ProtoMessage() {}
 
 func (x *GetCanaryRunRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[173]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[193]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14551,7 +16202,7 @@ func (x *GetCanaryRunRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCanaryRunRequest.ProtoReflect.Descriptor instead.
 func (*GetCanaryRunRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{173}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{193}
 }
 
 func (x *GetCanaryRunRequest) GetCanaryRunId() string {
@@ -14570,7 +16221,7 @@ type EnsureMetaAlertsRequest struct {
 
 func (x *EnsureMetaAlertsRequest) Reset() {
 	*x = EnsureMetaAlertsRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[174]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[194]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14582,7 +16233,7 @@ func (x *EnsureMetaAlertsRequest) String() string {
 func (*EnsureMetaAlertsRequest) ProtoMessage() {}
 
 func (x *EnsureMetaAlertsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[174]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[194]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14595,7 +16246,7 @@ func (x *EnsureMetaAlertsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnsureMetaAlertsRequest.ProtoReflect.Descriptor instead.
 func (*EnsureMetaAlertsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{174}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{194}
 }
 
 func (x *EnsureMetaAlertsRequest) GetOrgId() string {
@@ -14614,7 +16265,7 @@ type EnsureMetaAlertsResponse struct {
 
 func (x *EnsureMetaAlertsResponse) Reset() {
 	*x = EnsureMetaAlertsResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[175]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[195]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14626,7 +16277,7 @@ func (x *EnsureMetaAlertsResponse) String() string {
 func (*EnsureMetaAlertsResponse) ProtoMessage() {}
 
 func (x *EnsureMetaAlertsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[175]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[195]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14639,7 +16290,7 @@ func (x *EnsureMetaAlertsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use EnsureMetaAlertsResponse.ProtoReflect.Descriptor instead.
 func (*EnsureMetaAlertsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{175}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{195}
 }
 
 func (x *EnsureMetaAlertsResponse) GetDefinitions() []*AlertDefinitionV1 {
@@ -14657,7 +16308,7 @@ type GetAlertMetaHealthRequest struct {
 
 func (x *GetAlertMetaHealthRequest) Reset() {
 	*x = GetAlertMetaHealthRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[176]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[196]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14669,7 +16320,7 @@ func (x *GetAlertMetaHealthRequest) String() string {
 func (*GetAlertMetaHealthRequest) ProtoMessage() {}
 
 func (x *GetAlertMetaHealthRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[176]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[196]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14682,7 +16333,7 @@ func (x *GetAlertMetaHealthRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlertMetaHealthRequest.ProtoReflect.Descriptor instead.
 func (*GetAlertMetaHealthRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{176}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{196}
 }
 
 type GetAlertMetaHealthResponse struct {
@@ -14694,7 +16345,7 @@ type GetAlertMetaHealthResponse struct {
 
 func (x *GetAlertMetaHealthResponse) Reset() {
 	*x = GetAlertMetaHealthResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[177]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[197]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14706,7 +16357,7 @@ func (x *GetAlertMetaHealthResponse) String() string {
 func (*GetAlertMetaHealthResponse) ProtoMessage() {}
 
 func (x *GetAlertMetaHealthResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[177]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[197]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14719,7 +16370,7 @@ func (x *GetAlertMetaHealthResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlertMetaHealthResponse.ProtoReflect.Descriptor instead.
 func (*GetAlertMetaHealthResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{177}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{197}
 }
 
 func (x *GetAlertMetaHealthResponse) GetHealth() *AlertMetaHealthV1 {
@@ -14749,7 +16400,7 @@ type AlertMetaHealthV1 struct {
 
 func (x *AlertMetaHealthV1) Reset() {
 	*x = AlertMetaHealthV1{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[178]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[198]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14761,7 +16412,7 @@ func (x *AlertMetaHealthV1) String() string {
 func (*AlertMetaHealthV1) ProtoMessage() {}
 
 func (x *AlertMetaHealthV1) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[178]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[198]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14774,7 +16425,7 @@ func (x *AlertMetaHealthV1) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AlertMetaHealthV1.ProtoReflect.Descriptor instead.
 func (*AlertMetaHealthV1) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{178}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{198}
 }
 
 func (x *AlertMetaHealthV1) GetEvaluatorLagSeconds() float64 {
@@ -14885,7 +16536,7 @@ type AlertDefinitionLifecyclePreflightV1 struct {
 
 func (x *AlertDefinitionLifecyclePreflightV1) Reset() {
 	*x = AlertDefinitionLifecyclePreflightV1{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[179]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[199]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -14897,7 +16548,7 @@ func (x *AlertDefinitionLifecyclePreflightV1) String() string {
 func (*AlertDefinitionLifecyclePreflightV1) ProtoMessage() {}
 
 func (x *AlertDefinitionLifecyclePreflightV1) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[179]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[199]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -14910,7 +16561,7 @@ func (x *AlertDefinitionLifecyclePreflightV1) ProtoReflect() protoreflect.Messag
 
 // Deprecated: Use AlertDefinitionLifecyclePreflightV1.ProtoReflect.Descriptor instead.
 func (*AlertDefinitionLifecyclePreflightV1) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{179}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{199}
 }
 
 func (x *AlertDefinitionLifecyclePreflightV1) GetDefinitionId() string {
@@ -15034,7 +16685,7 @@ type GetAlertDefinitionLifecyclePreflightRequest struct {
 
 func (x *GetAlertDefinitionLifecyclePreflightRequest) Reset() {
 	*x = GetAlertDefinitionLifecyclePreflightRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[180]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[200]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15046,7 +16697,7 @@ func (x *GetAlertDefinitionLifecyclePreflightRequest) String() string {
 func (*GetAlertDefinitionLifecyclePreflightRequest) ProtoMessage() {}
 
 func (x *GetAlertDefinitionLifecyclePreflightRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[180]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[200]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15059,7 +16710,7 @@ func (x *GetAlertDefinitionLifecyclePreflightRequest) ProtoReflect() protoreflec
 
 // Deprecated: Use GetAlertDefinitionLifecyclePreflightRequest.ProtoReflect.Descriptor instead.
 func (*GetAlertDefinitionLifecyclePreflightRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{180}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{200}
 }
 
 func (x *GetAlertDefinitionLifecyclePreflightRequest) GetDefinitionId() string {
@@ -15081,7 +16732,7 @@ type ArchiveAlertDefinitionV2Request struct {
 
 func (x *ArchiveAlertDefinitionV2Request) Reset() {
 	*x = ArchiveAlertDefinitionV2Request{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[181]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[201]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15093,7 +16744,7 @@ func (x *ArchiveAlertDefinitionV2Request) String() string {
 func (*ArchiveAlertDefinitionV2Request) ProtoMessage() {}
 
 func (x *ArchiveAlertDefinitionV2Request) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[181]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[201]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15106,7 +16757,7 @@ func (x *ArchiveAlertDefinitionV2Request) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ArchiveAlertDefinitionV2Request.ProtoReflect.Descriptor instead.
 func (*ArchiveAlertDefinitionV2Request) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{181}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{201}
 }
 
 func (x *ArchiveAlertDefinitionV2Request) GetDefinitionId() string {
@@ -15149,7 +16800,7 @@ type RestoreAlertDefinitionRequest struct {
 
 func (x *RestoreAlertDefinitionRequest) Reset() {
 	*x = RestoreAlertDefinitionRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[182]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[202]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15161,7 +16812,7 @@ func (x *RestoreAlertDefinitionRequest) String() string {
 func (*RestoreAlertDefinitionRequest) ProtoMessage() {}
 
 func (x *RestoreAlertDefinitionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[182]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[202]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15174,7 +16825,7 @@ func (x *RestoreAlertDefinitionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RestoreAlertDefinitionRequest.ProtoReflect.Descriptor instead.
 func (*RestoreAlertDefinitionRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{182}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{202}
 }
 
 func (x *RestoreAlertDefinitionRequest) GetDefinitionId() string {
@@ -15218,7 +16869,7 @@ type PurgeAlertDefinitionRequest struct {
 
 func (x *PurgeAlertDefinitionRequest) Reset() {
 	*x = PurgeAlertDefinitionRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[183]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[203]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15230,7 +16881,7 @@ func (x *PurgeAlertDefinitionRequest) String() string {
 func (*PurgeAlertDefinitionRequest) ProtoMessage() {}
 
 func (x *PurgeAlertDefinitionRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[183]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[203]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15243,7 +16894,7 @@ func (x *PurgeAlertDefinitionRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PurgeAlertDefinitionRequest.ProtoReflect.Descriptor instead.
 func (*PurgeAlertDefinitionRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{183}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{203}
 }
 
 func (x *PurgeAlertDefinitionRequest) GetDefinitionId() string {
@@ -15303,7 +16954,7 @@ type AlertDraftV1 struct {
 
 func (x *AlertDraftV1) Reset() {
 	*x = AlertDraftV1{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[184]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[204]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15315,7 +16966,7 @@ func (x *AlertDraftV1) String() string {
 func (*AlertDraftV1) ProtoMessage() {}
 
 func (x *AlertDraftV1) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[184]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[204]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15328,7 +16979,7 @@ func (x *AlertDraftV1) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AlertDraftV1.ProtoReflect.Descriptor instead.
 func (*AlertDraftV1) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{184}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{204}
 }
 
 func (x *AlertDraftV1) GetId() string {
@@ -15446,7 +17097,7 @@ type PutAlertDraftRequest struct {
 
 func (x *PutAlertDraftRequest) Reset() {
 	*x = PutAlertDraftRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[185]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[205]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15458,7 +17109,7 @@ func (x *PutAlertDraftRequest) String() string {
 func (*PutAlertDraftRequest) ProtoMessage() {}
 
 func (x *PutAlertDraftRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[185]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[205]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15471,7 +17122,7 @@ func (x *PutAlertDraftRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PutAlertDraftRequest.ProtoReflect.Descriptor instead.
 func (*PutAlertDraftRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{185}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{205}
 }
 
 func (x *PutAlertDraftRequest) GetDraftKey() string {
@@ -15546,7 +17197,7 @@ type GetAlertDraftRequest struct {
 
 func (x *GetAlertDraftRequest) Reset() {
 	*x = GetAlertDraftRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[186]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[206]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15558,7 +17209,7 @@ func (x *GetAlertDraftRequest) String() string {
 func (*GetAlertDraftRequest) ProtoMessage() {}
 
 func (x *GetAlertDraftRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[186]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[206]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15571,7 +17222,7 @@ func (x *GetAlertDraftRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetAlertDraftRequest.ProtoReflect.Descriptor instead.
 func (*GetAlertDraftRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{186}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{206}
 }
 
 func (x *GetAlertDraftRequest) GetDraftId() string {
@@ -15591,7 +17242,7 @@ type ListAlertDraftsRequest struct {
 
 func (x *ListAlertDraftsRequest) Reset() {
 	*x = ListAlertDraftsRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[187]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[207]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15603,7 +17254,7 @@ func (x *ListAlertDraftsRequest) String() string {
 func (*ListAlertDraftsRequest) ProtoMessage() {}
 
 func (x *ListAlertDraftsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[187]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[207]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15616,7 +17267,7 @@ func (x *ListAlertDraftsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAlertDraftsRequest.ProtoReflect.Descriptor instead.
 func (*ListAlertDraftsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{187}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{207}
 }
 
 func (x *ListAlertDraftsRequest) GetDraftKind() string {
@@ -15642,7 +17293,7 @@ type ListAlertDraftsResponse struct {
 
 func (x *ListAlertDraftsResponse) Reset() {
 	*x = ListAlertDraftsResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[188]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[208]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15654,7 +17305,7 @@ func (x *ListAlertDraftsResponse) String() string {
 func (*ListAlertDraftsResponse) ProtoMessage() {}
 
 func (x *ListAlertDraftsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[188]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[208]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15667,7 +17318,7 @@ func (x *ListAlertDraftsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListAlertDraftsResponse.ProtoReflect.Descriptor instead.
 func (*ListAlertDraftsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{188}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{208}
 }
 
 func (x *ListAlertDraftsResponse) GetItems() []*AlertDraftV1 {
@@ -15688,7 +17339,7 @@ type DeleteAlertDraftRequest struct {
 
 func (x *DeleteAlertDraftRequest) Reset() {
 	*x = DeleteAlertDraftRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[189]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[209]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15700,7 +17351,7 @@ func (x *DeleteAlertDraftRequest) String() string {
 func (*DeleteAlertDraftRequest) ProtoMessage() {}
 
 func (x *DeleteAlertDraftRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[189]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[209]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15713,7 +17364,7 @@ func (x *DeleteAlertDraftRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteAlertDraftRequest.ProtoReflect.Descriptor instead.
 func (*DeleteAlertDraftRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{189}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{209}
 }
 
 func (x *DeleteAlertDraftRequest) GetDraftId() string {
@@ -15747,7 +17398,7 @@ type AlertBulkDefinitionItemV1 struct {
 
 func (x *AlertBulkDefinitionItemV1) Reset() {
 	*x = AlertBulkDefinitionItemV1{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[190]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[210]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15759,7 +17410,7 @@ func (x *AlertBulkDefinitionItemV1) String() string {
 func (*AlertBulkDefinitionItemV1) ProtoMessage() {}
 
 func (x *AlertBulkDefinitionItemV1) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[190]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[210]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15772,7 +17423,7 @@ func (x *AlertBulkDefinitionItemV1) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AlertBulkDefinitionItemV1.ProtoReflect.Descriptor instead.
 func (*AlertBulkDefinitionItemV1) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{190}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{210}
 }
 
 func (x *AlertBulkDefinitionItemV1) GetDefinitionId() string {
@@ -15801,7 +17452,7 @@ type AlertBulkDefinitionResultV1 struct {
 
 func (x *AlertBulkDefinitionResultV1) Reset() {
 	*x = AlertBulkDefinitionResultV1{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[191]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[211]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15813,7 +17464,7 @@ func (x *AlertBulkDefinitionResultV1) String() string {
 func (*AlertBulkDefinitionResultV1) ProtoMessage() {}
 
 func (x *AlertBulkDefinitionResultV1) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[191]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[211]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15826,7 +17477,7 @@ func (x *AlertBulkDefinitionResultV1) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AlertBulkDefinitionResultV1.ProtoReflect.Descriptor instead.
 func (*AlertBulkDefinitionResultV1) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{191}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{211}
 }
 
 func (x *AlertBulkDefinitionResultV1) GetDefinitionId() string {
@@ -15869,7 +17520,7 @@ type BulkMutateAlertDefinitionsRequest struct {
 
 func (x *BulkMutateAlertDefinitionsRequest) Reset() {
 	*x = BulkMutateAlertDefinitionsRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[192]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[212]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15881,7 +17532,7 @@ func (x *BulkMutateAlertDefinitionsRequest) String() string {
 func (*BulkMutateAlertDefinitionsRequest) ProtoMessage() {}
 
 func (x *BulkMutateAlertDefinitionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[192]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[212]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15894,7 +17545,7 @@ func (x *BulkMutateAlertDefinitionsRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use BulkMutateAlertDefinitionsRequest.ProtoReflect.Descriptor instead.
 func (*BulkMutateAlertDefinitionsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{192}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{212}
 }
 
 func (x *BulkMutateAlertDefinitionsRequest) GetAction() AlertDefinitionLifecycleActionV1 {
@@ -15937,7 +17588,7 @@ type BulkMutateAlertDefinitionsResponse struct {
 
 func (x *BulkMutateAlertDefinitionsResponse) Reset() {
 	*x = BulkMutateAlertDefinitionsResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[193]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[213]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -15949,7 +17600,7 @@ func (x *BulkMutateAlertDefinitionsResponse) String() string {
 func (*BulkMutateAlertDefinitionsResponse) ProtoMessage() {}
 
 func (x *BulkMutateAlertDefinitionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[193]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[213]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -15962,7 +17613,7 @@ func (x *BulkMutateAlertDefinitionsResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use BulkMutateAlertDefinitionsResponse.ProtoReflect.Descriptor instead.
 func (*BulkMutateAlertDefinitionsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{193}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{213}
 }
 
 func (x *BulkMutateAlertDefinitionsResponse) GetOperationId() string {
@@ -16014,7 +17665,7 @@ type PortableAlertDefinitionV1 struct {
 
 func (x *PortableAlertDefinitionV1) Reset() {
 	*x = PortableAlertDefinitionV1{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[194]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[214]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -16026,7 +17677,7 @@ func (x *PortableAlertDefinitionV1) String() string {
 func (*PortableAlertDefinitionV1) ProtoMessage() {}
 
 func (x *PortableAlertDefinitionV1) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[194]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[214]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16039,7 +17690,7 @@ func (x *PortableAlertDefinitionV1) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use PortableAlertDefinitionV1.ProtoReflect.Descriptor instead.
 func (*PortableAlertDefinitionV1) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{194}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{214}
 }
 
 func (x *PortableAlertDefinitionV1) GetSlug() string {
@@ -16145,7 +17796,7 @@ type AlertDefinitionExportBundleV1 struct {
 
 func (x *AlertDefinitionExportBundleV1) Reset() {
 	*x = AlertDefinitionExportBundleV1{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[195]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[215]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -16157,7 +17808,7 @@ func (x *AlertDefinitionExportBundleV1) String() string {
 func (*AlertDefinitionExportBundleV1) ProtoMessage() {}
 
 func (x *AlertDefinitionExportBundleV1) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[195]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[215]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16170,7 +17821,7 @@ func (x *AlertDefinitionExportBundleV1) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AlertDefinitionExportBundleV1.ProtoReflect.Descriptor instead.
 func (*AlertDefinitionExportBundleV1) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{195}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{215}
 }
 
 func (x *AlertDefinitionExportBundleV1) GetSchemaVersion() string {
@@ -16210,7 +17861,7 @@ type ExportAlertDefinitionsRequest struct {
 
 func (x *ExportAlertDefinitionsRequest) Reset() {
 	*x = ExportAlertDefinitionsRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[196]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[216]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -16222,7 +17873,7 @@ func (x *ExportAlertDefinitionsRequest) String() string {
 func (*ExportAlertDefinitionsRequest) ProtoMessage() {}
 
 func (x *ExportAlertDefinitionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[196]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[216]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16235,7 +17886,7 @@ func (x *ExportAlertDefinitionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ExportAlertDefinitionsRequest.ProtoReflect.Descriptor instead.
 func (*ExportAlertDefinitionsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{196}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{216}
 }
 
 func (x *ExportAlertDefinitionsRequest) GetDefinitionIds() []string {
@@ -16257,7 +17908,7 @@ type ImportAlertDefinitionsRequest struct {
 
 func (x *ImportAlertDefinitionsRequest) Reset() {
 	*x = ImportAlertDefinitionsRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[197]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[217]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -16269,7 +17920,7 @@ func (x *ImportAlertDefinitionsRequest) String() string {
 func (*ImportAlertDefinitionsRequest) ProtoMessage() {}
 
 func (x *ImportAlertDefinitionsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[197]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[217]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16282,7 +17933,7 @@ func (x *ImportAlertDefinitionsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImportAlertDefinitionsRequest.ProtoReflect.Descriptor instead.
 func (*ImportAlertDefinitionsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{197}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{217}
 }
 
 func (x *ImportAlertDefinitionsRequest) GetBundle() *AlertDefinitionExportBundleV1 {
@@ -16328,7 +17979,7 @@ type AlertDefinitionImportResultV1 struct {
 
 func (x *AlertDefinitionImportResultV1) Reset() {
 	*x = AlertDefinitionImportResultV1{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[198]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[218]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -16340,7 +17991,7 @@ func (x *AlertDefinitionImportResultV1) String() string {
 func (*AlertDefinitionImportResultV1) ProtoMessage() {}
 
 func (x *AlertDefinitionImportResultV1) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[198]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[218]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16353,7 +18004,7 @@ func (x *AlertDefinitionImportResultV1) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AlertDefinitionImportResultV1.ProtoReflect.Descriptor instead.
 func (*AlertDefinitionImportResultV1) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{198}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{218}
 }
 
 func (x *AlertDefinitionImportResultV1) GetSlug() string {
@@ -16416,7 +18067,7 @@ type ImportAlertDefinitionsResponse struct {
 
 func (x *ImportAlertDefinitionsResponse) Reset() {
 	*x = ImportAlertDefinitionsResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[199]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[219]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -16428,7 +18079,7 @@ func (x *ImportAlertDefinitionsResponse) String() string {
 func (*ImportAlertDefinitionsResponse) ProtoMessage() {}
 
 func (x *ImportAlertDefinitionsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[199]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[219]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16441,7 +18092,7 @@ func (x *ImportAlertDefinitionsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ImportAlertDefinitionsResponse.ProtoReflect.Descriptor instead.
 func (*ImportAlertDefinitionsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{199}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{219}
 }
 
 func (x *ImportAlertDefinitionsResponse) GetImportId() string {
@@ -16476,7 +18127,7 @@ type ReplayAlertDeliveryRequest struct {
 
 func (x *ReplayAlertDeliveryRequest) Reset() {
 	*x = ReplayAlertDeliveryRequest{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[200]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[220]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -16488,7 +18139,7 @@ func (x *ReplayAlertDeliveryRequest) String() string {
 func (*ReplayAlertDeliveryRequest) ProtoMessage() {}
 
 func (x *ReplayAlertDeliveryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[200]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[220]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16501,7 +18152,7 @@ func (x *ReplayAlertDeliveryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReplayAlertDeliveryRequest.ProtoReflect.Descriptor instead.
 func (*ReplayAlertDeliveryRequest) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{200}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{220}
 }
 
 func (x *ReplayAlertDeliveryRequest) GetDeliveryId() string {
@@ -16537,7 +18188,7 @@ type ReplayAlertDeliveryResponse struct {
 
 func (x *ReplayAlertDeliveryResponse) Reset() {
 	*x = ReplayAlertDeliveryResponse{}
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[201]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[221]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -16549,7 +18200,7 @@ func (x *ReplayAlertDeliveryResponse) String() string {
 func (*ReplayAlertDeliveryResponse) ProtoMessage() {}
 
 func (x *ReplayAlertDeliveryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[201]
+	mi := &file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[221]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -16562,7 +18213,7 @@ func (x *ReplayAlertDeliveryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ReplayAlertDeliveryResponse.ProtoReflect.Descriptor instead.
 func (*ReplayAlertDeliveryResponse) Descriptor() ([]byte, []int) {
-	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{201}
+	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP(), []int{221}
 }
 
 func (x *ReplayAlertDeliveryResponse) GetReplayId() string {
@@ -17273,10 +18924,12 @@ const file_proto_o11y_one_alerts_v1_alerts_proto_rawDesc = "" +
 	"\x05value\"m\n" +
 	"\x14AlertMatcherClauseV1\x12\x14\n" +
 	"\x05field\x18\x01 \x01(\tR\x05field\x12?\n" +
-	"\x06values\x18\x02 \x03(\v2'.o11y_one.alerts.v1.AlertMatcherValueV1R\x06values\"~\n" +
+	"\x06values\x18\x02 \x03(\v2'.o11y_one.alerts.v1.AlertMatcherValueV1R\x06values\"\xba\x01\n" +
 	"\x1eAlertNotificationRouteTargetV1\x12'\n" +
 	"\x0edestination_id\x18\x01 \x01(\tH\x00R\rdestinationId\x12)\n" +
-	"\x0fdestination_key\x18\x02 \x01(\tH\x00R\x0edestinationKeyB\b\n" +
+	"\x0fdestination_key\x18\x02 \x01(\tH\x00R\x0edestinationKey\x12\x1b\n" +
+	"\bgroup_id\x18\x03 \x01(\tH\x00R\agroupId\x12\x1d\n" +
+	"\tgroup_key\x18\x04 \x01(\tH\x00R\bgroupKeyB\b\n" +
 	"\x06target\"\xdf\x02\n" +
 	"\x18AlertNotificationRouteV1\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
@@ -17642,7 +19295,143 @@ const file_proto_o11y_one_alerts_v1_alerts_proto_rawDesc = "" +
 	"\x05items\x18\x01 \x03(\v2&.o11y_one.alerts.v1.AlertDestinationV1R\x05items\"S\n" +
 	"\x18DeleteDestinationRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12'\n" +
-	"\x0fidempotency_key\x18\x02 \x01(\tR\x0eidempotencyKey\"\xf8\x02\n" +
+	"\x0fidempotency_key\x18\x02 \x01(\tR\x0eidempotencyKey\"\x94\x04\n" +
+	"\x0eAlertContactV1\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vcontact_key\x18\x02 \x01(\tR\n" +
+	"contactKey\x12!\n" +
+	"\fdisplay_name\x18\x03 \x01(\tR\vdisplayName\x12\x14\n" +
+	"\x05email\x18\x04 \x01(\tR\x05email\x12@\n" +
+	"\x06status\x18\x05 \x01(\x0e2(.o11y_one.alerts.v1.AlertContactStatusV1R\x06status\x12\x1e\n" +
+	"\n" +
+	"generation\x18\x06 \x01(\x03R\n" +
+	"generation\x12/\n" +
+	"\x13verified_generation\x18\a \x01(\x03R\x12verifiedGeneration\x12\x1a\n" +
+	"\brevision\x18\b \x01(\x03R\brevision\x126\n" +
+	"\x17delivery_destination_id\x18\t \x01(\tR\x15deliveryDestinationId\x12;\n" +
+	"\varchived_at\x18\n" +
+	" \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"archivedAt\x129\n" +
+	"\n" +
+	"created_at\x18\v \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\f \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\x8d\x02\n" +
+	"\x19UpsertAlertContactRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1f\n" +
+	"\vcontact_key\x18\x02 \x01(\tR\n" +
+	"contactKey\x12!\n" +
+	"\fdisplay_name\x18\x03 \x01(\tR\vdisplayName\x12\x14\n" +
+	"\x05email\x18\x04 \x01(\tR\x05email\x120\n" +
+	"\x11expected_revision\x18\x05 \x01(\x03H\x00R\x10expectedRevision\x88\x01\x01\x12'\n" +
+	"\x0fidempotency_key\x18\x06 \x01(\tR\x0eidempotencyKey\x12\x15\n" +
+	"\x06org_id\x18\a \x01(\tR\x05orgIdB\x14\n" +
+	"\x12_expected_revision\"\x8a\x01\n" +
+	"\x18ListAlertContactsRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12)\n" +
+	"\x10include_archived\x18\x02 \x01(\bR\x0fincludeArchived\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x04 \x01(\x05R\x06offset\"U\n" +
+	"\x19ListAlertContactsResponse\x128\n" +
+	"\x05items\x18\x01 \x03(\v2\".o11y_one.alerts.v1.AlertContactV1R\x05items\"\xe0\x01\n" +
+	"\x1eSetAlertContactArchivedRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12\x1d\n" +
+	"\n" +
+	"contact_id\x18\x02 \x01(\tR\tcontactId\x12+\n" +
+	"\x11expected_revision\x18\x03 \x01(\x03R\x10expectedRevision\x12\x1a\n" +
+	"\barchived\x18\x04 \x01(\bR\barchived\x12\x16\n" +
+	"\x06reason\x18\x05 \x01(\tR\x06reason\x12'\n" +
+	"\x0fidempotency_key\x18\x06 \x01(\tR\x0eidempotencyKey\"\xb6\x01\n" +
+	"$BeginAlertContactVerificationRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12\x1d\n" +
+	"\n" +
+	"contact_id\x18\x02 \x01(\tR\tcontactId\x12/\n" +
+	"\x13expected_generation\x18\x03 \x01(\x03R\x12expectedGeneration\x12'\n" +
+	"\x0fidempotency_key\x18\x04 \x01(\tR\x0eidempotencyKey\"\xd2\x01\n" +
+	"%BeginAlertContactVerificationResponse\x12'\n" +
+	"\x0fverification_id\x18\x01 \x01(\tR\x0everificationId\x12-\n" +
+	"\x12contact_generation\x18\x02 \x01(\x03R\x11contactGeneration\x12\x16\n" +
+	"\x06status\x18\x03 \x01(\tR\x06status\x129\n" +
+	"\n" +
+	"expires_at\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\texpiresAt\"\xa7\x01\n" +
+	"&ConfirmAlertContactVerificationRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12'\n" +
+	"\x0fverification_id\x18\x02 \x01(\tR\x0everificationId\x12\x14\n" +
+	"\x05token\x18\x03 \x01(\tR\x05token\x12'\n" +
+	"\x0fidempotency_key\x18\x04 \x01(\tR\x0eidempotencyKey\"\xcf\x01\n" +
+	"\x1eAlertNotificationGroupMemberV1\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12J\n" +
+	"\x04kind\x18\x02 \x01(\x0e26.o11y_one.alerts.v1.AlertNotificationGroupMemberKindV1R\x04kind\x12\x1b\n" +
+	"\tmember_id\x18\x03 \x01(\tR\bmemberId\x12\x1a\n" +
+	"\bposition\x18\x04 \x01(\x05R\bposition\x12\x18\n" +
+	"\aenabled\x18\x05 \x01(\bR\aenabled\"\x92\x03\n" +
+	"\x18AlertNotificationGroupV1\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
+	"\tgroup_key\x18\x02 \x01(\tR\bgroupKey\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x18\n" +
+	"\aenabled\x18\x04 \x01(\bR\aenabled\x12\x1a\n" +
+	"\brevision\x18\x05 \x01(\x03R\brevision\x12;\n" +
+	"\varchived_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\n" +
+	"archivedAt\x12L\n" +
+	"\amembers\x18\a \x03(\v22.o11y_one.alerts.v1.AlertNotificationGroupMemberV1R\amembers\x129\n" +
+	"\n" +
+	"created_at\x18\b \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x129\n" +
+	"\n" +
+	"updated_at\x18\t \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xd6\x02\n" +
+	"#UpsertAlertNotificationGroupRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
+	"\tgroup_key\x18\x02 \x01(\tR\bgroupKey\x12\x12\n" +
+	"\x04name\x18\x03 \x01(\tR\x04name\x12\x18\n" +
+	"\aenabled\x18\x04 \x01(\bR\aenabled\x120\n" +
+	"\x11expected_revision\x18\x05 \x01(\x03H\x00R\x10expectedRevision\x88\x01\x01\x12L\n" +
+	"\amembers\x18\x06 \x03(\v22.o11y_one.alerts.v1.AlertNotificationGroupMemberV1R\amembers\x12'\n" +
+	"\x0fidempotency_key\x18\a \x01(\tR\x0eidempotencyKey\x12\x15\n" +
+	"\x06org_id\x18\b \x01(\tR\x05orgIdB\x14\n" +
+	"\x12_expected_revision\"\x94\x01\n" +
+	"\"ListAlertNotificationGroupsRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12)\n" +
+	"\x10include_archived\x18\x02 \x01(\bR\x0fincludeArchived\x12\x14\n" +
+	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x04 \x01(\x05R\x06offset\"i\n" +
+	"#ListAlertNotificationGroupsResponse\x12B\n" +
+	"\x05items\x18\x01 \x03(\v2,.o11y_one.alerts.v1.AlertNotificationGroupV1R\x05items\"\xe6\x01\n" +
+	"(SetAlertNotificationGroupArchivedRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12\x19\n" +
+	"\bgroup_id\x18\x02 \x01(\tR\agroupId\x12+\n" +
+	"\x11expected_revision\x18\x03 \x01(\x03R\x10expectedRevision\x12\x1a\n" +
+	"\barchived\x18\x04 \x01(\bR\barchived\x12\x16\n" +
+	"\x06reason\x18\x05 \x01(\tR\x06reason\x12'\n" +
+	"\x0fidempotency_key\x18\x06 \x01(\tR\x0eidempotencyKey\"\x97\x01\n" +
+	"\"PurgeAlertNotificationGroupRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12\x19\n" +
+	"\bgroup_id\x18\x02 \x01(\tR\agroupId\x12\x16\n" +
+	"\x06reason\x18\x03 \x01(\tR\x06reason\x12'\n" +
+	"\x0fidempotency_key\x18\x04 \x01(\tR\x0eidempotencyKey\"Y\n" +
+	"%GetAlertNotificationGroupUsageRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12\x19\n" +
+	"\bgroup_id\x18\x02 \x01(\tR\agroupId\"\x90\x01\n" +
+	"\x1dAlertNotificationGroupUsageV1\x12(\n" +
+	"\x10policy_route_ids\x18\x01 \x03(\tR\x0epolicyRouteIds\x12(\n" +
+	"\x10parent_group_ids\x18\x02 \x03(\tR\x0eparentGroupIds\x12\x1b\n" +
+	"\tcan_purge\x18\x03 \x01(\bR\bcanPurge\"a\n" +
+	"-PreviewAlertNotificationGroupExpansionRequest\x12\x15\n" +
+	"\x06org_id\x18\x01 \x01(\tR\x05orgId\x12\x19\n" +
+	"\bgroup_id\x18\x02 \x01(\tR\agroupId\"\xf1\x02\n" +
+	"\x1cAlertNotificationRecipientV1\x12%\n" +
+	"\x0edestination_id\x18\x01 \x01(\tR\rdestinationId\x12'\n" +
+	"\x0fdestination_key\x18\x02 \x01(\tR\x0edestinationKey\x12U\n" +
+	"\x10destination_kind\x18\x03 \x01(\x0e2*.o11y_one.alerts.v1.AlertDestinationKindV1R\x0fdestinationKind\x12W\n" +
+	"\vsource_kind\x18\x04 \x01(\x0e26.o11y_one.alerts.v1.AlertNotificationGroupMemberKindV1R\n" +
+	"sourceKind\x12\x1b\n" +
+	"\tsource_id\x18\x05 \x01(\tR\bsourceId\x12\x1a\n" +
+	"\bverified\x18\x06 \x01(\bR\bverified\x12\x18\n" +
+	"\aenabled\x18\a \x01(\bR\aenabled\"\xdd\x01\n" +
+	".PreviewAlertNotificationGroupExpansionResponse\x12\x19\n" +
+	"\bgroup_id\x18\x01 \x01(\tR\agroupId\x12P\n" +
+	"\n" +
+	"recipients\x18\x02 \x03(\v20.o11y_one.alerts.v1.AlertNotificationRecipientV1R\n" +
+	"recipients\x12 \n" +
+	"\vdiagnostics\x18\x03 \x03(\tR\vdiagnostics\x12\x1c\n" +
+	"\ttruncated\x18\x04 \x01(\bR\ttruncated\"\xf8\x02\n" +
 	"\x1fUpsertNotificationPolicyRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1d\n" +
 	"\n" +
@@ -17678,7 +19467,7 @@ const file_proto_o11y_one_alerts_v1_alerts_proto_rawDesc = "" +
 	"\n" +
 	"dimensions\x18\x04 \x03(\v2(.o11y_one.alerts.v1.AlertMatcherClauseV1R\n" +
 	"dimensions\x12U\n" +
-	"\x11correlation_hints\x18\x05 \x03(\v2(.o11y_one.alerts.v1.AlertMatcherClauseV1R\x10correlationHints\"\x83\x04\n" +
+	"\x11correlation_hints\x18\x05 \x03(\v2(.o11y_one.alerts.v1.AlertMatcherClauseV1R\x10correlationHints\"\xd8\x04\n" +
 	"\x16AlertRouteEvaluationV1\x12\x19\n" +
 	"\broute_id\x18\x01 \x01(\tR\arouteId\x12\x1b\n" +
 	"\tpolicy_id\x18\x02 \x01(\tR\bpolicyId\x12\x1b\n" +
@@ -17692,7 +19481,9 @@ const file_proto_o11y_one_alerts_v1_alerts_proto_rawDesc = "" +
 	"\astopped\x18\n" +
 	" \x01(\bR\astopped\x12\x16\n" +
 	"\x06reason\x18\v \x01(\tR\x06reason\x12}\n" +
-	"\x1edestination_verification_state\x18\f \x01(\x0e27.o11y_one.alerts.v1.AlertDestinationVerificationStateV1R\x1cdestinationVerificationState\"\xab\x03\n" +
+	"\x1edestination_verification_state\x18\f \x01(\x0e27.o11y_one.alerts.v1.AlertDestinationVerificationStateV1R\x1cdestinationVerificationState\x12\x19\n" +
+	"\bgroup_id\x18\r \x01(\tR\agroupId\x128\n" +
+	"\x18expanded_destination_ids\x18\x0e \x03(\tR\x16expandedDestinationIds\"\xab\x03\n" +
 	" PreviewNotificationRouteResponse\x12#\n" +
 	"\rdefinition_id\x18\x01 \x01(\tR\fdefinitionId\x12\x1f\n" +
 	"\vrevision_id\x18\x02 \x01(\tR\n" +
@@ -18199,7 +19990,18 @@ const file_proto_o11y_one_alerts_v1_alerts_proto_rawDesc = "" +
 	" AlertNotificationRouteBehaviorV1\x124\n" +
 	"0ALERT_NOTIFICATION_ROUTE_BEHAVIOR_V1_UNSPECIFIED\x10\x00\x12-\n" +
 	")ALERT_NOTIFICATION_ROUTE_BEHAVIOR_V1_STOP\x10\x01\x121\n" +
-	"-ALERT_NOTIFICATION_ROUTE_BEHAVIOR_V1_CONTINUE\x10\x02*\xeb\x01\n" +
+	"-ALERT_NOTIFICATION_ROUTE_BEHAVIOR_V1_CONTINUE\x10\x02*\xd6\x01\n" +
+	"\x14AlertContactStatusV1\x12'\n" +
+	"#ALERT_CONTACT_STATUS_V1_UNSPECIFIED\x10\x00\x12#\n" +
+	"\x1fALERT_CONTACT_STATUS_V1_PENDING\x10\x01\x12$\n" +
+	" ALERT_CONTACT_STATUS_V1_VERIFIED\x10\x02\x12$\n" +
+	" ALERT_CONTACT_STATUS_V1_DISABLED\x10\x03\x12$\n" +
+	" ALERT_CONTACT_STATUS_V1_ARCHIVED\x10\x04*\xfe\x01\n" +
+	"\"AlertNotificationGroupMemberKindV1\x127\n" +
+	"3ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_UNSPECIFIED\x10\x00\x123\n" +
+	"/ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_CONTACT\x10\x01\x127\n" +
+	"3ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_DESTINATION\x10\x02\x121\n" +
+	"-ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_GROUP\x10\x03*\xeb\x01\n" +
 	" AlertDefinitionLifecycleActionV1\x124\n" +
 	"0ALERT_DEFINITION_LIFECYCLE_ACTION_V1_UNSPECIFIED\x10\x00\x12.\n" +
 	"*ALERT_DEFINITION_LIFECYCLE_ACTION_V1_PAUSE\x10\x01\x12/\n" +
@@ -18246,14 +20048,30 @@ const file_proto_o11y_one_alerts_v1_alerts_proto_rawDesc = "" +
 	"\x0fExplainWhyFired\x12*.o11y_one.alerts.v1.ExplainWhyFiredRequest\x1a+.o11y_one.alerts.v1.ExplainWhyFiredResponse\x12e\n" +
 	"\vAcknowledge\x12+.o11y_one.alerts.v1.AcknowledgeAlertRequest\x1a).o11y_one.alerts.v1.AlertMutationResponse\x12Y\n" +
 	"\x05Pause\x12%.o11y_one.alerts.v1.PauseAlertRequest\x1a).o11y_one.alerts.v1.AlertMutationResponse\x12[\n" +
-	"\x06Resume\x12&.o11y_one.alerts.v1.ResumeAlertRequest\x1a).o11y_one.alerts.v1.AlertMutationResponse2\xcc\x1d\n" +
+	"\x06Resume\x12&.o11y_one.alerts.v1.ResumeAlertRequest\x1a).o11y_one.alerts.v1.AlertMutationResponse2\xa6,\n" +
 	"\x18AlertNotificationService\x12i\n" +
 	"\x11CreateDestination\x12,.o11y_one.alerts.v1.UpsertDestinationRequest\x1a&.o11y_one.alerts.v1.AlertDestinationV1\x12i\n" +
 	"\x11UpdateDestination\x12,.o11y_one.alerts.v1.UpsertDestinationRequest\x1a&.o11y_one.alerts.v1.AlertDestinationV1\x12l\n" +
 	"\x11DeleteDestination\x12,.o11y_one.alerts.v1.DeleteDestinationRequest\x1a).o11y_one.alerts.v1.AlertMutationResponse\x12e\n" +
 	"\x0eGetDestination\x12+.o11y_one.alerts.v1.GetAlertResourceRequest\x1a&.o11y_one.alerts.v1.AlertDestinationV1\x12m\n" +
 	"\x10ListDestinations\x12+.o11y_one.alerts.v1.ListDestinationsRequest\x1a,.o11y_one.alerts.v1.ListDestinationsResponse\x12n\n" +
-	"\x17GetDestinationPreflight\x12+.o11y_one.alerts.v1.GetAlertResourceRequest\x1a&.o11y_one.alerts.v1.AlertDestinationV1\x12~\n" +
+	"\x17GetDestinationPreflight\x12+.o11y_one.alerts.v1.GetAlertResourceRequest\x1a&.o11y_one.alerts.v1.AlertDestinationV1\x12b\n" +
+	"\rCreateContact\x12-.o11y_one.alerts.v1.UpsertAlertContactRequest\x1a\".o11y_one.alerts.v1.AlertContactV1\x12b\n" +
+	"\rUpdateContact\x12-.o11y_one.alerts.v1.UpsertAlertContactRequest\x1a\".o11y_one.alerts.v1.AlertContactV1\x12]\n" +
+	"\n" +
+	"GetContact\x12+.o11y_one.alerts.v1.GetAlertResourceRequest\x1a\".o11y_one.alerts.v1.AlertContactV1\x12k\n" +
+	"\fListContacts\x12,.o11y_one.alerts.v1.ListAlertContactsRequest\x1a-.o11y_one.alerts.v1.ListAlertContactsResponse\x12l\n" +
+	"\x12SetContactArchived\x122.o11y_one.alerts.v1.SetAlertContactArchivedRequest\x1a\".o11y_one.alerts.v1.AlertContactV1\x12\x8f\x01\n" +
+	"\x18BeginContactVerification\x128.o11y_one.alerts.v1.BeginAlertContactVerificationRequest\x1a9.o11y_one.alerts.v1.BeginAlertContactVerificationResponse\x12|\n" +
+	"\x1aConfirmContactVerification\x12:.o11y_one.alerts.v1.ConfirmAlertContactVerificationRequest\x1a\".o11y_one.alerts.v1.AlertContactV1\x12\x80\x01\n" +
+	"\x17CreateNotificationGroup\x127.o11y_one.alerts.v1.UpsertAlertNotificationGroupRequest\x1a,.o11y_one.alerts.v1.AlertNotificationGroupV1\x12\x80\x01\n" +
+	"\x17UpdateNotificationGroup\x127.o11y_one.alerts.v1.UpsertAlertNotificationGroupRequest\x1a,.o11y_one.alerts.v1.AlertNotificationGroupV1\x12q\n" +
+	"\x14GetNotificationGroup\x12+.o11y_one.alerts.v1.GetAlertResourceRequest\x1a,.o11y_one.alerts.v1.AlertNotificationGroupV1\x12\x89\x01\n" +
+	"\x16ListNotificationGroups\x126.o11y_one.alerts.v1.ListAlertNotificationGroupsRequest\x1a7.o11y_one.alerts.v1.ListAlertNotificationGroupsResponse\x12\x8a\x01\n" +
+	"\x1cSetNotificationGroupArchived\x12<.o11y_one.alerts.v1.SetAlertNotificationGroupArchivedRequest\x1a,.o11y_one.alerts.v1.AlertNotificationGroupV1\x12{\n" +
+	"\x16PurgeNotificationGroup\x126.o11y_one.alerts.v1.PurgeAlertNotificationGroupRequest\x1a).o11y_one.alerts.v1.AlertMutationResponse\x12\x89\x01\n" +
+	"\x19GetNotificationGroupUsage\x129.o11y_one.alerts.v1.GetAlertNotificationGroupUsageRequest\x1a1.o11y_one.alerts.v1.AlertNotificationGroupUsageV1\x12\xaa\x01\n" +
+	"!PreviewNotificationGroupExpansion\x12A.o11y_one.alerts.v1.PreviewAlertNotificationGroupExpansionRequest\x1aB.o11y_one.alerts.v1.PreviewAlertNotificationGroupExpansionResponse\x12~\n" +
 	"\x18CreateNotificationPolicy\x123.o11y_one.alerts.v1.UpsertNotificationPolicyRequest\x1a-.o11y_one.alerts.v1.AlertNotificationPolicyV1\x12~\n" +
 	"\x18UpdateNotificationPolicy\x123.o11y_one.alerts.v1.UpsertNotificationPolicyRequest\x1a-.o11y_one.alerts.v1.AlertNotificationPolicyV1\x12s\n" +
 	"\x15GetNotificationPolicy\x12+.o11y_one.alerts.v1.GetAlertResourceRequest\x1a-.o11y_one.alerts.v1.AlertNotificationPolicyV1\x12\x82\x01\n" +
@@ -18328,755 +20146,823 @@ func file_proto_o11y_one_alerts_v1_alerts_proto_rawDescGZIP() []byte {
 	return file_proto_o11y_one_alerts_v1_alerts_proto_rawDescData
 }
 
-var file_proto_o11y_one_alerts_v1_alerts_proto_enumTypes = make([]protoimpl.EnumInfo, 13)
-var file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes = make([]protoimpl.MessageInfo, 202)
+var file_proto_o11y_one_alerts_v1_alerts_proto_enumTypes = make([]protoimpl.EnumInfo, 15)
+var file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes = make([]protoimpl.MessageInfo, 222)
 var file_proto_o11y_one_alerts_v1_alerts_proto_goTypes = []any{
-	(AlertClassV1)(0),                                   // 0: o11y_one.alerts.v1.AlertClassV1
-	(AlertModeV1)(0),                                    // 1: o11y_one.alerts.v1.AlertModeV1
-	(AlertSeverityV1)(0),                                // 2: o11y_one.alerts.v1.AlertSeverityV1
-	(AlertDestinationKindV1)(0),                         // 3: o11y_one.alerts.v1.AlertDestinationKindV1
-	(SliIndicatorKindV1)(0),                             // 4: o11y_one.alerts.v1.SliIndicatorKindV1
-	(SliAggregationV1)(0),                               // 5: o11y_one.alerts.v1.SliAggregationV1
-	(SliMissingDataBehaviorV1)(0),                       // 6: o11y_one.alerts.v1.SliMissingDataBehaviorV1
-	(SliCoverageStateV1)(0),                             // 7: o11y_one.alerts.v1.SliCoverageStateV1
-	(AlertNoDataBehaviorV1)(0),                          // 8: o11y_one.alerts.v1.AlertNoDataBehaviorV1
-	(AlertPreviewCoverageStateV1)(0),                    // 9: o11y_one.alerts.v1.AlertPreviewCoverageStateV1
-	(AlertDestinationVerificationStateV1)(0),            // 10: o11y_one.alerts.v1.AlertDestinationVerificationStateV1
-	(AlertNotificationRouteBehaviorV1)(0),               // 11: o11y_one.alerts.v1.AlertNotificationRouteBehaviorV1
-	(AlertDefinitionLifecycleActionV1)(0),               // 12: o11y_one.alerts.v1.AlertDefinitionLifecycleActionV1
-	(*AlertOwnerRefV1)(nil),                             // 13: o11y_one.alerts.v1.AlertOwnerRefV1
-	(*AlertActionV1)(nil),                               // 14: o11y_one.alerts.v1.AlertActionV1
-	(*AgentQualityRegressionConfigV1)(nil),              // 15: o11y_one.alerts.v1.AgentQualityRegressionConfigV1
-	(*CostPerSuccessConfigV1)(nil),                      // 16: o11y_one.alerts.v1.CostPerSuccessConfigV1
-	(*SloBurnConfigV1)(nil),                             // 17: o11y_one.alerts.v1.SloBurnConfigV1
-	(*AlertSliRevisionV1)(nil),                          // 18: o11y_one.alerts.v1.AlertSliRevisionV1
-	(*AlertSliV1)(nil),                                  // 19: o11y_one.alerts.v1.AlertSliV1
-	(*SliRevisionInputV1)(nil),                          // 20: o11y_one.alerts.v1.SliRevisionInputV1
-	(*CreateSliRequest)(nil),                            // 21: o11y_one.alerts.v1.CreateSliRequest
-	(*UpdateSliRequest)(nil),                            // 22: o11y_one.alerts.v1.UpdateSliRequest
-	(*ValidateSliRequest)(nil),                          // 23: o11y_one.alerts.v1.ValidateSliRequest
-	(*ValidateSliResponse)(nil),                         // 24: o11y_one.alerts.v1.ValidateSliResponse
-	(*GetSliRequest)(nil),                               // 25: o11y_one.alerts.v1.GetSliRequest
-	(*ListSlisRequest)(nil),                             // 26: o11y_one.alerts.v1.ListSlisRequest
-	(*ListSlisResponse)(nil),                            // 27: o11y_one.alerts.v1.ListSlisResponse
-	(*ArchiveSliRequest)(nil),                           // 28: o11y_one.alerts.v1.ArchiveSliRequest
-	(*ListSliRevisionsRequest)(nil),                     // 29: o11y_one.alerts.v1.ListSliRevisionsRequest
-	(*ListSliRevisionsResponse)(nil),                    // 30: o11y_one.alerts.v1.ListSliRevisionsResponse
-	(*PreviewSliRequest)(nil),                           // 31: o11y_one.alerts.v1.PreviewSliRequest
-	(*SliPreviewV1)(nil),                                // 32: o11y_one.alerts.v1.SliPreviewV1
-	(*AlertSloRevisionV1)(nil),                          // 33: o11y_one.alerts.v1.AlertSloRevisionV1
-	(*AlertSloV1)(nil),                                  // 34: o11y_one.alerts.v1.AlertSloV1
-	(*SloRevisionInputV1)(nil),                          // 35: o11y_one.alerts.v1.SloRevisionInputV1
-	(*CreateSloRequest)(nil),                            // 36: o11y_one.alerts.v1.CreateSloRequest
-	(*UpdateSloRequest)(nil),                            // 37: o11y_one.alerts.v1.UpdateSloRequest
-	(*GetSloRequest)(nil),                               // 38: o11y_one.alerts.v1.GetSloRequest
-	(*ListSlosRequest)(nil),                             // 39: o11y_one.alerts.v1.ListSlosRequest
-	(*ListSlosResponse)(nil),                            // 40: o11y_one.alerts.v1.ListSlosResponse
-	(*ArchiveSloRequest)(nil),                           // 41: o11y_one.alerts.v1.ArchiveSloRequest
-	(*ListSloRevisionsRequest)(nil),                     // 42: o11y_one.alerts.v1.ListSloRevisionsRequest
-	(*ListSloRevisionsResponse)(nil),                    // 43: o11y_one.alerts.v1.ListSloRevisionsResponse
-	(*GetSloStatusRequest)(nil),                         // 44: o11y_one.alerts.v1.GetSloStatusRequest
-	(*SloStatusV1)(nil),                                 // 45: o11y_one.alerts.v1.SloStatusV1
-	(*GetSloBurndownRequest)(nil),                       // 46: o11y_one.alerts.v1.GetSloBurndownRequest
-	(*GetSloBurndownResponse)(nil),                      // 47: o11y_one.alerts.v1.GetSloBurndownResponse
-	(*ListSloHistoryRequest)(nil),                       // 48: o11y_one.alerts.v1.ListSloHistoryRequest
-	(*ListSloHistoryResponse)(nil),                      // 49: o11y_one.alerts.v1.ListSloHistoryResponse
-	(*CreateRecommendedSloBurnAlertRequest)(nil),        // 50: o11y_one.alerts.v1.CreateRecommendedSloBurnAlertRequest
-	(*CreateRecommendedSloBurnAlertResponse)(nil),       // 51: o11y_one.alerts.v1.CreateRecommendedSloBurnAlertResponse
-	(*AdvancedSignalConfigV1)(nil),                      // 52: o11y_one.alerts.v1.AdvancedSignalConfigV1
-	(*AlertDetectorConfigV1)(nil),                       // 53: o11y_one.alerts.v1.AlertDetectorConfigV1
-	(*AlertFieldViolationV1)(nil),                       // 54: o11y_one.alerts.v1.AlertFieldViolationV1
-	(*AlertErrorDetailsV1)(nil),                         // 55: o11y_one.alerts.v1.AlertErrorDetailsV1
-	(*AlertDefinitionV1)(nil),                           // 56: o11y_one.alerts.v1.AlertDefinitionV1
-	(*AlertManagedResourceV1)(nil),                      // 57: o11y_one.alerts.v1.AlertManagedResourceV1
-	(*AlertDefinitionRuntimeSummaryV1)(nil),             // 58: o11y_one.alerts.v1.AlertDefinitionRuntimeSummaryV1
-	(*AlertScopeV1)(nil),                                // 59: o11y_one.alerts.v1.AlertScopeV1
-	(*AlertEvaluationSettingsV1)(nil),                   // 60: o11y_one.alerts.v1.AlertEvaluationSettingsV1
-	(*AlertSampleGuardV1)(nil),                          // 61: o11y_one.alerts.v1.AlertSampleGuardV1
-	(*AlertRevisionV1)(nil),                             // 62: o11y_one.alerts.v1.AlertRevisionV1
-	(*AlertRevisionDiffEntryV1)(nil),                    // 63: o11y_one.alerts.v1.AlertRevisionDiffEntryV1
-	(*AlertRevisionDiffV1)(nil),                         // 64: o11y_one.alerts.v1.AlertRevisionDiffV1
-	(*AlertInstanceV1)(nil),                             // 65: o11y_one.alerts.v1.AlertInstanceV1
-	(*AlertEvalRunV1)(nil),                              // 66: o11y_one.alerts.v1.AlertEvalRunV1
-	(*AlertStateEventV1)(nil),                           // 67: o11y_one.alerts.v1.AlertStateEventV1
-	(*AlertPreviewRunV1)(nil),                           // 68: o11y_one.alerts.v1.AlertPreviewRunV1
-	(*AlertPreviewCoverageV1)(nil),                      // 69: o11y_one.alerts.v1.AlertPreviewCoverageV1
-	(*AlertPreviewSampleGuardResultV1)(nil),             // 70: o11y_one.alerts.v1.AlertPreviewSampleGuardResultV1
-	(*AlertPreviewRouteDecisionV1)(nil),                 // 71: o11y_one.alerts.v1.AlertPreviewRouteDecisionV1
-	(*AlertPreviewNoiseBudgetEffectV1)(nil),             // 72: o11y_one.alerts.v1.AlertPreviewNoiseBudgetEffectV1
-	(*AlertDeliveryHistoryV1)(nil),                      // 73: o11y_one.alerts.v1.AlertDeliveryHistoryV1
-	(*AlertDeliveryAttemptV1)(nil),                      // 74: o11y_one.alerts.v1.AlertDeliveryAttemptV1
-	(*AlertDestinationFieldRequirementV1)(nil),          // 75: o11y_one.alerts.v1.AlertDestinationFieldRequirementV1
-	(*AlertDestinationSetupRequirementsV1)(nil),         // 76: o11y_one.alerts.v1.AlertDestinationSetupRequirementsV1
-	(*AlertDestinationVerificationV1)(nil),              // 77: o11y_one.alerts.v1.AlertDestinationVerificationV1
-	(*AlertDestinationRouteUsageV1)(nil),                // 78: o11y_one.alerts.v1.AlertDestinationRouteUsageV1
-	(*AlertDestinationUsageV1)(nil),                     // 79: o11y_one.alerts.v1.AlertDestinationUsageV1
-	(*AlertDestinationV1)(nil),                          // 80: o11y_one.alerts.v1.AlertDestinationV1
-	(*AlertMatcherValueV1)(nil),                         // 81: o11y_one.alerts.v1.AlertMatcherValueV1
-	(*AlertMatcherClauseV1)(nil),                        // 82: o11y_one.alerts.v1.AlertMatcherClauseV1
-	(*AlertNotificationRouteTargetV1)(nil),              // 83: o11y_one.alerts.v1.AlertNotificationRouteTargetV1
-	(*AlertNotificationRouteV1)(nil),                    // 84: o11y_one.alerts.v1.AlertNotificationRouteV1
-	(*AlertNotificationPolicyConfigV1)(nil),             // 85: o11y_one.alerts.v1.AlertNotificationPolicyConfigV1
-	(*AlertPolicyDiagnosticV1)(nil),                     // 86: o11y_one.alerts.v1.AlertPolicyDiagnosticV1
-	(*AlertNotificationPolicyV1)(nil),                   // 87: o11y_one.alerts.v1.AlertNotificationPolicyV1
-	(*AlertMaintenanceWindowV1)(nil),                    // 88: o11y_one.alerts.v1.AlertMaintenanceWindowV1
-	(*AlertSilenceV1)(nil),                              // 89: o11y_one.alerts.v1.AlertSilenceV1
-	(*AlertRecipeBaseV1)(nil),                           // 90: o11y_one.alerts.v1.AlertRecipeBaseV1
-	(*CreateAgentQualityRegressionAlertRequest)(nil),    // 91: o11y_one.alerts.v1.CreateAgentQualityRegressionAlertRequest
-	(*CreateCostPerSuccessAlertRequest)(nil),            // 92: o11y_one.alerts.v1.CreateCostPerSuccessAlertRequest
-	(*CreateSloBurnAlertRequest)(nil),                   // 93: o11y_one.alerts.v1.CreateSloBurnAlertRequest
-	(*CreateAdvancedSignalAlertRequest)(nil),            // 94: o11y_one.alerts.v1.CreateAdvancedSignalAlertRequest
-	(*CreateAlertDefinitionResponse)(nil),               // 95: o11y_one.alerts.v1.CreateAlertDefinitionResponse
-	(*GetAlertDefinitionRequest)(nil),                   // 96: o11y_one.alerts.v1.GetAlertDefinitionRequest
-	(*DeleteAlertDefinitionRequest)(nil),                // 97: o11y_one.alerts.v1.DeleteAlertDefinitionRequest
-	(*GetAlertResourceRequest)(nil),                     // 98: o11y_one.alerts.v1.GetAlertResourceRequest
-	(*ListAlertDefinitionsRequest)(nil),                 // 99: o11y_one.alerts.v1.ListAlertDefinitionsRequest
-	(*ListAlertDefinitionsResponse)(nil),                // 100: o11y_one.alerts.v1.ListAlertDefinitionsResponse
-	(*UpdateShadowAlertRequest)(nil),                    // 101: o11y_one.alerts.v1.UpdateShadowAlertRequest
-	(*UpsertAlertCandidateRevisionRequest)(nil),         // 102: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest
-	(*GetAlertRevisionRequest)(nil),                     // 103: o11y_one.alerts.v1.GetAlertRevisionRequest
-	(*ListAlertRevisionsRequest)(nil),                   // 104: o11y_one.alerts.v1.ListAlertRevisionsRequest
-	(*ListAlertRevisionsResponse)(nil),                  // 105: o11y_one.alerts.v1.ListAlertRevisionsResponse
-	(*DiffAlertRevisionsRequest)(nil),                   // 106: o11y_one.alerts.v1.DiffAlertRevisionsRequest
-	(*ActivateAlertRevisionRequest)(nil),                // 107: o11y_one.alerts.v1.ActivateAlertRevisionRequest
-	(*ActivateNotifyModeRequest)(nil),                   // 108: o11y_one.alerts.v1.ActivateNotifyModeRequest
-	(*ListActiveAlertInstancesRequest)(nil),             // 109: o11y_one.alerts.v1.ListActiveAlertInstancesRequest
-	(*ListActiveAlertInstancesResponse)(nil),            // 110: o11y_one.alerts.v1.ListActiveAlertInstancesResponse
-	(*AlertIdRequest)(nil),                              // 111: o11y_one.alerts.v1.AlertIdRequest
-	(*AlertInstanceIdRequest)(nil),                      // 112: o11y_one.alerts.v1.AlertInstanceIdRequest
-	(*ListAlertEvalHistoryResponse)(nil),                // 113: o11y_one.alerts.v1.ListAlertEvalHistoryResponse
-	(*ListAlertStateHistoryResponse)(nil),               // 114: o11y_one.alerts.v1.ListAlertStateHistoryResponse
-	(*GetIncidentCandidateRequest)(nil),                 // 115: o11y_one.alerts.v1.GetIncidentCandidateRequest
-	(*GetIncidentCandidateResponse)(nil),                // 116: o11y_one.alerts.v1.GetIncidentCandidateResponse
-	(*AlertIncidentMemberV1)(nil),                       // 117: o11y_one.alerts.v1.AlertIncidentMemberV1
-	(*AlertIncidentV1)(nil),                             // 118: o11y_one.alerts.v1.AlertIncidentV1
-	(*ListAlertIncidentsRequest)(nil),                   // 119: o11y_one.alerts.v1.ListAlertIncidentsRequest
-	(*ListAlertIncidentsResponse)(nil),                  // 120: o11y_one.alerts.v1.ListAlertIncidentsResponse
-	(*GetAlertIncidentRequest)(nil),                     // 121: o11y_one.alerts.v1.GetAlertIncidentRequest
-	(*GetAlertIncidentResponse)(nil),                    // 122: o11y_one.alerts.v1.GetAlertIncidentResponse
-	(*AlertIncidentTimelineEventV1)(nil),                // 123: o11y_one.alerts.v1.AlertIncidentTimelineEventV1
-	(*ListAlertIncidentTimelineRequest)(nil),            // 124: o11y_one.alerts.v1.ListAlertIncidentTimelineRequest
-	(*ListAlertIncidentTimelineResponse)(nil),           // 125: o11y_one.alerts.v1.ListAlertIncidentTimelineResponse
-	(*AcknowledgeAlertIncidentRequest)(nil),             // 126: o11y_one.alerts.v1.AcknowledgeAlertIncidentRequest
-	(*ListAlertInstancesRequest)(nil),                   // 127: o11y_one.alerts.v1.ListAlertInstancesRequest
-	(*ListAlertInstancesResponse)(nil),                  // 128: o11y_one.alerts.v1.ListAlertInstancesResponse
-	(*ExplainWhyFiredRequest)(nil),                      // 129: o11y_one.alerts.v1.ExplainWhyFiredRequest
-	(*ExplainWhyFiredResponse)(nil),                     // 130: o11y_one.alerts.v1.ExplainWhyFiredResponse
-	(*AcknowledgeAlertRequest)(nil),                     // 131: o11y_one.alerts.v1.AcknowledgeAlertRequest
-	(*PauseAlertRequest)(nil),                           // 132: o11y_one.alerts.v1.PauseAlertRequest
-	(*ResumeAlertRequest)(nil),                          // 133: o11y_one.alerts.v1.ResumeAlertRequest
-	(*AlertMutationResponse)(nil),                       // 134: o11y_one.alerts.v1.AlertMutationResponse
-	(*PreviewAlertRequest)(nil),                         // 135: o11y_one.alerts.v1.PreviewAlertRequest
-	(*PreviewAlertResponse)(nil),                        // 136: o11y_one.alerts.v1.PreviewAlertResponse
-	(*ListPreviewHistoryResponse)(nil),                  // 137: o11y_one.alerts.v1.ListPreviewHistoryResponse
-	(*UpsertDestinationRequest)(nil),                    // 138: o11y_one.alerts.v1.UpsertDestinationRequest
-	(*ListDestinationsRequest)(nil),                     // 139: o11y_one.alerts.v1.ListDestinationsRequest
-	(*ListDestinationsResponse)(nil),                    // 140: o11y_one.alerts.v1.ListDestinationsResponse
-	(*DeleteDestinationRequest)(nil),                    // 141: o11y_one.alerts.v1.DeleteDestinationRequest
-	(*UpsertNotificationPolicyRequest)(nil),             // 142: o11y_one.alerts.v1.UpsertNotificationPolicyRequest
-	(*ValidateNotificationPolicyRequest)(nil),           // 143: o11y_one.alerts.v1.ValidateNotificationPolicyRequest
-	(*ValidateNotificationPolicyResponse)(nil),          // 144: o11y_one.alerts.v1.ValidateNotificationPolicyResponse
-	(*AlertRoutingSubjectV1)(nil),                       // 145: o11y_one.alerts.v1.AlertRoutingSubjectV1
-	(*PreviewNotificationRouteRequest)(nil),             // 146: o11y_one.alerts.v1.PreviewNotificationRouteRequest
-	(*AlertRouteEvaluationV1)(nil),                      // 147: o11y_one.alerts.v1.AlertRouteEvaluationV1
-	(*PreviewNotificationRouteResponse)(nil),            // 148: o11y_one.alerts.v1.PreviewNotificationRouteResponse
-	(*PreviewNotificationPayloadRequest)(nil),           // 149: o11y_one.alerts.v1.PreviewNotificationPayloadRequest
-	(*PreviewNotificationPayloadResponse)(nil),          // 150: o11y_one.alerts.v1.PreviewNotificationPayloadResponse
-	(*GetActivationReadinessRequest)(nil),               // 151: o11y_one.alerts.v1.GetActivationReadinessRequest
-	(*AlertActivationBlockerV1)(nil),                    // 152: o11y_one.alerts.v1.AlertActivationBlockerV1
-	(*GetActivationReadinessResponse)(nil),              // 153: o11y_one.alerts.v1.GetActivationReadinessResponse
-	(*ListNotificationPoliciesResponse)(nil),            // 154: o11y_one.alerts.v1.ListNotificationPoliciesResponse
-	(*ListOperatorResourcesRequest)(nil),                // 155: o11y_one.alerts.v1.ListOperatorResourcesRequest
-	(*DeleteOperatorResourceRequest)(nil),               // 156: o11y_one.alerts.v1.DeleteOperatorResourceRequest
-	(*ListMaintenanceWindowsResponse)(nil),              // 157: o11y_one.alerts.v1.ListMaintenanceWindowsResponse
-	(*ListSilencesResponse)(nil),                        // 158: o11y_one.alerts.v1.ListSilencesResponse
-	(*UpsertMaintenanceWindowRequest)(nil),              // 159: o11y_one.alerts.v1.UpsertMaintenanceWindowRequest
-	(*UpsertSilenceRequest)(nil),                        // 160: o11y_one.alerts.v1.UpsertSilenceRequest
-	(*TestDestinationRequest)(nil),                      // 161: o11y_one.alerts.v1.TestDestinationRequest
-	(*TestDestinationResponse)(nil),                     // 162: o11y_one.alerts.v1.TestDestinationResponse
-	(*PutDestinationSecretRequest)(nil),                 // 163: o11y_one.alerts.v1.PutDestinationSecretRequest
-	(*RevokeDestinationSecretRequest)(nil),              // 164: o11y_one.alerts.v1.RevokeDestinationSecretRequest
-	(*ListDestinationSecretsRequest)(nil),               // 165: o11y_one.alerts.v1.ListDestinationSecretsRequest
-	(*DestinationSecretMetadataV1)(nil),                 // 166: o11y_one.alerts.v1.DestinationSecretMetadataV1
-	(*PutDestinationSecretResponse)(nil),                // 167: o11y_one.alerts.v1.PutDestinationSecretResponse
-	(*RevokeDestinationSecretResponse)(nil),             // 168: o11y_one.alerts.v1.RevokeDestinationSecretResponse
-	(*ListDestinationSecretsResponse)(nil),              // 169: o11y_one.alerts.v1.ListDestinationSecretsResponse
-	(*GetDeliveryHistoryRequest)(nil),                   // 170: o11y_one.alerts.v1.GetDeliveryHistoryRequest
-	(*GetDeliveryHistoryResponse)(nil),                  // 171: o11y_one.alerts.v1.GetDeliveryHistoryResponse
-	(*ListAlertDeliveriesRequest)(nil),                  // 172: o11y_one.alerts.v1.ListAlertDeliveriesRequest
-	(*ListAlertDeliveriesResponse)(nil),                 // 173: o11y_one.alerts.v1.ListAlertDeliveriesResponse
-	(*GetAlertDeliveryRequest)(nil),                     // 174: o11y_one.alerts.v1.GetAlertDeliveryRequest
-	(*GetAlertDeliveryResponse)(nil),                    // 175: o11y_one.alerts.v1.GetAlertDeliveryResponse
-	(*AlertDeliveryV1)(nil),                             // 176: o11y_one.alerts.v1.AlertDeliveryV1
-	(*ListAlertAuditRequest)(nil),                       // 177: o11y_one.alerts.v1.ListAlertAuditRequest
-	(*AlertAuditEventV1)(nil),                           // 178: o11y_one.alerts.v1.AlertAuditEventV1
-	(*ListAlertAuditResponse)(nil),                      // 179: o11y_one.alerts.v1.ListAlertAuditResponse
-	(*GetAlertAuditRequest)(nil),                        // 180: o11y_one.alerts.v1.GetAlertAuditRequest
-	(*GetAlertAuditResponse)(nil),                       // 181: o11y_one.alerts.v1.GetAlertAuditResponse
-	(*PreviewAlertSuppressionRequest)(nil),              // 182: o11y_one.alerts.v1.PreviewAlertSuppressionRequest
-	(*PreviewAlertSuppressionResponse)(nil),             // 183: o11y_one.alerts.v1.PreviewAlertSuppressionResponse
-	(*TriggerCanaryRequest)(nil),                        // 184: o11y_one.alerts.v1.TriggerCanaryRequest
-	(*TriggerCanaryResponse)(nil),                       // 185: o11y_one.alerts.v1.TriggerCanaryResponse
-	(*GetCanaryRunRequest)(nil),                         // 186: o11y_one.alerts.v1.GetCanaryRunRequest
-	(*EnsureMetaAlertsRequest)(nil),                     // 187: o11y_one.alerts.v1.EnsureMetaAlertsRequest
-	(*EnsureMetaAlertsResponse)(nil),                    // 188: o11y_one.alerts.v1.EnsureMetaAlertsResponse
-	(*GetAlertMetaHealthRequest)(nil),                   // 189: o11y_one.alerts.v1.GetAlertMetaHealthRequest
-	(*GetAlertMetaHealthResponse)(nil),                  // 190: o11y_one.alerts.v1.GetAlertMetaHealthResponse
-	(*AlertMetaHealthV1)(nil),                           // 191: o11y_one.alerts.v1.AlertMetaHealthV1
-	(*AlertDefinitionLifecyclePreflightV1)(nil),         // 192: o11y_one.alerts.v1.AlertDefinitionLifecyclePreflightV1
-	(*GetAlertDefinitionLifecyclePreflightRequest)(nil), // 193: o11y_one.alerts.v1.GetAlertDefinitionLifecyclePreflightRequest
-	(*ArchiveAlertDefinitionV2Request)(nil),             // 194: o11y_one.alerts.v1.ArchiveAlertDefinitionV2Request
-	(*RestoreAlertDefinitionRequest)(nil),               // 195: o11y_one.alerts.v1.RestoreAlertDefinitionRequest
-	(*PurgeAlertDefinitionRequest)(nil),                 // 196: o11y_one.alerts.v1.PurgeAlertDefinitionRequest
-	(*AlertDraftV1)(nil),                                // 197: o11y_one.alerts.v1.AlertDraftV1
-	(*PutAlertDraftRequest)(nil),                        // 198: o11y_one.alerts.v1.PutAlertDraftRequest
-	(*GetAlertDraftRequest)(nil),                        // 199: o11y_one.alerts.v1.GetAlertDraftRequest
-	(*ListAlertDraftsRequest)(nil),                      // 200: o11y_one.alerts.v1.ListAlertDraftsRequest
-	(*ListAlertDraftsResponse)(nil),                     // 201: o11y_one.alerts.v1.ListAlertDraftsResponse
-	(*DeleteAlertDraftRequest)(nil),                     // 202: o11y_one.alerts.v1.DeleteAlertDraftRequest
-	(*AlertBulkDefinitionItemV1)(nil),                   // 203: o11y_one.alerts.v1.AlertBulkDefinitionItemV1
-	(*AlertBulkDefinitionResultV1)(nil),                 // 204: o11y_one.alerts.v1.AlertBulkDefinitionResultV1
-	(*BulkMutateAlertDefinitionsRequest)(nil),           // 205: o11y_one.alerts.v1.BulkMutateAlertDefinitionsRequest
-	(*BulkMutateAlertDefinitionsResponse)(nil),          // 206: o11y_one.alerts.v1.BulkMutateAlertDefinitionsResponse
-	(*PortableAlertDefinitionV1)(nil),                   // 207: o11y_one.alerts.v1.PortableAlertDefinitionV1
-	(*AlertDefinitionExportBundleV1)(nil),               // 208: o11y_one.alerts.v1.AlertDefinitionExportBundleV1
-	(*ExportAlertDefinitionsRequest)(nil),               // 209: o11y_one.alerts.v1.ExportAlertDefinitionsRequest
-	(*ImportAlertDefinitionsRequest)(nil),               // 210: o11y_one.alerts.v1.ImportAlertDefinitionsRequest
-	(*AlertDefinitionImportResultV1)(nil),               // 211: o11y_one.alerts.v1.AlertDefinitionImportResultV1
-	(*ImportAlertDefinitionsResponse)(nil),              // 212: o11y_one.alerts.v1.ImportAlertDefinitionsResponse
-	(*ReplayAlertDeliveryRequest)(nil),                  // 213: o11y_one.alerts.v1.ReplayAlertDeliveryRequest
-	(*ReplayAlertDeliveryResponse)(nil),                 // 214: o11y_one.alerts.v1.ReplayAlertDeliveryResponse
-	(*structpb.Struct)(nil),                             // 215: google.protobuf.Struct
-	(*timestamppb.Timestamp)(nil),                       // 216: google.protobuf.Timestamp
-	(*structpb.Value)(nil),                              // 217: google.protobuf.Value
+	(AlertClassV1)(0),                                      // 0: o11y_one.alerts.v1.AlertClassV1
+	(AlertModeV1)(0),                                       // 1: o11y_one.alerts.v1.AlertModeV1
+	(AlertSeverityV1)(0),                                   // 2: o11y_one.alerts.v1.AlertSeverityV1
+	(AlertDestinationKindV1)(0),                            // 3: o11y_one.alerts.v1.AlertDestinationKindV1
+	(SliIndicatorKindV1)(0),                                // 4: o11y_one.alerts.v1.SliIndicatorKindV1
+	(SliAggregationV1)(0),                                  // 5: o11y_one.alerts.v1.SliAggregationV1
+	(SliMissingDataBehaviorV1)(0),                          // 6: o11y_one.alerts.v1.SliMissingDataBehaviorV1
+	(SliCoverageStateV1)(0),                                // 7: o11y_one.alerts.v1.SliCoverageStateV1
+	(AlertNoDataBehaviorV1)(0),                             // 8: o11y_one.alerts.v1.AlertNoDataBehaviorV1
+	(AlertPreviewCoverageStateV1)(0),                       // 9: o11y_one.alerts.v1.AlertPreviewCoverageStateV1
+	(AlertDestinationVerificationStateV1)(0),               // 10: o11y_one.alerts.v1.AlertDestinationVerificationStateV1
+	(AlertNotificationRouteBehaviorV1)(0),                  // 11: o11y_one.alerts.v1.AlertNotificationRouteBehaviorV1
+	(AlertContactStatusV1)(0),                              // 12: o11y_one.alerts.v1.AlertContactStatusV1
+	(AlertNotificationGroupMemberKindV1)(0),                // 13: o11y_one.alerts.v1.AlertNotificationGroupMemberKindV1
+	(AlertDefinitionLifecycleActionV1)(0),                  // 14: o11y_one.alerts.v1.AlertDefinitionLifecycleActionV1
+	(*AlertOwnerRefV1)(nil),                                // 15: o11y_one.alerts.v1.AlertOwnerRefV1
+	(*AlertActionV1)(nil),                                  // 16: o11y_one.alerts.v1.AlertActionV1
+	(*AgentQualityRegressionConfigV1)(nil),                 // 17: o11y_one.alerts.v1.AgentQualityRegressionConfigV1
+	(*CostPerSuccessConfigV1)(nil),                         // 18: o11y_one.alerts.v1.CostPerSuccessConfigV1
+	(*SloBurnConfigV1)(nil),                                // 19: o11y_one.alerts.v1.SloBurnConfigV1
+	(*AlertSliRevisionV1)(nil),                             // 20: o11y_one.alerts.v1.AlertSliRevisionV1
+	(*AlertSliV1)(nil),                                     // 21: o11y_one.alerts.v1.AlertSliV1
+	(*SliRevisionInputV1)(nil),                             // 22: o11y_one.alerts.v1.SliRevisionInputV1
+	(*CreateSliRequest)(nil),                               // 23: o11y_one.alerts.v1.CreateSliRequest
+	(*UpdateSliRequest)(nil),                               // 24: o11y_one.alerts.v1.UpdateSliRequest
+	(*ValidateSliRequest)(nil),                             // 25: o11y_one.alerts.v1.ValidateSliRequest
+	(*ValidateSliResponse)(nil),                            // 26: o11y_one.alerts.v1.ValidateSliResponse
+	(*GetSliRequest)(nil),                                  // 27: o11y_one.alerts.v1.GetSliRequest
+	(*ListSlisRequest)(nil),                                // 28: o11y_one.alerts.v1.ListSlisRequest
+	(*ListSlisResponse)(nil),                               // 29: o11y_one.alerts.v1.ListSlisResponse
+	(*ArchiveSliRequest)(nil),                              // 30: o11y_one.alerts.v1.ArchiveSliRequest
+	(*ListSliRevisionsRequest)(nil),                        // 31: o11y_one.alerts.v1.ListSliRevisionsRequest
+	(*ListSliRevisionsResponse)(nil),                       // 32: o11y_one.alerts.v1.ListSliRevisionsResponse
+	(*PreviewSliRequest)(nil),                              // 33: o11y_one.alerts.v1.PreviewSliRequest
+	(*SliPreviewV1)(nil),                                   // 34: o11y_one.alerts.v1.SliPreviewV1
+	(*AlertSloRevisionV1)(nil),                             // 35: o11y_one.alerts.v1.AlertSloRevisionV1
+	(*AlertSloV1)(nil),                                     // 36: o11y_one.alerts.v1.AlertSloV1
+	(*SloRevisionInputV1)(nil),                             // 37: o11y_one.alerts.v1.SloRevisionInputV1
+	(*CreateSloRequest)(nil),                               // 38: o11y_one.alerts.v1.CreateSloRequest
+	(*UpdateSloRequest)(nil),                               // 39: o11y_one.alerts.v1.UpdateSloRequest
+	(*GetSloRequest)(nil),                                  // 40: o11y_one.alerts.v1.GetSloRequest
+	(*ListSlosRequest)(nil),                                // 41: o11y_one.alerts.v1.ListSlosRequest
+	(*ListSlosResponse)(nil),                               // 42: o11y_one.alerts.v1.ListSlosResponse
+	(*ArchiveSloRequest)(nil),                              // 43: o11y_one.alerts.v1.ArchiveSloRequest
+	(*ListSloRevisionsRequest)(nil),                        // 44: o11y_one.alerts.v1.ListSloRevisionsRequest
+	(*ListSloRevisionsResponse)(nil),                       // 45: o11y_one.alerts.v1.ListSloRevisionsResponse
+	(*GetSloStatusRequest)(nil),                            // 46: o11y_one.alerts.v1.GetSloStatusRequest
+	(*SloStatusV1)(nil),                                    // 47: o11y_one.alerts.v1.SloStatusV1
+	(*GetSloBurndownRequest)(nil),                          // 48: o11y_one.alerts.v1.GetSloBurndownRequest
+	(*GetSloBurndownResponse)(nil),                         // 49: o11y_one.alerts.v1.GetSloBurndownResponse
+	(*ListSloHistoryRequest)(nil),                          // 50: o11y_one.alerts.v1.ListSloHistoryRequest
+	(*ListSloHistoryResponse)(nil),                         // 51: o11y_one.alerts.v1.ListSloHistoryResponse
+	(*CreateRecommendedSloBurnAlertRequest)(nil),           // 52: o11y_one.alerts.v1.CreateRecommendedSloBurnAlertRequest
+	(*CreateRecommendedSloBurnAlertResponse)(nil),          // 53: o11y_one.alerts.v1.CreateRecommendedSloBurnAlertResponse
+	(*AdvancedSignalConfigV1)(nil),                         // 54: o11y_one.alerts.v1.AdvancedSignalConfigV1
+	(*AlertDetectorConfigV1)(nil),                          // 55: o11y_one.alerts.v1.AlertDetectorConfigV1
+	(*AlertFieldViolationV1)(nil),                          // 56: o11y_one.alerts.v1.AlertFieldViolationV1
+	(*AlertErrorDetailsV1)(nil),                            // 57: o11y_one.alerts.v1.AlertErrorDetailsV1
+	(*AlertDefinitionV1)(nil),                              // 58: o11y_one.alerts.v1.AlertDefinitionV1
+	(*AlertManagedResourceV1)(nil),                         // 59: o11y_one.alerts.v1.AlertManagedResourceV1
+	(*AlertDefinitionRuntimeSummaryV1)(nil),                // 60: o11y_one.alerts.v1.AlertDefinitionRuntimeSummaryV1
+	(*AlertScopeV1)(nil),                                   // 61: o11y_one.alerts.v1.AlertScopeV1
+	(*AlertEvaluationSettingsV1)(nil),                      // 62: o11y_one.alerts.v1.AlertEvaluationSettingsV1
+	(*AlertSampleGuardV1)(nil),                             // 63: o11y_one.alerts.v1.AlertSampleGuardV1
+	(*AlertRevisionV1)(nil),                                // 64: o11y_one.alerts.v1.AlertRevisionV1
+	(*AlertRevisionDiffEntryV1)(nil),                       // 65: o11y_one.alerts.v1.AlertRevisionDiffEntryV1
+	(*AlertRevisionDiffV1)(nil),                            // 66: o11y_one.alerts.v1.AlertRevisionDiffV1
+	(*AlertInstanceV1)(nil),                                // 67: o11y_one.alerts.v1.AlertInstanceV1
+	(*AlertEvalRunV1)(nil),                                 // 68: o11y_one.alerts.v1.AlertEvalRunV1
+	(*AlertStateEventV1)(nil),                              // 69: o11y_one.alerts.v1.AlertStateEventV1
+	(*AlertPreviewRunV1)(nil),                              // 70: o11y_one.alerts.v1.AlertPreviewRunV1
+	(*AlertPreviewCoverageV1)(nil),                         // 71: o11y_one.alerts.v1.AlertPreviewCoverageV1
+	(*AlertPreviewSampleGuardResultV1)(nil),                // 72: o11y_one.alerts.v1.AlertPreviewSampleGuardResultV1
+	(*AlertPreviewRouteDecisionV1)(nil),                    // 73: o11y_one.alerts.v1.AlertPreviewRouteDecisionV1
+	(*AlertPreviewNoiseBudgetEffectV1)(nil),                // 74: o11y_one.alerts.v1.AlertPreviewNoiseBudgetEffectV1
+	(*AlertDeliveryHistoryV1)(nil),                         // 75: o11y_one.alerts.v1.AlertDeliveryHistoryV1
+	(*AlertDeliveryAttemptV1)(nil),                         // 76: o11y_one.alerts.v1.AlertDeliveryAttemptV1
+	(*AlertDestinationFieldRequirementV1)(nil),             // 77: o11y_one.alerts.v1.AlertDestinationFieldRequirementV1
+	(*AlertDestinationSetupRequirementsV1)(nil),            // 78: o11y_one.alerts.v1.AlertDestinationSetupRequirementsV1
+	(*AlertDestinationVerificationV1)(nil),                 // 79: o11y_one.alerts.v1.AlertDestinationVerificationV1
+	(*AlertDestinationRouteUsageV1)(nil),                   // 80: o11y_one.alerts.v1.AlertDestinationRouteUsageV1
+	(*AlertDestinationUsageV1)(nil),                        // 81: o11y_one.alerts.v1.AlertDestinationUsageV1
+	(*AlertDestinationV1)(nil),                             // 82: o11y_one.alerts.v1.AlertDestinationV1
+	(*AlertMatcherValueV1)(nil),                            // 83: o11y_one.alerts.v1.AlertMatcherValueV1
+	(*AlertMatcherClauseV1)(nil),                           // 84: o11y_one.alerts.v1.AlertMatcherClauseV1
+	(*AlertNotificationRouteTargetV1)(nil),                 // 85: o11y_one.alerts.v1.AlertNotificationRouteTargetV1
+	(*AlertNotificationRouteV1)(nil),                       // 86: o11y_one.alerts.v1.AlertNotificationRouteV1
+	(*AlertNotificationPolicyConfigV1)(nil),                // 87: o11y_one.alerts.v1.AlertNotificationPolicyConfigV1
+	(*AlertPolicyDiagnosticV1)(nil),                        // 88: o11y_one.alerts.v1.AlertPolicyDiagnosticV1
+	(*AlertNotificationPolicyV1)(nil),                      // 89: o11y_one.alerts.v1.AlertNotificationPolicyV1
+	(*AlertMaintenanceWindowV1)(nil),                       // 90: o11y_one.alerts.v1.AlertMaintenanceWindowV1
+	(*AlertSilenceV1)(nil),                                 // 91: o11y_one.alerts.v1.AlertSilenceV1
+	(*AlertRecipeBaseV1)(nil),                              // 92: o11y_one.alerts.v1.AlertRecipeBaseV1
+	(*CreateAgentQualityRegressionAlertRequest)(nil),       // 93: o11y_one.alerts.v1.CreateAgentQualityRegressionAlertRequest
+	(*CreateCostPerSuccessAlertRequest)(nil),               // 94: o11y_one.alerts.v1.CreateCostPerSuccessAlertRequest
+	(*CreateSloBurnAlertRequest)(nil),                      // 95: o11y_one.alerts.v1.CreateSloBurnAlertRequest
+	(*CreateAdvancedSignalAlertRequest)(nil),               // 96: o11y_one.alerts.v1.CreateAdvancedSignalAlertRequest
+	(*CreateAlertDefinitionResponse)(nil),                  // 97: o11y_one.alerts.v1.CreateAlertDefinitionResponse
+	(*GetAlertDefinitionRequest)(nil),                      // 98: o11y_one.alerts.v1.GetAlertDefinitionRequest
+	(*DeleteAlertDefinitionRequest)(nil),                   // 99: o11y_one.alerts.v1.DeleteAlertDefinitionRequest
+	(*GetAlertResourceRequest)(nil),                        // 100: o11y_one.alerts.v1.GetAlertResourceRequest
+	(*ListAlertDefinitionsRequest)(nil),                    // 101: o11y_one.alerts.v1.ListAlertDefinitionsRequest
+	(*ListAlertDefinitionsResponse)(nil),                   // 102: o11y_one.alerts.v1.ListAlertDefinitionsResponse
+	(*UpdateShadowAlertRequest)(nil),                       // 103: o11y_one.alerts.v1.UpdateShadowAlertRequest
+	(*UpsertAlertCandidateRevisionRequest)(nil),            // 104: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest
+	(*GetAlertRevisionRequest)(nil),                        // 105: o11y_one.alerts.v1.GetAlertRevisionRequest
+	(*ListAlertRevisionsRequest)(nil),                      // 106: o11y_one.alerts.v1.ListAlertRevisionsRequest
+	(*ListAlertRevisionsResponse)(nil),                     // 107: o11y_one.alerts.v1.ListAlertRevisionsResponse
+	(*DiffAlertRevisionsRequest)(nil),                      // 108: o11y_one.alerts.v1.DiffAlertRevisionsRequest
+	(*ActivateAlertRevisionRequest)(nil),                   // 109: o11y_one.alerts.v1.ActivateAlertRevisionRequest
+	(*ActivateNotifyModeRequest)(nil),                      // 110: o11y_one.alerts.v1.ActivateNotifyModeRequest
+	(*ListActiveAlertInstancesRequest)(nil),                // 111: o11y_one.alerts.v1.ListActiveAlertInstancesRequest
+	(*ListActiveAlertInstancesResponse)(nil),               // 112: o11y_one.alerts.v1.ListActiveAlertInstancesResponse
+	(*AlertIdRequest)(nil),                                 // 113: o11y_one.alerts.v1.AlertIdRequest
+	(*AlertInstanceIdRequest)(nil),                         // 114: o11y_one.alerts.v1.AlertInstanceIdRequest
+	(*ListAlertEvalHistoryResponse)(nil),                   // 115: o11y_one.alerts.v1.ListAlertEvalHistoryResponse
+	(*ListAlertStateHistoryResponse)(nil),                  // 116: o11y_one.alerts.v1.ListAlertStateHistoryResponse
+	(*GetIncidentCandidateRequest)(nil),                    // 117: o11y_one.alerts.v1.GetIncidentCandidateRequest
+	(*GetIncidentCandidateResponse)(nil),                   // 118: o11y_one.alerts.v1.GetIncidentCandidateResponse
+	(*AlertIncidentMemberV1)(nil),                          // 119: o11y_one.alerts.v1.AlertIncidentMemberV1
+	(*AlertIncidentV1)(nil),                                // 120: o11y_one.alerts.v1.AlertIncidentV1
+	(*ListAlertIncidentsRequest)(nil),                      // 121: o11y_one.alerts.v1.ListAlertIncidentsRequest
+	(*ListAlertIncidentsResponse)(nil),                     // 122: o11y_one.alerts.v1.ListAlertIncidentsResponse
+	(*GetAlertIncidentRequest)(nil),                        // 123: o11y_one.alerts.v1.GetAlertIncidentRequest
+	(*GetAlertIncidentResponse)(nil),                       // 124: o11y_one.alerts.v1.GetAlertIncidentResponse
+	(*AlertIncidentTimelineEventV1)(nil),                   // 125: o11y_one.alerts.v1.AlertIncidentTimelineEventV1
+	(*ListAlertIncidentTimelineRequest)(nil),               // 126: o11y_one.alerts.v1.ListAlertIncidentTimelineRequest
+	(*ListAlertIncidentTimelineResponse)(nil),              // 127: o11y_one.alerts.v1.ListAlertIncidentTimelineResponse
+	(*AcknowledgeAlertIncidentRequest)(nil),                // 128: o11y_one.alerts.v1.AcknowledgeAlertIncidentRequest
+	(*ListAlertInstancesRequest)(nil),                      // 129: o11y_one.alerts.v1.ListAlertInstancesRequest
+	(*ListAlertInstancesResponse)(nil),                     // 130: o11y_one.alerts.v1.ListAlertInstancesResponse
+	(*ExplainWhyFiredRequest)(nil),                         // 131: o11y_one.alerts.v1.ExplainWhyFiredRequest
+	(*ExplainWhyFiredResponse)(nil),                        // 132: o11y_one.alerts.v1.ExplainWhyFiredResponse
+	(*AcknowledgeAlertRequest)(nil),                        // 133: o11y_one.alerts.v1.AcknowledgeAlertRequest
+	(*PauseAlertRequest)(nil),                              // 134: o11y_one.alerts.v1.PauseAlertRequest
+	(*ResumeAlertRequest)(nil),                             // 135: o11y_one.alerts.v1.ResumeAlertRequest
+	(*AlertMutationResponse)(nil),                          // 136: o11y_one.alerts.v1.AlertMutationResponse
+	(*PreviewAlertRequest)(nil),                            // 137: o11y_one.alerts.v1.PreviewAlertRequest
+	(*PreviewAlertResponse)(nil),                           // 138: o11y_one.alerts.v1.PreviewAlertResponse
+	(*ListPreviewHistoryResponse)(nil),                     // 139: o11y_one.alerts.v1.ListPreviewHistoryResponse
+	(*UpsertDestinationRequest)(nil),                       // 140: o11y_one.alerts.v1.UpsertDestinationRequest
+	(*ListDestinationsRequest)(nil),                        // 141: o11y_one.alerts.v1.ListDestinationsRequest
+	(*ListDestinationsResponse)(nil),                       // 142: o11y_one.alerts.v1.ListDestinationsResponse
+	(*DeleteDestinationRequest)(nil),                       // 143: o11y_one.alerts.v1.DeleteDestinationRequest
+	(*AlertContactV1)(nil),                                 // 144: o11y_one.alerts.v1.AlertContactV1
+	(*UpsertAlertContactRequest)(nil),                      // 145: o11y_one.alerts.v1.UpsertAlertContactRequest
+	(*ListAlertContactsRequest)(nil),                       // 146: o11y_one.alerts.v1.ListAlertContactsRequest
+	(*ListAlertContactsResponse)(nil),                      // 147: o11y_one.alerts.v1.ListAlertContactsResponse
+	(*SetAlertContactArchivedRequest)(nil),                 // 148: o11y_one.alerts.v1.SetAlertContactArchivedRequest
+	(*BeginAlertContactVerificationRequest)(nil),           // 149: o11y_one.alerts.v1.BeginAlertContactVerificationRequest
+	(*BeginAlertContactVerificationResponse)(nil),          // 150: o11y_one.alerts.v1.BeginAlertContactVerificationResponse
+	(*ConfirmAlertContactVerificationRequest)(nil),         // 151: o11y_one.alerts.v1.ConfirmAlertContactVerificationRequest
+	(*AlertNotificationGroupMemberV1)(nil),                 // 152: o11y_one.alerts.v1.AlertNotificationGroupMemberV1
+	(*AlertNotificationGroupV1)(nil),                       // 153: o11y_one.alerts.v1.AlertNotificationGroupV1
+	(*UpsertAlertNotificationGroupRequest)(nil),            // 154: o11y_one.alerts.v1.UpsertAlertNotificationGroupRequest
+	(*ListAlertNotificationGroupsRequest)(nil),             // 155: o11y_one.alerts.v1.ListAlertNotificationGroupsRequest
+	(*ListAlertNotificationGroupsResponse)(nil),            // 156: o11y_one.alerts.v1.ListAlertNotificationGroupsResponse
+	(*SetAlertNotificationGroupArchivedRequest)(nil),       // 157: o11y_one.alerts.v1.SetAlertNotificationGroupArchivedRequest
+	(*PurgeAlertNotificationGroupRequest)(nil),             // 158: o11y_one.alerts.v1.PurgeAlertNotificationGroupRequest
+	(*GetAlertNotificationGroupUsageRequest)(nil),          // 159: o11y_one.alerts.v1.GetAlertNotificationGroupUsageRequest
+	(*AlertNotificationGroupUsageV1)(nil),                  // 160: o11y_one.alerts.v1.AlertNotificationGroupUsageV1
+	(*PreviewAlertNotificationGroupExpansionRequest)(nil),  // 161: o11y_one.alerts.v1.PreviewAlertNotificationGroupExpansionRequest
+	(*AlertNotificationRecipientV1)(nil),                   // 162: o11y_one.alerts.v1.AlertNotificationRecipientV1
+	(*PreviewAlertNotificationGroupExpansionResponse)(nil), // 163: o11y_one.alerts.v1.PreviewAlertNotificationGroupExpansionResponse
+	(*UpsertNotificationPolicyRequest)(nil),                // 164: o11y_one.alerts.v1.UpsertNotificationPolicyRequest
+	(*ValidateNotificationPolicyRequest)(nil),              // 165: o11y_one.alerts.v1.ValidateNotificationPolicyRequest
+	(*ValidateNotificationPolicyResponse)(nil),             // 166: o11y_one.alerts.v1.ValidateNotificationPolicyResponse
+	(*AlertRoutingSubjectV1)(nil),                          // 167: o11y_one.alerts.v1.AlertRoutingSubjectV1
+	(*PreviewNotificationRouteRequest)(nil),                // 168: o11y_one.alerts.v1.PreviewNotificationRouteRequest
+	(*AlertRouteEvaluationV1)(nil),                         // 169: o11y_one.alerts.v1.AlertRouteEvaluationV1
+	(*PreviewNotificationRouteResponse)(nil),               // 170: o11y_one.alerts.v1.PreviewNotificationRouteResponse
+	(*PreviewNotificationPayloadRequest)(nil),              // 171: o11y_one.alerts.v1.PreviewNotificationPayloadRequest
+	(*PreviewNotificationPayloadResponse)(nil),             // 172: o11y_one.alerts.v1.PreviewNotificationPayloadResponse
+	(*GetActivationReadinessRequest)(nil),                  // 173: o11y_one.alerts.v1.GetActivationReadinessRequest
+	(*AlertActivationBlockerV1)(nil),                       // 174: o11y_one.alerts.v1.AlertActivationBlockerV1
+	(*GetActivationReadinessResponse)(nil),                 // 175: o11y_one.alerts.v1.GetActivationReadinessResponse
+	(*ListNotificationPoliciesResponse)(nil),               // 176: o11y_one.alerts.v1.ListNotificationPoliciesResponse
+	(*ListOperatorResourcesRequest)(nil),                   // 177: o11y_one.alerts.v1.ListOperatorResourcesRequest
+	(*DeleteOperatorResourceRequest)(nil),                  // 178: o11y_one.alerts.v1.DeleteOperatorResourceRequest
+	(*ListMaintenanceWindowsResponse)(nil),                 // 179: o11y_one.alerts.v1.ListMaintenanceWindowsResponse
+	(*ListSilencesResponse)(nil),                           // 180: o11y_one.alerts.v1.ListSilencesResponse
+	(*UpsertMaintenanceWindowRequest)(nil),                 // 181: o11y_one.alerts.v1.UpsertMaintenanceWindowRequest
+	(*UpsertSilenceRequest)(nil),                           // 182: o11y_one.alerts.v1.UpsertSilenceRequest
+	(*TestDestinationRequest)(nil),                         // 183: o11y_one.alerts.v1.TestDestinationRequest
+	(*TestDestinationResponse)(nil),                        // 184: o11y_one.alerts.v1.TestDestinationResponse
+	(*PutDestinationSecretRequest)(nil),                    // 185: o11y_one.alerts.v1.PutDestinationSecretRequest
+	(*RevokeDestinationSecretRequest)(nil),                 // 186: o11y_one.alerts.v1.RevokeDestinationSecretRequest
+	(*ListDestinationSecretsRequest)(nil),                  // 187: o11y_one.alerts.v1.ListDestinationSecretsRequest
+	(*DestinationSecretMetadataV1)(nil),                    // 188: o11y_one.alerts.v1.DestinationSecretMetadataV1
+	(*PutDestinationSecretResponse)(nil),                   // 189: o11y_one.alerts.v1.PutDestinationSecretResponse
+	(*RevokeDestinationSecretResponse)(nil),                // 190: o11y_one.alerts.v1.RevokeDestinationSecretResponse
+	(*ListDestinationSecretsResponse)(nil),                 // 191: o11y_one.alerts.v1.ListDestinationSecretsResponse
+	(*GetDeliveryHistoryRequest)(nil),                      // 192: o11y_one.alerts.v1.GetDeliveryHistoryRequest
+	(*GetDeliveryHistoryResponse)(nil),                     // 193: o11y_one.alerts.v1.GetDeliveryHistoryResponse
+	(*ListAlertDeliveriesRequest)(nil),                     // 194: o11y_one.alerts.v1.ListAlertDeliveriesRequest
+	(*ListAlertDeliveriesResponse)(nil),                    // 195: o11y_one.alerts.v1.ListAlertDeliveriesResponse
+	(*GetAlertDeliveryRequest)(nil),                        // 196: o11y_one.alerts.v1.GetAlertDeliveryRequest
+	(*GetAlertDeliveryResponse)(nil),                       // 197: o11y_one.alerts.v1.GetAlertDeliveryResponse
+	(*AlertDeliveryV1)(nil),                                // 198: o11y_one.alerts.v1.AlertDeliveryV1
+	(*ListAlertAuditRequest)(nil),                          // 199: o11y_one.alerts.v1.ListAlertAuditRequest
+	(*AlertAuditEventV1)(nil),                              // 200: o11y_one.alerts.v1.AlertAuditEventV1
+	(*ListAlertAuditResponse)(nil),                         // 201: o11y_one.alerts.v1.ListAlertAuditResponse
+	(*GetAlertAuditRequest)(nil),                           // 202: o11y_one.alerts.v1.GetAlertAuditRequest
+	(*GetAlertAuditResponse)(nil),                          // 203: o11y_one.alerts.v1.GetAlertAuditResponse
+	(*PreviewAlertSuppressionRequest)(nil),                 // 204: o11y_one.alerts.v1.PreviewAlertSuppressionRequest
+	(*PreviewAlertSuppressionResponse)(nil),                // 205: o11y_one.alerts.v1.PreviewAlertSuppressionResponse
+	(*TriggerCanaryRequest)(nil),                           // 206: o11y_one.alerts.v1.TriggerCanaryRequest
+	(*TriggerCanaryResponse)(nil),                          // 207: o11y_one.alerts.v1.TriggerCanaryResponse
+	(*GetCanaryRunRequest)(nil),                            // 208: o11y_one.alerts.v1.GetCanaryRunRequest
+	(*EnsureMetaAlertsRequest)(nil),                        // 209: o11y_one.alerts.v1.EnsureMetaAlertsRequest
+	(*EnsureMetaAlertsResponse)(nil),                       // 210: o11y_one.alerts.v1.EnsureMetaAlertsResponse
+	(*GetAlertMetaHealthRequest)(nil),                      // 211: o11y_one.alerts.v1.GetAlertMetaHealthRequest
+	(*GetAlertMetaHealthResponse)(nil),                     // 212: o11y_one.alerts.v1.GetAlertMetaHealthResponse
+	(*AlertMetaHealthV1)(nil),                              // 213: o11y_one.alerts.v1.AlertMetaHealthV1
+	(*AlertDefinitionLifecyclePreflightV1)(nil),            // 214: o11y_one.alerts.v1.AlertDefinitionLifecyclePreflightV1
+	(*GetAlertDefinitionLifecyclePreflightRequest)(nil),    // 215: o11y_one.alerts.v1.GetAlertDefinitionLifecyclePreflightRequest
+	(*ArchiveAlertDefinitionV2Request)(nil),                // 216: o11y_one.alerts.v1.ArchiveAlertDefinitionV2Request
+	(*RestoreAlertDefinitionRequest)(nil),                  // 217: o11y_one.alerts.v1.RestoreAlertDefinitionRequest
+	(*PurgeAlertDefinitionRequest)(nil),                    // 218: o11y_one.alerts.v1.PurgeAlertDefinitionRequest
+	(*AlertDraftV1)(nil),                                   // 219: o11y_one.alerts.v1.AlertDraftV1
+	(*PutAlertDraftRequest)(nil),                           // 220: o11y_one.alerts.v1.PutAlertDraftRequest
+	(*GetAlertDraftRequest)(nil),                           // 221: o11y_one.alerts.v1.GetAlertDraftRequest
+	(*ListAlertDraftsRequest)(nil),                         // 222: o11y_one.alerts.v1.ListAlertDraftsRequest
+	(*ListAlertDraftsResponse)(nil),                        // 223: o11y_one.alerts.v1.ListAlertDraftsResponse
+	(*DeleteAlertDraftRequest)(nil),                        // 224: o11y_one.alerts.v1.DeleteAlertDraftRequest
+	(*AlertBulkDefinitionItemV1)(nil),                      // 225: o11y_one.alerts.v1.AlertBulkDefinitionItemV1
+	(*AlertBulkDefinitionResultV1)(nil),                    // 226: o11y_one.alerts.v1.AlertBulkDefinitionResultV1
+	(*BulkMutateAlertDefinitionsRequest)(nil),              // 227: o11y_one.alerts.v1.BulkMutateAlertDefinitionsRequest
+	(*BulkMutateAlertDefinitionsResponse)(nil),             // 228: o11y_one.alerts.v1.BulkMutateAlertDefinitionsResponse
+	(*PortableAlertDefinitionV1)(nil),                      // 229: o11y_one.alerts.v1.PortableAlertDefinitionV1
+	(*AlertDefinitionExportBundleV1)(nil),                  // 230: o11y_one.alerts.v1.AlertDefinitionExportBundleV1
+	(*ExportAlertDefinitionsRequest)(nil),                  // 231: o11y_one.alerts.v1.ExportAlertDefinitionsRequest
+	(*ImportAlertDefinitionsRequest)(nil),                  // 232: o11y_one.alerts.v1.ImportAlertDefinitionsRequest
+	(*AlertDefinitionImportResultV1)(nil),                  // 233: o11y_one.alerts.v1.AlertDefinitionImportResultV1
+	(*ImportAlertDefinitionsResponse)(nil),                 // 234: o11y_one.alerts.v1.ImportAlertDefinitionsResponse
+	(*ReplayAlertDeliveryRequest)(nil),                     // 235: o11y_one.alerts.v1.ReplayAlertDeliveryRequest
+	(*ReplayAlertDeliveryResponse)(nil),                    // 236: o11y_one.alerts.v1.ReplayAlertDeliveryResponse
+	(*structpb.Struct)(nil),                                // 237: google.protobuf.Struct
+	(*timestamppb.Timestamp)(nil),                          // 238: google.protobuf.Timestamp
+	(*structpb.Value)(nil),                                 // 239: google.protobuf.Value
 }
 var file_proto_o11y_one_alerts_v1_alerts_proto_depIdxs = []int32{
 	4,   // 0: o11y_one.alerts.v1.AlertSliRevisionV1.indicator_kind:type_name -> o11y_one.alerts.v1.SliIndicatorKindV1
-	215, // 1: o11y_one.alerts.v1.AlertSliRevisionV1.scope:type_name -> google.protobuf.Struct
-	13,  // 2: o11y_one.alerts.v1.AlertSliRevisionV1.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
-	215, // 3: o11y_one.alerts.v1.AlertSliRevisionV1.eligible_events:type_name -> google.protobuf.Struct
-	215, // 4: o11y_one.alerts.v1.AlertSliRevisionV1.good_events:type_name -> google.protobuf.Struct
-	215, // 5: o11y_one.alerts.v1.AlertSliRevisionV1.excluded_events:type_name -> google.protobuf.Struct
+	237, // 1: o11y_one.alerts.v1.AlertSliRevisionV1.scope:type_name -> google.protobuf.Struct
+	15,  // 2: o11y_one.alerts.v1.AlertSliRevisionV1.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
+	237, // 3: o11y_one.alerts.v1.AlertSliRevisionV1.eligible_events:type_name -> google.protobuf.Struct
+	237, // 4: o11y_one.alerts.v1.AlertSliRevisionV1.good_events:type_name -> google.protobuf.Struct
+	237, // 5: o11y_one.alerts.v1.AlertSliRevisionV1.excluded_events:type_name -> google.protobuf.Struct
 	5,   // 6: o11y_one.alerts.v1.AlertSliRevisionV1.aggregation:type_name -> o11y_one.alerts.v1.SliAggregationV1
 	6,   // 7: o11y_one.alerts.v1.AlertSliRevisionV1.missing_data_behavior:type_name -> o11y_one.alerts.v1.SliMissingDataBehaviorV1
-	216, // 8: o11y_one.alerts.v1.AlertSliRevisionV1.created_at:type_name -> google.protobuf.Timestamp
-	216, // 9: o11y_one.alerts.v1.AlertSliV1.archived_at:type_name -> google.protobuf.Timestamp
-	216, // 10: o11y_one.alerts.v1.AlertSliV1.created_at:type_name -> google.protobuf.Timestamp
-	216, // 11: o11y_one.alerts.v1.AlertSliV1.updated_at:type_name -> google.protobuf.Timestamp
-	18,  // 12: o11y_one.alerts.v1.AlertSliV1.current_revision:type_name -> o11y_one.alerts.v1.AlertSliRevisionV1
+	238, // 8: o11y_one.alerts.v1.AlertSliRevisionV1.created_at:type_name -> google.protobuf.Timestamp
+	238, // 9: o11y_one.alerts.v1.AlertSliV1.archived_at:type_name -> google.protobuf.Timestamp
+	238, // 10: o11y_one.alerts.v1.AlertSliV1.created_at:type_name -> google.protobuf.Timestamp
+	238, // 11: o11y_one.alerts.v1.AlertSliV1.updated_at:type_name -> google.protobuf.Timestamp
+	20,  // 12: o11y_one.alerts.v1.AlertSliV1.current_revision:type_name -> o11y_one.alerts.v1.AlertSliRevisionV1
 	4,   // 13: o11y_one.alerts.v1.SliRevisionInputV1.indicator_kind:type_name -> o11y_one.alerts.v1.SliIndicatorKindV1
-	215, // 14: o11y_one.alerts.v1.SliRevisionInputV1.scope:type_name -> google.protobuf.Struct
-	13,  // 15: o11y_one.alerts.v1.SliRevisionInputV1.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
-	215, // 16: o11y_one.alerts.v1.SliRevisionInputV1.eligible_events:type_name -> google.protobuf.Struct
-	215, // 17: o11y_one.alerts.v1.SliRevisionInputV1.good_events:type_name -> google.protobuf.Struct
-	215, // 18: o11y_one.alerts.v1.SliRevisionInputV1.excluded_events:type_name -> google.protobuf.Struct
+	237, // 14: o11y_one.alerts.v1.SliRevisionInputV1.scope:type_name -> google.protobuf.Struct
+	15,  // 15: o11y_one.alerts.v1.SliRevisionInputV1.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
+	237, // 16: o11y_one.alerts.v1.SliRevisionInputV1.eligible_events:type_name -> google.protobuf.Struct
+	237, // 17: o11y_one.alerts.v1.SliRevisionInputV1.good_events:type_name -> google.protobuf.Struct
+	237, // 18: o11y_one.alerts.v1.SliRevisionInputV1.excluded_events:type_name -> google.protobuf.Struct
 	5,   // 19: o11y_one.alerts.v1.SliRevisionInputV1.aggregation:type_name -> o11y_one.alerts.v1.SliAggregationV1
 	6,   // 20: o11y_one.alerts.v1.SliRevisionInputV1.missing_data_behavior:type_name -> o11y_one.alerts.v1.SliMissingDataBehaviorV1
-	20,  // 21: o11y_one.alerts.v1.CreateSliRequest.revision:type_name -> o11y_one.alerts.v1.SliRevisionInputV1
-	20,  // 22: o11y_one.alerts.v1.UpdateSliRequest.revision:type_name -> o11y_one.alerts.v1.SliRevisionInputV1
-	20,  // 23: o11y_one.alerts.v1.ValidateSliRequest.revision:type_name -> o11y_one.alerts.v1.SliRevisionInputV1
-	54,  // 24: o11y_one.alerts.v1.ValidateSliResponse.violations:type_name -> o11y_one.alerts.v1.AlertFieldViolationV1
-	19,  // 25: o11y_one.alerts.v1.ListSlisResponse.items:type_name -> o11y_one.alerts.v1.AlertSliV1
-	18,  // 26: o11y_one.alerts.v1.ListSliRevisionsResponse.items:type_name -> o11y_one.alerts.v1.AlertSliRevisionV1
-	216, // 27: o11y_one.alerts.v1.PreviewSliRequest.range_start:type_name -> google.protobuf.Timestamp
-	216, // 28: o11y_one.alerts.v1.PreviewSliRequest.range_end:type_name -> google.protobuf.Timestamp
-	216, // 29: o11y_one.alerts.v1.SliPreviewV1.range_start:type_name -> google.protobuf.Timestamp
-	216, // 30: o11y_one.alerts.v1.SliPreviewV1.range_end:type_name -> google.protobuf.Timestamp
+	22,  // 21: o11y_one.alerts.v1.CreateSliRequest.revision:type_name -> o11y_one.alerts.v1.SliRevisionInputV1
+	22,  // 22: o11y_one.alerts.v1.UpdateSliRequest.revision:type_name -> o11y_one.alerts.v1.SliRevisionInputV1
+	22,  // 23: o11y_one.alerts.v1.ValidateSliRequest.revision:type_name -> o11y_one.alerts.v1.SliRevisionInputV1
+	56,  // 24: o11y_one.alerts.v1.ValidateSliResponse.violations:type_name -> o11y_one.alerts.v1.AlertFieldViolationV1
+	21,  // 25: o11y_one.alerts.v1.ListSlisResponse.items:type_name -> o11y_one.alerts.v1.AlertSliV1
+	20,  // 26: o11y_one.alerts.v1.ListSliRevisionsResponse.items:type_name -> o11y_one.alerts.v1.AlertSliRevisionV1
+	238, // 27: o11y_one.alerts.v1.PreviewSliRequest.range_start:type_name -> google.protobuf.Timestamp
+	238, // 28: o11y_one.alerts.v1.PreviewSliRequest.range_end:type_name -> google.protobuf.Timestamp
+	238, // 29: o11y_one.alerts.v1.SliPreviewV1.range_start:type_name -> google.protobuf.Timestamp
+	238, // 30: o11y_one.alerts.v1.SliPreviewV1.range_end:type_name -> google.protobuf.Timestamp
 	7,   // 31: o11y_one.alerts.v1.SliPreviewV1.coverage_state:type_name -> o11y_one.alerts.v1.SliCoverageStateV1
-	216, // 32: o11y_one.alerts.v1.SliPreviewV1.source_frontier:type_name -> google.protobuf.Timestamp
-	215, // 33: o11y_one.alerts.v1.SliPreviewV1.evidence:type_name -> google.protobuf.Struct
-	13,  // 34: o11y_one.alerts.v1.AlertSloRevisionV1.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
-	215, // 35: o11y_one.alerts.v1.AlertSloRevisionV1.labels:type_name -> google.protobuf.Struct
-	216, // 36: o11y_one.alerts.v1.AlertSloRevisionV1.created_at:type_name -> google.protobuf.Timestamp
-	216, // 37: o11y_one.alerts.v1.AlertSloV1.archived_at:type_name -> google.protobuf.Timestamp
-	216, // 38: o11y_one.alerts.v1.AlertSloV1.created_at:type_name -> google.protobuf.Timestamp
-	216, // 39: o11y_one.alerts.v1.AlertSloV1.updated_at:type_name -> google.protobuf.Timestamp
-	33,  // 40: o11y_one.alerts.v1.AlertSloV1.current_revision:type_name -> o11y_one.alerts.v1.AlertSloRevisionV1
-	13,  // 41: o11y_one.alerts.v1.SloRevisionInputV1.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
-	215, // 42: o11y_one.alerts.v1.SloRevisionInputV1.labels:type_name -> google.protobuf.Struct
-	35,  // 43: o11y_one.alerts.v1.CreateSloRequest.revision:type_name -> o11y_one.alerts.v1.SloRevisionInputV1
-	35,  // 44: o11y_one.alerts.v1.UpdateSloRequest.revision:type_name -> o11y_one.alerts.v1.SloRevisionInputV1
-	34,  // 45: o11y_one.alerts.v1.ListSlosResponse.items:type_name -> o11y_one.alerts.v1.AlertSloV1
-	33,  // 46: o11y_one.alerts.v1.ListSloRevisionsResponse.items:type_name -> o11y_one.alerts.v1.AlertSloRevisionV1
-	216, // 47: o11y_one.alerts.v1.GetSloStatusRequest.evaluated_at:type_name -> google.protobuf.Timestamp
-	216, // 48: o11y_one.alerts.v1.SloStatusV1.window_start:type_name -> google.protobuf.Timestamp
-	216, // 49: o11y_one.alerts.v1.SloStatusV1.window_end:type_name -> google.protobuf.Timestamp
+	238, // 32: o11y_one.alerts.v1.SliPreviewV1.source_frontier:type_name -> google.protobuf.Timestamp
+	237, // 33: o11y_one.alerts.v1.SliPreviewV1.evidence:type_name -> google.protobuf.Struct
+	15,  // 34: o11y_one.alerts.v1.AlertSloRevisionV1.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
+	237, // 35: o11y_one.alerts.v1.AlertSloRevisionV1.labels:type_name -> google.protobuf.Struct
+	238, // 36: o11y_one.alerts.v1.AlertSloRevisionV1.created_at:type_name -> google.protobuf.Timestamp
+	238, // 37: o11y_one.alerts.v1.AlertSloV1.archived_at:type_name -> google.protobuf.Timestamp
+	238, // 38: o11y_one.alerts.v1.AlertSloV1.created_at:type_name -> google.protobuf.Timestamp
+	238, // 39: o11y_one.alerts.v1.AlertSloV1.updated_at:type_name -> google.protobuf.Timestamp
+	35,  // 40: o11y_one.alerts.v1.AlertSloV1.current_revision:type_name -> o11y_one.alerts.v1.AlertSloRevisionV1
+	15,  // 41: o11y_one.alerts.v1.SloRevisionInputV1.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
+	237, // 42: o11y_one.alerts.v1.SloRevisionInputV1.labels:type_name -> google.protobuf.Struct
+	37,  // 43: o11y_one.alerts.v1.CreateSloRequest.revision:type_name -> o11y_one.alerts.v1.SloRevisionInputV1
+	37,  // 44: o11y_one.alerts.v1.UpdateSloRequest.revision:type_name -> o11y_one.alerts.v1.SloRevisionInputV1
+	36,  // 45: o11y_one.alerts.v1.ListSlosResponse.items:type_name -> o11y_one.alerts.v1.AlertSloV1
+	35,  // 46: o11y_one.alerts.v1.ListSloRevisionsResponse.items:type_name -> o11y_one.alerts.v1.AlertSloRevisionV1
+	238, // 47: o11y_one.alerts.v1.GetSloStatusRequest.evaluated_at:type_name -> google.protobuf.Timestamp
+	238, // 48: o11y_one.alerts.v1.SloStatusV1.window_start:type_name -> google.protobuf.Timestamp
+	238, // 49: o11y_one.alerts.v1.SloStatusV1.window_end:type_name -> google.protobuf.Timestamp
 	7,   // 50: o11y_one.alerts.v1.SloStatusV1.coverage_state:type_name -> o11y_one.alerts.v1.SliCoverageStateV1
-	216, // 51: o11y_one.alerts.v1.SloStatusV1.source_frontier:type_name -> google.protobuf.Timestamp
-	216, // 52: o11y_one.alerts.v1.GetSloBurndownRequest.range_start:type_name -> google.protobuf.Timestamp
-	216, // 53: o11y_one.alerts.v1.GetSloBurndownRequest.range_end:type_name -> google.protobuf.Timestamp
-	45,  // 54: o11y_one.alerts.v1.GetSloBurndownResponse.points:type_name -> o11y_one.alerts.v1.SloStatusV1
-	45,  // 55: o11y_one.alerts.v1.ListSloHistoryResponse.points:type_name -> o11y_one.alerts.v1.SloStatusV1
+	238, // 51: o11y_one.alerts.v1.SloStatusV1.source_frontier:type_name -> google.protobuf.Timestamp
+	238, // 52: o11y_one.alerts.v1.GetSloBurndownRequest.range_start:type_name -> google.protobuf.Timestamp
+	238, // 53: o11y_one.alerts.v1.GetSloBurndownRequest.range_end:type_name -> google.protobuf.Timestamp
+	47,  // 54: o11y_one.alerts.v1.GetSloBurndownResponse.points:type_name -> o11y_one.alerts.v1.SloStatusV1
+	47,  // 55: o11y_one.alerts.v1.ListSloHistoryResponse.points:type_name -> o11y_one.alerts.v1.SloStatusV1
 	2,   // 56: o11y_one.alerts.v1.CreateRecommendedSloBurnAlertRequest.severity:type_name -> o11y_one.alerts.v1.AlertSeverityV1
-	13,  // 57: o11y_one.alerts.v1.CreateRecommendedSloBurnAlertRequest.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
-	14,  // 58: o11y_one.alerts.v1.CreateRecommendedSloBurnAlertRequest.action:type_name -> o11y_one.alerts.v1.AlertActionV1
-	56,  // 59: o11y_one.alerts.v1.CreateRecommendedSloBurnAlertResponse.definitions:type_name -> o11y_one.alerts.v1.AlertDefinitionV1
-	15,  // 60: o11y_one.alerts.v1.AlertDetectorConfigV1.agent_quality_regression:type_name -> o11y_one.alerts.v1.AgentQualityRegressionConfigV1
-	16,  // 61: o11y_one.alerts.v1.AlertDetectorConfigV1.cost_per_success:type_name -> o11y_one.alerts.v1.CostPerSuccessConfigV1
-	17,  // 62: o11y_one.alerts.v1.AlertDetectorConfigV1.slo_burn:type_name -> o11y_one.alerts.v1.SloBurnConfigV1
-	52,  // 63: o11y_one.alerts.v1.AlertDetectorConfigV1.advanced_signal:type_name -> o11y_one.alerts.v1.AdvancedSignalConfigV1
-	54,  // 64: o11y_one.alerts.v1.AlertErrorDetailsV1.field_violations:type_name -> o11y_one.alerts.v1.AlertFieldViolationV1
+	15,  // 57: o11y_one.alerts.v1.CreateRecommendedSloBurnAlertRequest.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
+	16,  // 58: o11y_one.alerts.v1.CreateRecommendedSloBurnAlertRequest.action:type_name -> o11y_one.alerts.v1.AlertActionV1
+	58,  // 59: o11y_one.alerts.v1.CreateRecommendedSloBurnAlertResponse.definitions:type_name -> o11y_one.alerts.v1.AlertDefinitionV1
+	17,  // 60: o11y_one.alerts.v1.AlertDetectorConfigV1.agent_quality_regression:type_name -> o11y_one.alerts.v1.AgentQualityRegressionConfigV1
+	18,  // 61: o11y_one.alerts.v1.AlertDetectorConfigV1.cost_per_success:type_name -> o11y_one.alerts.v1.CostPerSuccessConfigV1
+	19,  // 62: o11y_one.alerts.v1.AlertDetectorConfigV1.slo_burn:type_name -> o11y_one.alerts.v1.SloBurnConfigV1
+	54,  // 63: o11y_one.alerts.v1.AlertDetectorConfigV1.advanced_signal:type_name -> o11y_one.alerts.v1.AdvancedSignalConfigV1
+	56,  // 64: o11y_one.alerts.v1.AlertErrorDetailsV1.field_violations:type_name -> o11y_one.alerts.v1.AlertFieldViolationV1
 	0,   // 65: o11y_one.alerts.v1.AlertDefinitionV1.class:type_name -> o11y_one.alerts.v1.AlertClassV1
 	1,   // 66: o11y_one.alerts.v1.AlertDefinitionV1.mode:type_name -> o11y_one.alerts.v1.AlertModeV1
 	2,   // 67: o11y_one.alerts.v1.AlertDefinitionV1.severity:type_name -> o11y_one.alerts.v1.AlertSeverityV1
-	215, // 68: o11y_one.alerts.v1.AlertDefinitionV1.scope:type_name -> google.protobuf.Struct
-	215, // 69: o11y_one.alerts.v1.AlertDefinitionV1.owner:type_name -> google.protobuf.Struct
-	215, // 70: o11y_one.alerts.v1.AlertDefinitionV1.action:type_name -> google.protobuf.Struct
-	215, // 71: o11y_one.alerts.v1.AlertDefinitionV1.evaluation_settings:type_name -> google.protobuf.Struct
-	215, // 72: o11y_one.alerts.v1.AlertDefinitionV1.sample_guard:type_name -> google.protobuf.Struct
-	216, // 73: o11y_one.alerts.v1.AlertDefinitionV1.created_at:type_name -> google.protobuf.Timestamp
-	216, // 74: o11y_one.alerts.v1.AlertDefinitionV1.updated_at:type_name -> google.protobuf.Timestamp
-	215, // 75: o11y_one.alerts.v1.AlertDefinitionV1.recipe_config:type_name -> google.protobuf.Struct
-	53,  // 76: o11y_one.alerts.v1.AlertDefinitionV1.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
-	13,  // 77: o11y_one.alerts.v1.AlertDefinitionV1.owner_ref:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
-	14,  // 78: o11y_one.alerts.v1.AlertDefinitionV1.alert_action:type_name -> o11y_one.alerts.v1.AlertActionV1
-	58,  // 79: o11y_one.alerts.v1.AlertDefinitionV1.runtime:type_name -> o11y_one.alerts.v1.AlertDefinitionRuntimeSummaryV1
-	57,  // 80: o11y_one.alerts.v1.AlertDefinitionV1.management:type_name -> o11y_one.alerts.v1.AlertManagedResourceV1
-	216, // 81: o11y_one.alerts.v1.AlertManagedResourceV1.created_at:type_name -> google.protobuf.Timestamp
-	216, // 82: o11y_one.alerts.v1.AlertManagedResourceV1.updated_at:type_name -> google.protobuf.Timestamp
-	216, // 83: o11y_one.alerts.v1.AlertDefinitionRuntimeSummaryV1.last_evaluated_at:type_name -> google.protobuf.Timestamp
-	216, // 84: o11y_one.alerts.v1.AlertDefinitionRuntimeSummaryV1.next_evaluation_at:type_name -> google.protobuf.Timestamp
+	237, // 68: o11y_one.alerts.v1.AlertDefinitionV1.scope:type_name -> google.protobuf.Struct
+	237, // 69: o11y_one.alerts.v1.AlertDefinitionV1.owner:type_name -> google.protobuf.Struct
+	237, // 70: o11y_one.alerts.v1.AlertDefinitionV1.action:type_name -> google.protobuf.Struct
+	237, // 71: o11y_one.alerts.v1.AlertDefinitionV1.evaluation_settings:type_name -> google.protobuf.Struct
+	237, // 72: o11y_one.alerts.v1.AlertDefinitionV1.sample_guard:type_name -> google.protobuf.Struct
+	238, // 73: o11y_one.alerts.v1.AlertDefinitionV1.created_at:type_name -> google.protobuf.Timestamp
+	238, // 74: o11y_one.alerts.v1.AlertDefinitionV1.updated_at:type_name -> google.protobuf.Timestamp
+	237, // 75: o11y_one.alerts.v1.AlertDefinitionV1.recipe_config:type_name -> google.protobuf.Struct
+	55,  // 76: o11y_one.alerts.v1.AlertDefinitionV1.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
+	15,  // 77: o11y_one.alerts.v1.AlertDefinitionV1.owner_ref:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
+	16,  // 78: o11y_one.alerts.v1.AlertDefinitionV1.alert_action:type_name -> o11y_one.alerts.v1.AlertActionV1
+	60,  // 79: o11y_one.alerts.v1.AlertDefinitionV1.runtime:type_name -> o11y_one.alerts.v1.AlertDefinitionRuntimeSummaryV1
+	59,  // 80: o11y_one.alerts.v1.AlertDefinitionV1.management:type_name -> o11y_one.alerts.v1.AlertManagedResourceV1
+	238, // 81: o11y_one.alerts.v1.AlertManagedResourceV1.created_at:type_name -> google.protobuf.Timestamp
+	238, // 82: o11y_one.alerts.v1.AlertManagedResourceV1.updated_at:type_name -> google.protobuf.Timestamp
+	238, // 83: o11y_one.alerts.v1.AlertDefinitionRuntimeSummaryV1.last_evaluated_at:type_name -> google.protobuf.Timestamp
+	238, // 84: o11y_one.alerts.v1.AlertDefinitionRuntimeSummaryV1.next_evaluation_at:type_name -> google.protobuf.Timestamp
 	8,   // 85: o11y_one.alerts.v1.AlertEvaluationSettingsV1.no_data_behavior:type_name -> o11y_one.alerts.v1.AlertNoDataBehaviorV1
 	0,   // 86: o11y_one.alerts.v1.AlertRevisionV1.class:type_name -> o11y_one.alerts.v1.AlertClassV1
 	1,   // 87: o11y_one.alerts.v1.AlertRevisionV1.mode:type_name -> o11y_one.alerts.v1.AlertModeV1
 	2,   // 88: o11y_one.alerts.v1.AlertRevisionV1.severity:type_name -> o11y_one.alerts.v1.AlertSeverityV1
-	59,  // 89: o11y_one.alerts.v1.AlertRevisionV1.scope:type_name -> o11y_one.alerts.v1.AlertScopeV1
-	13,  // 90: o11y_one.alerts.v1.AlertRevisionV1.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
-	14,  // 91: o11y_one.alerts.v1.AlertRevisionV1.action:type_name -> o11y_one.alerts.v1.AlertActionV1
-	60,  // 92: o11y_one.alerts.v1.AlertRevisionV1.evaluation_settings:type_name -> o11y_one.alerts.v1.AlertEvaluationSettingsV1
-	61,  // 93: o11y_one.alerts.v1.AlertRevisionV1.sample_guard:type_name -> o11y_one.alerts.v1.AlertSampleGuardV1
-	53,  // 94: o11y_one.alerts.v1.AlertRevisionV1.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
-	216, // 95: o11y_one.alerts.v1.AlertRevisionV1.activated_at:type_name -> google.protobuf.Timestamp
-	216, // 96: o11y_one.alerts.v1.AlertRevisionV1.superseded_at:type_name -> google.protobuf.Timestamp
-	216, // 97: o11y_one.alerts.v1.AlertRevisionV1.created_at:type_name -> google.protobuf.Timestamp
-	63,  // 98: o11y_one.alerts.v1.AlertRevisionDiffV1.changes:type_name -> o11y_one.alerts.v1.AlertRevisionDiffEntryV1
+	61,  // 89: o11y_one.alerts.v1.AlertRevisionV1.scope:type_name -> o11y_one.alerts.v1.AlertScopeV1
+	15,  // 90: o11y_one.alerts.v1.AlertRevisionV1.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
+	16,  // 91: o11y_one.alerts.v1.AlertRevisionV1.action:type_name -> o11y_one.alerts.v1.AlertActionV1
+	62,  // 92: o11y_one.alerts.v1.AlertRevisionV1.evaluation_settings:type_name -> o11y_one.alerts.v1.AlertEvaluationSettingsV1
+	63,  // 93: o11y_one.alerts.v1.AlertRevisionV1.sample_guard:type_name -> o11y_one.alerts.v1.AlertSampleGuardV1
+	55,  // 94: o11y_one.alerts.v1.AlertRevisionV1.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
+	238, // 95: o11y_one.alerts.v1.AlertRevisionV1.activated_at:type_name -> google.protobuf.Timestamp
+	238, // 96: o11y_one.alerts.v1.AlertRevisionV1.superseded_at:type_name -> google.protobuf.Timestamp
+	238, // 97: o11y_one.alerts.v1.AlertRevisionV1.created_at:type_name -> google.protobuf.Timestamp
+	65,  // 98: o11y_one.alerts.v1.AlertRevisionDiffV1.changes:type_name -> o11y_one.alerts.v1.AlertRevisionDiffEntryV1
 	2,   // 99: o11y_one.alerts.v1.AlertInstanceV1.severity:type_name -> o11y_one.alerts.v1.AlertSeverityV1
-	216, // 100: o11y_one.alerts.v1.AlertInstanceV1.first_firing_at:type_name -> google.protobuf.Timestamp
-	216, // 101: o11y_one.alerts.v1.AlertInstanceV1.last_state_change_at:type_name -> google.protobuf.Timestamp
-	216, // 102: o11y_one.alerts.v1.AlertInstanceV1.resolved_at:type_name -> google.protobuf.Timestamp
-	216, // 103: o11y_one.alerts.v1.AlertInstanceV1.updated_at:type_name -> google.protobuf.Timestamp
-	216, // 104: o11y_one.alerts.v1.AlertEvalRunV1.scheduled_for:type_name -> google.protobuf.Timestamp
-	216, // 105: o11y_one.alerts.v1.AlertEvalRunV1.started_at:type_name -> google.protobuf.Timestamp
-	216, // 106: o11y_one.alerts.v1.AlertEvalRunV1.finished_at:type_name -> google.protobuf.Timestamp
-	215, // 107: o11y_one.alerts.v1.AlertEvalRunV1.facts_summary:type_name -> google.protobuf.Struct
-	215, // 108: o11y_one.alerts.v1.AlertEvalRunV1.metadata:type_name -> google.protobuf.Struct
-	216, // 109: o11y_one.alerts.v1.AlertStateEventV1.occurred_at:type_name -> google.protobuf.Timestamp
-	215, // 110: o11y_one.alerts.v1.AlertPreviewRunV1.sample_guard_result:type_name -> google.protobuf.Struct
-	217, // 111: o11y_one.alerts.v1.AlertPreviewRunV1.evidence_refs:type_name -> google.protobuf.Value
-	217, // 112: o11y_one.alerts.v1.AlertPreviewRunV1.activation_blockers:type_name -> google.protobuf.Value
-	215, // 113: o11y_one.alerts.v1.AlertPreviewRunV1.result:type_name -> google.protobuf.Struct
-	216, // 114: o11y_one.alerts.v1.AlertPreviewRunV1.created_at:type_name -> google.protobuf.Timestamp
-	69,  // 115: o11y_one.alerts.v1.AlertPreviewRunV1.coverage:type_name -> o11y_one.alerts.v1.AlertPreviewCoverageV1
-	70,  // 116: o11y_one.alerts.v1.AlertPreviewRunV1.typed_sample_guard:type_name -> o11y_one.alerts.v1.AlertPreviewSampleGuardResultV1
-	71,  // 117: o11y_one.alerts.v1.AlertPreviewRunV1.route_decisions:type_name -> o11y_one.alerts.v1.AlertPreviewRouteDecisionV1
-	72,  // 118: o11y_one.alerts.v1.AlertPreviewRunV1.noise_budget_effect:type_name -> o11y_one.alerts.v1.AlertPreviewNoiseBudgetEffectV1
-	216, // 119: o11y_one.alerts.v1.AlertPreviewRunV1.range_start:type_name -> google.protobuf.Timestamp
-	216, // 120: o11y_one.alerts.v1.AlertPreviewRunV1.range_end:type_name -> google.protobuf.Timestamp
+	238, // 100: o11y_one.alerts.v1.AlertInstanceV1.first_firing_at:type_name -> google.protobuf.Timestamp
+	238, // 101: o11y_one.alerts.v1.AlertInstanceV1.last_state_change_at:type_name -> google.protobuf.Timestamp
+	238, // 102: o11y_one.alerts.v1.AlertInstanceV1.resolved_at:type_name -> google.protobuf.Timestamp
+	238, // 103: o11y_one.alerts.v1.AlertInstanceV1.updated_at:type_name -> google.protobuf.Timestamp
+	238, // 104: o11y_one.alerts.v1.AlertEvalRunV1.scheduled_for:type_name -> google.protobuf.Timestamp
+	238, // 105: o11y_one.alerts.v1.AlertEvalRunV1.started_at:type_name -> google.protobuf.Timestamp
+	238, // 106: o11y_one.alerts.v1.AlertEvalRunV1.finished_at:type_name -> google.protobuf.Timestamp
+	237, // 107: o11y_one.alerts.v1.AlertEvalRunV1.facts_summary:type_name -> google.protobuf.Struct
+	237, // 108: o11y_one.alerts.v1.AlertEvalRunV1.metadata:type_name -> google.protobuf.Struct
+	238, // 109: o11y_one.alerts.v1.AlertStateEventV1.occurred_at:type_name -> google.protobuf.Timestamp
+	237, // 110: o11y_one.alerts.v1.AlertPreviewRunV1.sample_guard_result:type_name -> google.protobuf.Struct
+	239, // 111: o11y_one.alerts.v1.AlertPreviewRunV1.evidence_refs:type_name -> google.protobuf.Value
+	239, // 112: o11y_one.alerts.v1.AlertPreviewRunV1.activation_blockers:type_name -> google.protobuf.Value
+	237, // 113: o11y_one.alerts.v1.AlertPreviewRunV1.result:type_name -> google.protobuf.Struct
+	238, // 114: o11y_one.alerts.v1.AlertPreviewRunV1.created_at:type_name -> google.protobuf.Timestamp
+	71,  // 115: o11y_one.alerts.v1.AlertPreviewRunV1.coverage:type_name -> o11y_one.alerts.v1.AlertPreviewCoverageV1
+	72,  // 116: o11y_one.alerts.v1.AlertPreviewRunV1.typed_sample_guard:type_name -> o11y_one.alerts.v1.AlertPreviewSampleGuardResultV1
+	73,  // 117: o11y_one.alerts.v1.AlertPreviewRunV1.route_decisions:type_name -> o11y_one.alerts.v1.AlertPreviewRouteDecisionV1
+	74,  // 118: o11y_one.alerts.v1.AlertPreviewRunV1.noise_budget_effect:type_name -> o11y_one.alerts.v1.AlertPreviewNoiseBudgetEffectV1
+	238, // 119: o11y_one.alerts.v1.AlertPreviewRunV1.range_start:type_name -> google.protobuf.Timestamp
+	238, // 120: o11y_one.alerts.v1.AlertPreviewRunV1.range_end:type_name -> google.protobuf.Timestamp
 	9,   // 121: o11y_one.alerts.v1.AlertPreviewCoverageV1.state:type_name -> o11y_one.alerts.v1.AlertPreviewCoverageStateV1
-	216, // 122: o11y_one.alerts.v1.AlertPreviewRouteDecisionV1.evaluated_at:type_name -> google.protobuf.Timestamp
+	238, // 122: o11y_one.alerts.v1.AlertPreviewRouteDecisionV1.evaluated_at:type_name -> google.protobuf.Timestamp
 	3,   // 123: o11y_one.alerts.v1.AlertDeliveryHistoryV1.destination_kind:type_name -> o11y_one.alerts.v1.AlertDestinationKindV1
-	216, // 124: o11y_one.alerts.v1.AlertDeliveryHistoryV1.created_at:type_name -> google.protobuf.Timestamp
-	216, // 125: o11y_one.alerts.v1.AlertDeliveryHistoryV1.updated_at:type_name -> google.protobuf.Timestamp
-	74,  // 126: o11y_one.alerts.v1.AlertDeliveryHistoryV1.attempt_history:type_name -> o11y_one.alerts.v1.AlertDeliveryAttemptV1
-	216, // 127: o11y_one.alerts.v1.AlertDeliveryAttemptV1.attempted_at:type_name -> google.protobuf.Timestamp
+	238, // 124: o11y_one.alerts.v1.AlertDeliveryHistoryV1.created_at:type_name -> google.protobuf.Timestamp
+	238, // 125: o11y_one.alerts.v1.AlertDeliveryHistoryV1.updated_at:type_name -> google.protobuf.Timestamp
+	76,  // 126: o11y_one.alerts.v1.AlertDeliveryHistoryV1.attempt_history:type_name -> o11y_one.alerts.v1.AlertDeliveryAttemptV1
+	238, // 127: o11y_one.alerts.v1.AlertDeliveryAttemptV1.attempted_at:type_name -> google.protobuf.Timestamp
 	3,   // 128: o11y_one.alerts.v1.AlertDestinationSetupRequirementsV1.kind:type_name -> o11y_one.alerts.v1.AlertDestinationKindV1
-	75,  // 129: o11y_one.alerts.v1.AlertDestinationSetupRequirementsV1.fields:type_name -> o11y_one.alerts.v1.AlertDestinationFieldRequirementV1
+	77,  // 129: o11y_one.alerts.v1.AlertDestinationSetupRequirementsV1.fields:type_name -> o11y_one.alerts.v1.AlertDestinationFieldRequirementV1
 	10,  // 130: o11y_one.alerts.v1.AlertDestinationVerificationV1.state:type_name -> o11y_one.alerts.v1.AlertDestinationVerificationStateV1
-	216, // 131: o11y_one.alerts.v1.AlertDestinationVerificationV1.attempted_at:type_name -> google.protobuf.Timestamp
-	216, // 132: o11y_one.alerts.v1.AlertDestinationVerificationV1.succeeded_at:type_name -> google.protobuf.Timestamp
-	216, // 133: o11y_one.alerts.v1.AlertDestinationVerificationV1.stale_at:type_name -> google.protobuf.Timestamp
-	78,  // 134: o11y_one.alerts.v1.AlertDestinationUsageV1.routes:type_name -> o11y_one.alerts.v1.AlertDestinationRouteUsageV1
+	238, // 131: o11y_one.alerts.v1.AlertDestinationVerificationV1.attempted_at:type_name -> google.protobuf.Timestamp
+	238, // 132: o11y_one.alerts.v1.AlertDestinationVerificationV1.succeeded_at:type_name -> google.protobuf.Timestamp
+	238, // 133: o11y_one.alerts.v1.AlertDestinationVerificationV1.stale_at:type_name -> google.protobuf.Timestamp
+	80,  // 134: o11y_one.alerts.v1.AlertDestinationUsageV1.routes:type_name -> o11y_one.alerts.v1.AlertDestinationRouteUsageV1
 	3,   // 135: o11y_one.alerts.v1.AlertDestinationV1.kind:type_name -> o11y_one.alerts.v1.AlertDestinationKindV1
-	215, // 136: o11y_one.alerts.v1.AlertDestinationV1.config:type_name -> google.protobuf.Struct
-	215, // 137: o11y_one.alerts.v1.AlertDestinationV1.secret_refs:type_name -> google.protobuf.Struct
-	216, // 138: o11y_one.alerts.v1.AlertDestinationV1.last_tested_at:type_name -> google.protobuf.Timestamp
-	216, // 139: o11y_one.alerts.v1.AlertDestinationV1.created_at:type_name -> google.protobuf.Timestamp
-	216, // 140: o11y_one.alerts.v1.AlertDestinationV1.updated_at:type_name -> google.protobuf.Timestamp
-	76,  // 141: o11y_one.alerts.v1.AlertDestinationV1.setup_requirements:type_name -> o11y_one.alerts.v1.AlertDestinationSetupRequirementsV1
-	77,  // 142: o11y_one.alerts.v1.AlertDestinationV1.verification:type_name -> o11y_one.alerts.v1.AlertDestinationVerificationV1
-	79,  // 143: o11y_one.alerts.v1.AlertDestinationV1.usage:type_name -> o11y_one.alerts.v1.AlertDestinationUsageV1
-	81,  // 144: o11y_one.alerts.v1.AlertMatcherClauseV1.values:type_name -> o11y_one.alerts.v1.AlertMatcherValueV1
-	82,  // 145: o11y_one.alerts.v1.AlertNotificationRouteV1.matcher:type_name -> o11y_one.alerts.v1.AlertMatcherClauseV1
-	83,  // 146: o11y_one.alerts.v1.AlertNotificationRouteV1.target:type_name -> o11y_one.alerts.v1.AlertNotificationRouteTargetV1
+	237, // 136: o11y_one.alerts.v1.AlertDestinationV1.config:type_name -> google.protobuf.Struct
+	237, // 137: o11y_one.alerts.v1.AlertDestinationV1.secret_refs:type_name -> google.protobuf.Struct
+	238, // 138: o11y_one.alerts.v1.AlertDestinationV1.last_tested_at:type_name -> google.protobuf.Timestamp
+	238, // 139: o11y_one.alerts.v1.AlertDestinationV1.created_at:type_name -> google.protobuf.Timestamp
+	238, // 140: o11y_one.alerts.v1.AlertDestinationV1.updated_at:type_name -> google.protobuf.Timestamp
+	78,  // 141: o11y_one.alerts.v1.AlertDestinationV1.setup_requirements:type_name -> o11y_one.alerts.v1.AlertDestinationSetupRequirementsV1
+	79,  // 142: o11y_one.alerts.v1.AlertDestinationV1.verification:type_name -> o11y_one.alerts.v1.AlertDestinationVerificationV1
+	81,  // 143: o11y_one.alerts.v1.AlertDestinationV1.usage:type_name -> o11y_one.alerts.v1.AlertDestinationUsageV1
+	83,  // 144: o11y_one.alerts.v1.AlertMatcherClauseV1.values:type_name -> o11y_one.alerts.v1.AlertMatcherValueV1
+	84,  // 145: o11y_one.alerts.v1.AlertNotificationRouteV1.matcher:type_name -> o11y_one.alerts.v1.AlertMatcherClauseV1
+	85,  // 146: o11y_one.alerts.v1.AlertNotificationRouteV1.target:type_name -> o11y_one.alerts.v1.AlertNotificationRouteTargetV1
 	11,  // 147: o11y_one.alerts.v1.AlertNotificationRouteV1.behavior:type_name -> o11y_one.alerts.v1.AlertNotificationRouteBehaviorV1
-	84,  // 148: o11y_one.alerts.v1.AlertNotificationPolicyConfigV1.routes:type_name -> o11y_one.alerts.v1.AlertNotificationRouteV1
-	82,  // 149: o11y_one.alerts.v1.AlertNotificationPolicyConfigV1.inhibition_matcher:type_name -> o11y_one.alerts.v1.AlertMatcherClauseV1
-	215, // 150: o11y_one.alerts.v1.AlertNotificationPolicyV1.config:type_name -> google.protobuf.Struct
-	216, // 151: o11y_one.alerts.v1.AlertNotificationPolicyV1.created_at:type_name -> google.protobuf.Timestamp
-	216, // 152: o11y_one.alerts.v1.AlertNotificationPolicyV1.updated_at:type_name -> google.protobuf.Timestamp
-	85,  // 153: o11y_one.alerts.v1.AlertNotificationPolicyV1.effective_policy:type_name -> o11y_one.alerts.v1.AlertNotificationPolicyConfigV1
-	84,  // 154: o11y_one.alerts.v1.AlertNotificationPolicyV1.routes:type_name -> o11y_one.alerts.v1.AlertNotificationRouteV1
-	86,  // 155: o11y_one.alerts.v1.AlertNotificationPolicyV1.diagnostics:type_name -> o11y_one.alerts.v1.AlertPolicyDiagnosticV1
-	215, // 156: o11y_one.alerts.v1.AlertMaintenanceWindowV1.scope:type_name -> google.protobuf.Struct
-	216, // 157: o11y_one.alerts.v1.AlertMaintenanceWindowV1.starts_at:type_name -> google.protobuf.Timestamp
-	216, // 158: o11y_one.alerts.v1.AlertMaintenanceWindowV1.ends_at:type_name -> google.protobuf.Timestamp
-	215, // 159: o11y_one.alerts.v1.AlertSilenceV1.matcher:type_name -> google.protobuf.Struct
-	216, // 160: o11y_one.alerts.v1.AlertSilenceV1.starts_at:type_name -> google.protobuf.Timestamp
-	216, // 161: o11y_one.alerts.v1.AlertSilenceV1.ends_at:type_name -> google.protobuf.Timestamp
+	86,  // 148: o11y_one.alerts.v1.AlertNotificationPolicyConfigV1.routes:type_name -> o11y_one.alerts.v1.AlertNotificationRouteV1
+	84,  // 149: o11y_one.alerts.v1.AlertNotificationPolicyConfigV1.inhibition_matcher:type_name -> o11y_one.alerts.v1.AlertMatcherClauseV1
+	237, // 150: o11y_one.alerts.v1.AlertNotificationPolicyV1.config:type_name -> google.protobuf.Struct
+	238, // 151: o11y_one.alerts.v1.AlertNotificationPolicyV1.created_at:type_name -> google.protobuf.Timestamp
+	238, // 152: o11y_one.alerts.v1.AlertNotificationPolicyV1.updated_at:type_name -> google.protobuf.Timestamp
+	87,  // 153: o11y_one.alerts.v1.AlertNotificationPolicyV1.effective_policy:type_name -> o11y_one.alerts.v1.AlertNotificationPolicyConfigV1
+	86,  // 154: o11y_one.alerts.v1.AlertNotificationPolicyV1.routes:type_name -> o11y_one.alerts.v1.AlertNotificationRouteV1
+	88,  // 155: o11y_one.alerts.v1.AlertNotificationPolicyV1.diagnostics:type_name -> o11y_one.alerts.v1.AlertPolicyDiagnosticV1
+	237, // 156: o11y_one.alerts.v1.AlertMaintenanceWindowV1.scope:type_name -> google.protobuf.Struct
+	238, // 157: o11y_one.alerts.v1.AlertMaintenanceWindowV1.starts_at:type_name -> google.protobuf.Timestamp
+	238, // 158: o11y_one.alerts.v1.AlertMaintenanceWindowV1.ends_at:type_name -> google.protobuf.Timestamp
+	237, // 159: o11y_one.alerts.v1.AlertSilenceV1.matcher:type_name -> google.protobuf.Struct
+	238, // 160: o11y_one.alerts.v1.AlertSilenceV1.starts_at:type_name -> google.protobuf.Timestamp
+	238, // 161: o11y_one.alerts.v1.AlertSilenceV1.ends_at:type_name -> google.protobuf.Timestamp
 	2,   // 162: o11y_one.alerts.v1.AlertRecipeBaseV1.severity:type_name -> o11y_one.alerts.v1.AlertSeverityV1
-	215, // 163: o11y_one.alerts.v1.AlertRecipeBaseV1.scope:type_name -> google.protobuf.Struct
-	215, // 164: o11y_one.alerts.v1.AlertRecipeBaseV1.owner:type_name -> google.protobuf.Struct
-	215, // 165: o11y_one.alerts.v1.AlertRecipeBaseV1.action:type_name -> google.protobuf.Struct
-	215, // 166: o11y_one.alerts.v1.AlertRecipeBaseV1.evaluation_settings:type_name -> google.protobuf.Struct
-	215, // 167: o11y_one.alerts.v1.AlertRecipeBaseV1.sample_guard:type_name -> google.protobuf.Struct
-	13,  // 168: o11y_one.alerts.v1.AlertRecipeBaseV1.owner_ref:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
-	14,  // 169: o11y_one.alerts.v1.AlertRecipeBaseV1.alert_action:type_name -> o11y_one.alerts.v1.AlertActionV1
-	90,  // 170: o11y_one.alerts.v1.CreateAgentQualityRegressionAlertRequest.base:type_name -> o11y_one.alerts.v1.AlertRecipeBaseV1
-	215, // 171: o11y_one.alerts.v1.CreateAgentQualityRegressionAlertRequest.recipe_config:type_name -> google.protobuf.Struct
-	53,  // 172: o11y_one.alerts.v1.CreateAgentQualityRegressionAlertRequest.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
-	90,  // 173: o11y_one.alerts.v1.CreateCostPerSuccessAlertRequest.base:type_name -> o11y_one.alerts.v1.AlertRecipeBaseV1
-	215, // 174: o11y_one.alerts.v1.CreateCostPerSuccessAlertRequest.recipe_config:type_name -> google.protobuf.Struct
-	53,  // 175: o11y_one.alerts.v1.CreateCostPerSuccessAlertRequest.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
-	90,  // 176: o11y_one.alerts.v1.CreateSloBurnAlertRequest.base:type_name -> o11y_one.alerts.v1.AlertRecipeBaseV1
-	215, // 177: o11y_one.alerts.v1.CreateSloBurnAlertRequest.recipe_config:type_name -> google.protobuf.Struct
-	53,  // 178: o11y_one.alerts.v1.CreateSloBurnAlertRequest.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
-	90,  // 179: o11y_one.alerts.v1.CreateAdvancedSignalAlertRequest.base:type_name -> o11y_one.alerts.v1.AlertRecipeBaseV1
-	215, // 180: o11y_one.alerts.v1.CreateAdvancedSignalAlertRequest.condition:type_name -> google.protobuf.Struct
-	53,  // 181: o11y_one.alerts.v1.CreateAdvancedSignalAlertRequest.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
-	56,  // 182: o11y_one.alerts.v1.CreateAlertDefinitionResponse.definition:type_name -> o11y_one.alerts.v1.AlertDefinitionV1
-	56,  // 183: o11y_one.alerts.v1.ListAlertDefinitionsResponse.items:type_name -> o11y_one.alerts.v1.AlertDefinitionV1
-	215, // 184: o11y_one.alerts.v1.UpdateShadowAlertRequest.owner:type_name -> google.protobuf.Struct
-	215, // 185: o11y_one.alerts.v1.UpdateShadowAlertRequest.action:type_name -> google.protobuf.Struct
-	215, // 186: o11y_one.alerts.v1.UpdateShadowAlertRequest.evaluation_settings:type_name -> google.protobuf.Struct
-	215, // 187: o11y_one.alerts.v1.UpdateShadowAlertRequest.sample_guard:type_name -> google.protobuf.Struct
-	13,  // 188: o11y_one.alerts.v1.UpdateShadowAlertRequest.owner_ref:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
-	14,  // 189: o11y_one.alerts.v1.UpdateShadowAlertRequest.alert_action:type_name -> o11y_one.alerts.v1.AlertActionV1
+	237, // 163: o11y_one.alerts.v1.AlertRecipeBaseV1.scope:type_name -> google.protobuf.Struct
+	237, // 164: o11y_one.alerts.v1.AlertRecipeBaseV1.owner:type_name -> google.protobuf.Struct
+	237, // 165: o11y_one.alerts.v1.AlertRecipeBaseV1.action:type_name -> google.protobuf.Struct
+	237, // 166: o11y_one.alerts.v1.AlertRecipeBaseV1.evaluation_settings:type_name -> google.protobuf.Struct
+	237, // 167: o11y_one.alerts.v1.AlertRecipeBaseV1.sample_guard:type_name -> google.protobuf.Struct
+	15,  // 168: o11y_one.alerts.v1.AlertRecipeBaseV1.owner_ref:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
+	16,  // 169: o11y_one.alerts.v1.AlertRecipeBaseV1.alert_action:type_name -> o11y_one.alerts.v1.AlertActionV1
+	92,  // 170: o11y_one.alerts.v1.CreateAgentQualityRegressionAlertRequest.base:type_name -> o11y_one.alerts.v1.AlertRecipeBaseV1
+	237, // 171: o11y_one.alerts.v1.CreateAgentQualityRegressionAlertRequest.recipe_config:type_name -> google.protobuf.Struct
+	55,  // 172: o11y_one.alerts.v1.CreateAgentQualityRegressionAlertRequest.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
+	92,  // 173: o11y_one.alerts.v1.CreateCostPerSuccessAlertRequest.base:type_name -> o11y_one.alerts.v1.AlertRecipeBaseV1
+	237, // 174: o11y_one.alerts.v1.CreateCostPerSuccessAlertRequest.recipe_config:type_name -> google.protobuf.Struct
+	55,  // 175: o11y_one.alerts.v1.CreateCostPerSuccessAlertRequest.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
+	92,  // 176: o11y_one.alerts.v1.CreateSloBurnAlertRequest.base:type_name -> o11y_one.alerts.v1.AlertRecipeBaseV1
+	237, // 177: o11y_one.alerts.v1.CreateSloBurnAlertRequest.recipe_config:type_name -> google.protobuf.Struct
+	55,  // 178: o11y_one.alerts.v1.CreateSloBurnAlertRequest.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
+	92,  // 179: o11y_one.alerts.v1.CreateAdvancedSignalAlertRequest.base:type_name -> o11y_one.alerts.v1.AlertRecipeBaseV1
+	237, // 180: o11y_one.alerts.v1.CreateAdvancedSignalAlertRequest.condition:type_name -> google.protobuf.Struct
+	55,  // 181: o11y_one.alerts.v1.CreateAdvancedSignalAlertRequest.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
+	58,  // 182: o11y_one.alerts.v1.CreateAlertDefinitionResponse.definition:type_name -> o11y_one.alerts.v1.AlertDefinitionV1
+	58,  // 183: o11y_one.alerts.v1.ListAlertDefinitionsResponse.items:type_name -> o11y_one.alerts.v1.AlertDefinitionV1
+	237, // 184: o11y_one.alerts.v1.UpdateShadowAlertRequest.owner:type_name -> google.protobuf.Struct
+	237, // 185: o11y_one.alerts.v1.UpdateShadowAlertRequest.action:type_name -> google.protobuf.Struct
+	237, // 186: o11y_one.alerts.v1.UpdateShadowAlertRequest.evaluation_settings:type_name -> google.protobuf.Struct
+	237, // 187: o11y_one.alerts.v1.UpdateShadowAlertRequest.sample_guard:type_name -> google.protobuf.Struct
+	15,  // 188: o11y_one.alerts.v1.UpdateShadowAlertRequest.owner_ref:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
+	16,  // 189: o11y_one.alerts.v1.UpdateShadowAlertRequest.alert_action:type_name -> o11y_one.alerts.v1.AlertActionV1
 	2,   // 190: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest.severity:type_name -> o11y_one.alerts.v1.AlertSeverityV1
-	59,  // 191: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest.scope:type_name -> o11y_one.alerts.v1.AlertScopeV1
-	13,  // 192: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
-	14,  // 193: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest.action:type_name -> o11y_one.alerts.v1.AlertActionV1
-	60,  // 194: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest.evaluation_settings:type_name -> o11y_one.alerts.v1.AlertEvaluationSettingsV1
-	61,  // 195: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest.sample_guard:type_name -> o11y_one.alerts.v1.AlertSampleGuardV1
-	53,  // 196: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
-	62,  // 197: o11y_one.alerts.v1.ListAlertRevisionsResponse.items:type_name -> o11y_one.alerts.v1.AlertRevisionV1
-	65,  // 198: o11y_one.alerts.v1.ListActiveAlertInstancesResponse.items:type_name -> o11y_one.alerts.v1.AlertInstanceV1
-	66,  // 199: o11y_one.alerts.v1.ListAlertEvalHistoryResponse.items:type_name -> o11y_one.alerts.v1.AlertEvalRunV1
-	67,  // 200: o11y_one.alerts.v1.ListAlertStateHistoryResponse.items:type_name -> o11y_one.alerts.v1.AlertStateEventV1
-	118, // 201: o11y_one.alerts.v1.GetIncidentCandidateResponse.incident:type_name -> o11y_one.alerts.v1.AlertIncidentV1
-	215, // 202: o11y_one.alerts.v1.AlertIncidentMemberV1.decision:type_name -> google.protobuf.Struct
-	216, // 203: o11y_one.alerts.v1.AlertIncidentMemberV1.first_observed_at:type_name -> google.protobuf.Timestamp
-	216, // 204: o11y_one.alerts.v1.AlertIncidentMemberV1.last_observed_at:type_name -> google.protobuf.Timestamp
-	216, // 205: o11y_one.alerts.v1.AlertIncidentMemberV1.resolved_at:type_name -> google.protobuf.Timestamp
-	215, // 206: o11y_one.alerts.v1.AlertIncidentV1.correlation_hints:type_name -> google.protobuf.Struct
-	216, // 207: o11y_one.alerts.v1.AlertIncidentV1.window_start:type_name -> google.protobuf.Timestamp
-	216, // 208: o11y_one.alerts.v1.AlertIncidentV1.window_end:type_name -> google.protobuf.Timestamp
-	216, // 209: o11y_one.alerts.v1.AlertIncidentV1.opened_at:type_name -> google.protobuf.Timestamp
-	216, // 210: o11y_one.alerts.v1.AlertIncidentV1.last_observed_at:type_name -> google.protobuf.Timestamp
-	216, // 211: o11y_one.alerts.v1.AlertIncidentV1.resolved_at:type_name -> google.protobuf.Timestamp
-	216, // 212: o11y_one.alerts.v1.AlertIncidentV1.updated_at:type_name -> google.protobuf.Timestamp
-	117, // 213: o11y_one.alerts.v1.AlertIncidentV1.members:type_name -> o11y_one.alerts.v1.AlertIncidentMemberV1
-	216, // 214: o11y_one.alerts.v1.ListAlertIncidentsRequest.observed_after:type_name -> google.protobuf.Timestamp
-	216, // 215: o11y_one.alerts.v1.ListAlertIncidentsRequest.observed_before:type_name -> google.protobuf.Timestamp
-	215, // 216: o11y_one.alerts.v1.ListAlertIncidentsRequest.scope:type_name -> google.protobuf.Struct
-	118, // 217: o11y_one.alerts.v1.ListAlertIncidentsResponse.items:type_name -> o11y_one.alerts.v1.AlertIncidentV1
-	118, // 218: o11y_one.alerts.v1.GetAlertIncidentResponse.incident:type_name -> o11y_one.alerts.v1.AlertIncidentV1
-	215, // 219: o11y_one.alerts.v1.AlertIncidentTimelineEventV1.details:type_name -> google.protobuf.Struct
-	216, // 220: o11y_one.alerts.v1.AlertIncidentTimelineEventV1.occurred_at:type_name -> google.protobuf.Timestamp
-	123, // 221: o11y_one.alerts.v1.ListAlertIncidentTimelineResponse.items:type_name -> o11y_one.alerts.v1.AlertIncidentTimelineEventV1
-	215, // 222: o11y_one.alerts.v1.ListAlertInstancesRequest.scope:type_name -> google.protobuf.Struct
-	216, // 223: o11y_one.alerts.v1.ListAlertInstancesRequest.updated_after:type_name -> google.protobuf.Timestamp
-	216, // 224: o11y_one.alerts.v1.ListAlertInstancesRequest.updated_before:type_name -> google.protobuf.Timestamp
-	65,  // 225: o11y_one.alerts.v1.ListAlertInstancesResponse.items:type_name -> o11y_one.alerts.v1.AlertInstanceV1
-	215, // 226: o11y_one.alerts.v1.ExplainWhyFiredResponse.explanation:type_name -> google.protobuf.Struct
-	216, // 227: o11y_one.alerts.v1.PreviewAlertRequest.range_start:type_name -> google.protobuf.Timestamp
-	216, // 228: o11y_one.alerts.v1.PreviewAlertRequest.range_end:type_name -> google.protobuf.Timestamp
-	68,  // 229: o11y_one.alerts.v1.PreviewAlertResponse.preview:type_name -> o11y_one.alerts.v1.AlertPreviewRunV1
-	68,  // 230: o11y_one.alerts.v1.ListPreviewHistoryResponse.items:type_name -> o11y_one.alerts.v1.AlertPreviewRunV1
+	61,  // 191: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest.scope:type_name -> o11y_one.alerts.v1.AlertScopeV1
+	15,  // 192: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
+	16,  // 193: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest.action:type_name -> o11y_one.alerts.v1.AlertActionV1
+	62,  // 194: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest.evaluation_settings:type_name -> o11y_one.alerts.v1.AlertEvaluationSettingsV1
+	63,  // 195: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest.sample_guard:type_name -> o11y_one.alerts.v1.AlertSampleGuardV1
+	55,  // 196: o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
+	64,  // 197: o11y_one.alerts.v1.ListAlertRevisionsResponse.items:type_name -> o11y_one.alerts.v1.AlertRevisionV1
+	67,  // 198: o11y_one.alerts.v1.ListActiveAlertInstancesResponse.items:type_name -> o11y_one.alerts.v1.AlertInstanceV1
+	68,  // 199: o11y_one.alerts.v1.ListAlertEvalHistoryResponse.items:type_name -> o11y_one.alerts.v1.AlertEvalRunV1
+	69,  // 200: o11y_one.alerts.v1.ListAlertStateHistoryResponse.items:type_name -> o11y_one.alerts.v1.AlertStateEventV1
+	120, // 201: o11y_one.alerts.v1.GetIncidentCandidateResponse.incident:type_name -> o11y_one.alerts.v1.AlertIncidentV1
+	237, // 202: o11y_one.alerts.v1.AlertIncidentMemberV1.decision:type_name -> google.protobuf.Struct
+	238, // 203: o11y_one.alerts.v1.AlertIncidentMemberV1.first_observed_at:type_name -> google.protobuf.Timestamp
+	238, // 204: o11y_one.alerts.v1.AlertIncidentMemberV1.last_observed_at:type_name -> google.protobuf.Timestamp
+	238, // 205: o11y_one.alerts.v1.AlertIncidentMemberV1.resolved_at:type_name -> google.protobuf.Timestamp
+	237, // 206: o11y_one.alerts.v1.AlertIncidentV1.correlation_hints:type_name -> google.protobuf.Struct
+	238, // 207: o11y_one.alerts.v1.AlertIncidentV1.window_start:type_name -> google.protobuf.Timestamp
+	238, // 208: o11y_one.alerts.v1.AlertIncidentV1.window_end:type_name -> google.protobuf.Timestamp
+	238, // 209: o11y_one.alerts.v1.AlertIncidentV1.opened_at:type_name -> google.protobuf.Timestamp
+	238, // 210: o11y_one.alerts.v1.AlertIncidentV1.last_observed_at:type_name -> google.protobuf.Timestamp
+	238, // 211: o11y_one.alerts.v1.AlertIncidentV1.resolved_at:type_name -> google.protobuf.Timestamp
+	238, // 212: o11y_one.alerts.v1.AlertIncidentV1.updated_at:type_name -> google.protobuf.Timestamp
+	119, // 213: o11y_one.alerts.v1.AlertIncidentV1.members:type_name -> o11y_one.alerts.v1.AlertIncidentMemberV1
+	238, // 214: o11y_one.alerts.v1.ListAlertIncidentsRequest.observed_after:type_name -> google.protobuf.Timestamp
+	238, // 215: o11y_one.alerts.v1.ListAlertIncidentsRequest.observed_before:type_name -> google.protobuf.Timestamp
+	237, // 216: o11y_one.alerts.v1.ListAlertIncidentsRequest.scope:type_name -> google.protobuf.Struct
+	120, // 217: o11y_one.alerts.v1.ListAlertIncidentsResponse.items:type_name -> o11y_one.alerts.v1.AlertIncidentV1
+	120, // 218: o11y_one.alerts.v1.GetAlertIncidentResponse.incident:type_name -> o11y_one.alerts.v1.AlertIncidentV1
+	237, // 219: o11y_one.alerts.v1.AlertIncidentTimelineEventV1.details:type_name -> google.protobuf.Struct
+	238, // 220: o11y_one.alerts.v1.AlertIncidentTimelineEventV1.occurred_at:type_name -> google.protobuf.Timestamp
+	125, // 221: o11y_one.alerts.v1.ListAlertIncidentTimelineResponse.items:type_name -> o11y_one.alerts.v1.AlertIncidentTimelineEventV1
+	237, // 222: o11y_one.alerts.v1.ListAlertInstancesRequest.scope:type_name -> google.protobuf.Struct
+	238, // 223: o11y_one.alerts.v1.ListAlertInstancesRequest.updated_after:type_name -> google.protobuf.Timestamp
+	238, // 224: o11y_one.alerts.v1.ListAlertInstancesRequest.updated_before:type_name -> google.protobuf.Timestamp
+	67,  // 225: o11y_one.alerts.v1.ListAlertInstancesResponse.items:type_name -> o11y_one.alerts.v1.AlertInstanceV1
+	237, // 226: o11y_one.alerts.v1.ExplainWhyFiredResponse.explanation:type_name -> google.protobuf.Struct
+	238, // 227: o11y_one.alerts.v1.PreviewAlertRequest.range_start:type_name -> google.protobuf.Timestamp
+	238, // 228: o11y_one.alerts.v1.PreviewAlertRequest.range_end:type_name -> google.protobuf.Timestamp
+	70,  // 229: o11y_one.alerts.v1.PreviewAlertResponse.preview:type_name -> o11y_one.alerts.v1.AlertPreviewRunV1
+	70,  // 230: o11y_one.alerts.v1.ListPreviewHistoryResponse.items:type_name -> o11y_one.alerts.v1.AlertPreviewRunV1
 	3,   // 231: o11y_one.alerts.v1.UpsertDestinationRequest.kind:type_name -> o11y_one.alerts.v1.AlertDestinationKindV1
-	215, // 232: o11y_one.alerts.v1.UpsertDestinationRequest.config:type_name -> google.protobuf.Struct
-	215, // 233: o11y_one.alerts.v1.UpsertDestinationRequest.secret_refs:type_name -> google.protobuf.Struct
-	80,  // 234: o11y_one.alerts.v1.ListDestinationsResponse.items:type_name -> o11y_one.alerts.v1.AlertDestinationV1
-	215, // 235: o11y_one.alerts.v1.UpsertNotificationPolicyRequest.config:type_name -> google.protobuf.Struct
-	85,  // 236: o11y_one.alerts.v1.UpsertNotificationPolicyRequest.typed_policy:type_name -> o11y_one.alerts.v1.AlertNotificationPolicyConfigV1
-	85,  // 237: o11y_one.alerts.v1.ValidateNotificationPolicyRequest.policy:type_name -> o11y_one.alerts.v1.AlertNotificationPolicyConfigV1
-	85,  // 238: o11y_one.alerts.v1.ValidateNotificationPolicyResponse.normalized_policy:type_name -> o11y_one.alerts.v1.AlertNotificationPolicyConfigV1
-	86,  // 239: o11y_one.alerts.v1.ValidateNotificationPolicyResponse.diagnostics:type_name -> o11y_one.alerts.v1.AlertPolicyDiagnosticV1
-	1,   // 240: o11y_one.alerts.v1.AlertRoutingSubjectV1.mode:type_name -> o11y_one.alerts.v1.AlertModeV1
-	2,   // 241: o11y_one.alerts.v1.AlertRoutingSubjectV1.severity:type_name -> o11y_one.alerts.v1.AlertSeverityV1
-	215, // 242: o11y_one.alerts.v1.AlertRoutingSubjectV1.scope:type_name -> google.protobuf.Struct
-	13,  // 243: o11y_one.alerts.v1.AlertRoutingSubjectV1.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
-	14,  // 244: o11y_one.alerts.v1.AlertRoutingSubjectV1.action:type_name -> o11y_one.alerts.v1.AlertActionV1
-	145, // 245: o11y_one.alerts.v1.PreviewNotificationRouteRequest.candidate:type_name -> o11y_one.alerts.v1.AlertRoutingSubjectV1
-	82,  // 246: o11y_one.alerts.v1.PreviewNotificationRouteRequest.dimensions:type_name -> o11y_one.alerts.v1.AlertMatcherClauseV1
-	82,  // 247: o11y_one.alerts.v1.PreviewNotificationRouteRequest.correlation_hints:type_name -> o11y_one.alerts.v1.AlertMatcherClauseV1
-	11,  // 248: o11y_one.alerts.v1.AlertRouteEvaluationV1.behavior:type_name -> o11y_one.alerts.v1.AlertNotificationRouteBehaviorV1
-	10,  // 249: o11y_one.alerts.v1.AlertRouteEvaluationV1.destination_verification_state:type_name -> o11y_one.alerts.v1.AlertDestinationVerificationStateV1
-	147, // 250: o11y_one.alerts.v1.PreviewNotificationRouteResponse.routes:type_name -> o11y_one.alerts.v1.AlertRouteEvaluationV1
-	215, // 251: o11y_one.alerts.v1.PreviewNotificationRouteResponse.noise_budget_status:type_name -> google.protobuf.Struct
-	215, // 252: o11y_one.alerts.v1.PreviewNotificationPayloadRequest.representative_evidence:type_name -> google.protobuf.Struct
-	3,   // 253: o11y_one.alerts.v1.PreviewNotificationPayloadResponse.destination_kind:type_name -> o11y_one.alerts.v1.AlertDestinationKindV1
-	215, // 254: o11y_one.alerts.v1.PreviewNotificationPayloadResponse.fields:type_name -> google.protobuf.Struct
-	86,  // 255: o11y_one.alerts.v1.PreviewNotificationPayloadResponse.template_diagnostics:type_name -> o11y_one.alerts.v1.AlertPolicyDiagnosticV1
-	216, // 256: o11y_one.alerts.v1.GetActivationReadinessResponse.observed_at:type_name -> google.protobuf.Timestamp
-	152, // 257: o11y_one.alerts.v1.GetActivationReadinessResponse.blockers:type_name -> o11y_one.alerts.v1.AlertActivationBlockerV1
-	87,  // 258: o11y_one.alerts.v1.ListNotificationPoliciesResponse.items:type_name -> o11y_one.alerts.v1.AlertNotificationPolicyV1
-	88,  // 259: o11y_one.alerts.v1.ListMaintenanceWindowsResponse.items:type_name -> o11y_one.alerts.v1.AlertMaintenanceWindowV1
-	89,  // 260: o11y_one.alerts.v1.ListSilencesResponse.items:type_name -> o11y_one.alerts.v1.AlertSilenceV1
-	215, // 261: o11y_one.alerts.v1.UpsertMaintenanceWindowRequest.scope:type_name -> google.protobuf.Struct
-	216, // 262: o11y_one.alerts.v1.UpsertMaintenanceWindowRequest.starts_at:type_name -> google.protobuf.Timestamp
-	216, // 263: o11y_one.alerts.v1.UpsertMaintenanceWindowRequest.ends_at:type_name -> google.protobuf.Timestamp
-	215, // 264: o11y_one.alerts.v1.UpsertSilenceRequest.matcher:type_name -> google.protobuf.Struct
-	216, // 265: o11y_one.alerts.v1.UpsertSilenceRequest.starts_at:type_name -> google.protobuf.Timestamp
-	216, // 266: o11y_one.alerts.v1.UpsertSilenceRequest.ends_at:type_name -> google.protobuf.Timestamp
-	216, // 267: o11y_one.alerts.v1.DestinationSecretMetadataV1.activated_at:type_name -> google.protobuf.Timestamp
-	216, // 268: o11y_one.alerts.v1.DestinationSecretMetadataV1.revoked_at:type_name -> google.protobuf.Timestamp
-	216, // 269: o11y_one.alerts.v1.DestinationSecretMetadataV1.created_at:type_name -> google.protobuf.Timestamp
-	166, // 270: o11y_one.alerts.v1.PutDestinationSecretResponse.metadata:type_name -> o11y_one.alerts.v1.DestinationSecretMetadataV1
-	166, // 271: o11y_one.alerts.v1.ListDestinationSecretsResponse.items:type_name -> o11y_one.alerts.v1.DestinationSecretMetadataV1
-	73,  // 272: o11y_one.alerts.v1.GetDeliveryHistoryResponse.items:type_name -> o11y_one.alerts.v1.AlertDeliveryHistoryV1
-	216, // 273: o11y_one.alerts.v1.ListAlertDeliveriesRequest.updated_after:type_name -> google.protobuf.Timestamp
-	216, // 274: o11y_one.alerts.v1.ListAlertDeliveriesRequest.updated_before:type_name -> google.protobuf.Timestamp
-	176, // 275: o11y_one.alerts.v1.ListAlertDeliveriesResponse.items:type_name -> o11y_one.alerts.v1.AlertDeliveryV1
-	176, // 276: o11y_one.alerts.v1.GetAlertDeliveryResponse.delivery:type_name -> o11y_one.alerts.v1.AlertDeliveryV1
-	3,   // 277: o11y_one.alerts.v1.AlertDeliveryV1.destination_kind:type_name -> o11y_one.alerts.v1.AlertDestinationKindV1
-	216, // 278: o11y_one.alerts.v1.AlertDeliveryV1.next_attempt_at:type_name -> google.protobuf.Timestamp
-	216, // 279: o11y_one.alerts.v1.AlertDeliveryV1.sent_at:type_name -> google.protobuf.Timestamp
-	216, // 280: o11y_one.alerts.v1.AlertDeliveryV1.failed_at:type_name -> google.protobuf.Timestamp
-	216, // 281: o11y_one.alerts.v1.AlertDeliveryV1.dead_lettered_at:type_name -> google.protobuf.Timestamp
-	216, // 282: o11y_one.alerts.v1.AlertDeliveryV1.created_at:type_name -> google.protobuf.Timestamp
-	216, // 283: o11y_one.alerts.v1.AlertDeliveryV1.updated_at:type_name -> google.protobuf.Timestamp
-	74,  // 284: o11y_one.alerts.v1.AlertDeliveryV1.attempts:type_name -> o11y_one.alerts.v1.AlertDeliveryAttemptV1
-	216, // 285: o11y_one.alerts.v1.ListAlertAuditRequest.occurred_after:type_name -> google.protobuf.Timestamp
-	216, // 286: o11y_one.alerts.v1.ListAlertAuditRequest.occurred_before:type_name -> google.protobuf.Timestamp
-	215, // 287: o11y_one.alerts.v1.AlertAuditEventV1.details:type_name -> google.protobuf.Struct
-	216, // 288: o11y_one.alerts.v1.AlertAuditEventV1.occurred_at:type_name -> google.protobuf.Timestamp
-	178, // 289: o11y_one.alerts.v1.ListAlertAuditResponse.items:type_name -> o11y_one.alerts.v1.AlertAuditEventV1
-	178, // 290: o11y_one.alerts.v1.GetAlertAuditResponse.event:type_name -> o11y_one.alerts.v1.AlertAuditEventV1
-	215, // 291: o11y_one.alerts.v1.PreviewAlertSuppressionRequest.matcher:type_name -> google.protobuf.Struct
-	56,  // 292: o11y_one.alerts.v1.EnsureMetaAlertsResponse.definitions:type_name -> o11y_one.alerts.v1.AlertDefinitionV1
-	191, // 293: o11y_one.alerts.v1.GetAlertMetaHealthResponse.health:type_name -> o11y_one.alerts.v1.AlertMetaHealthV1
-	216, // 294: o11y_one.alerts.v1.AlertMetaHealthV1.canary_completed_at:type_name -> google.protobuf.Timestamp
-	216, // 295: o11y_one.alerts.v1.AlertMetaHealthV1.as_of:type_name -> google.protobuf.Timestamp
-	1,   // 296: o11y_one.alerts.v1.AlertDefinitionLifecyclePreflightV1.mode:type_name -> o11y_one.alerts.v1.AlertModeV1
-	216, // 297: o11y_one.alerts.v1.AlertDefinitionLifecyclePreflightV1.archived_at:type_name -> google.protobuf.Timestamp
-	216, // 298: o11y_one.alerts.v1.AlertDefinitionLifecyclePreflightV1.restore_expires_at:type_name -> google.protobuf.Timestamp
-	216, // 299: o11y_one.alerts.v1.AlertDefinitionLifecyclePreflightV1.purged_at:type_name -> google.protobuf.Timestamp
-	215, // 300: o11y_one.alerts.v1.AlertDraftV1.payload:type_name -> google.protobuf.Struct
-	216, // 301: o11y_one.alerts.v1.AlertDraftV1.expires_at:type_name -> google.protobuf.Timestamp
-	216, // 302: o11y_one.alerts.v1.AlertDraftV1.created_at:type_name -> google.protobuf.Timestamp
-	216, // 303: o11y_one.alerts.v1.AlertDraftV1.updated_at:type_name -> google.protobuf.Timestamp
-	215, // 304: o11y_one.alerts.v1.PutAlertDraftRequest.payload:type_name -> google.protobuf.Struct
-	197, // 305: o11y_one.alerts.v1.ListAlertDraftsResponse.items:type_name -> o11y_one.alerts.v1.AlertDraftV1
-	12,  // 306: o11y_one.alerts.v1.BulkMutateAlertDefinitionsRequest.action:type_name -> o11y_one.alerts.v1.AlertDefinitionLifecycleActionV1
-	203, // 307: o11y_one.alerts.v1.BulkMutateAlertDefinitionsRequest.items:type_name -> o11y_one.alerts.v1.AlertBulkDefinitionItemV1
-	204, // 308: o11y_one.alerts.v1.BulkMutateAlertDefinitionsResponse.results:type_name -> o11y_one.alerts.v1.AlertBulkDefinitionResultV1
-	0,   // 309: o11y_one.alerts.v1.PortableAlertDefinitionV1.class:type_name -> o11y_one.alerts.v1.AlertClassV1
-	2,   // 310: o11y_one.alerts.v1.PortableAlertDefinitionV1.severity:type_name -> o11y_one.alerts.v1.AlertSeverityV1
-	215, // 311: o11y_one.alerts.v1.PortableAlertDefinitionV1.scope:type_name -> google.protobuf.Struct
-	13,  // 312: o11y_one.alerts.v1.PortableAlertDefinitionV1.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
-	14,  // 313: o11y_one.alerts.v1.PortableAlertDefinitionV1.action:type_name -> o11y_one.alerts.v1.AlertActionV1
-	215, // 314: o11y_one.alerts.v1.PortableAlertDefinitionV1.evaluation_settings:type_name -> google.protobuf.Struct
-	215, // 315: o11y_one.alerts.v1.PortableAlertDefinitionV1.sample_guard:type_name -> google.protobuf.Struct
-	53,  // 316: o11y_one.alerts.v1.PortableAlertDefinitionV1.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
-	216, // 317: o11y_one.alerts.v1.AlertDefinitionExportBundleV1.exported_at:type_name -> google.protobuf.Timestamp
-	207, // 318: o11y_one.alerts.v1.AlertDefinitionExportBundleV1.definitions:type_name -> o11y_one.alerts.v1.PortableAlertDefinitionV1
-	208, // 319: o11y_one.alerts.v1.ImportAlertDefinitionsRequest.bundle:type_name -> o11y_one.alerts.v1.AlertDefinitionExportBundleV1
-	54,  // 320: o11y_one.alerts.v1.AlertDefinitionImportResultV1.violations:type_name -> o11y_one.alerts.v1.AlertFieldViolationV1
-	211, // 321: o11y_one.alerts.v1.ImportAlertDefinitionsResponse.results:type_name -> o11y_one.alerts.v1.AlertDefinitionImportResultV1
-	216, // 322: o11y_one.alerts.v1.ReplayAlertDeliveryResponse.created_at:type_name -> google.protobuf.Timestamp
-	91,  // 323: o11y_one.alerts.v1.AlertDefinitionService.CreateAgentQualityRegressionAlert:input_type -> o11y_one.alerts.v1.CreateAgentQualityRegressionAlertRequest
-	92,  // 324: o11y_one.alerts.v1.AlertDefinitionService.CreateCostPerSuccessAlert:input_type -> o11y_one.alerts.v1.CreateCostPerSuccessAlertRequest
-	93,  // 325: o11y_one.alerts.v1.AlertDefinitionService.CreateSloBurnAlert:input_type -> o11y_one.alerts.v1.CreateSloBurnAlertRequest
-	94,  // 326: o11y_one.alerts.v1.AlertDefinitionService.CreateAdvancedSignalAlert:input_type -> o11y_one.alerts.v1.CreateAdvancedSignalAlertRequest
-	96,  // 327: o11y_one.alerts.v1.AlertDefinitionService.GetDefinition:input_type -> o11y_one.alerts.v1.GetAlertDefinitionRequest
-	99,  // 328: o11y_one.alerts.v1.AlertDefinitionService.ListDefinitions:input_type -> o11y_one.alerts.v1.ListAlertDefinitionsRequest
-	101, // 329: o11y_one.alerts.v1.AlertDefinitionService.UpdateShadow:input_type -> o11y_one.alerts.v1.UpdateShadowAlertRequest
-	102, // 330: o11y_one.alerts.v1.AlertDefinitionService.UpsertCandidateRevision:input_type -> o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest
-	103, // 331: o11y_one.alerts.v1.AlertDefinitionService.GetRevision:input_type -> o11y_one.alerts.v1.GetAlertRevisionRequest
-	104, // 332: o11y_one.alerts.v1.AlertDefinitionService.ListRevisions:input_type -> o11y_one.alerts.v1.ListAlertRevisionsRequest
-	106, // 333: o11y_one.alerts.v1.AlertDefinitionService.DiffRevisions:input_type -> o11y_one.alerts.v1.DiffAlertRevisionsRequest
-	97,  // 334: o11y_one.alerts.v1.AlertDefinitionService.DeleteDefinition:input_type -> o11y_one.alerts.v1.DeleteAlertDefinitionRequest
-	193, // 335: o11y_one.alerts.v1.AlertDefinitionService.GetLifecyclePreflight:input_type -> o11y_one.alerts.v1.GetAlertDefinitionLifecyclePreflightRequest
-	194, // 336: o11y_one.alerts.v1.AlertDefinitionService.ArchiveDefinitionV2:input_type -> o11y_one.alerts.v1.ArchiveAlertDefinitionV2Request
-	195, // 337: o11y_one.alerts.v1.AlertDefinitionService.RestoreDefinition:input_type -> o11y_one.alerts.v1.RestoreAlertDefinitionRequest
-	196, // 338: o11y_one.alerts.v1.AlertDefinitionService.PurgeDefinition:input_type -> o11y_one.alerts.v1.PurgeAlertDefinitionRequest
-	198, // 339: o11y_one.alerts.v1.AlertDefinitionService.PutDraft:input_type -> o11y_one.alerts.v1.PutAlertDraftRequest
-	199, // 340: o11y_one.alerts.v1.AlertDefinitionService.GetDraft:input_type -> o11y_one.alerts.v1.GetAlertDraftRequest
-	200, // 341: o11y_one.alerts.v1.AlertDefinitionService.ListDrafts:input_type -> o11y_one.alerts.v1.ListAlertDraftsRequest
-	202, // 342: o11y_one.alerts.v1.AlertDefinitionService.DeleteDraft:input_type -> o11y_one.alerts.v1.DeleteAlertDraftRequest
-	205, // 343: o11y_one.alerts.v1.AlertDefinitionService.BulkMutateDefinitions:input_type -> o11y_one.alerts.v1.BulkMutateAlertDefinitionsRequest
-	209, // 344: o11y_one.alerts.v1.AlertDefinitionService.ExportDefinitions:input_type -> o11y_one.alerts.v1.ExportAlertDefinitionsRequest
-	210, // 345: o11y_one.alerts.v1.AlertDefinitionService.ImportDefinitions:input_type -> o11y_one.alerts.v1.ImportAlertDefinitionsRequest
-	109, // 346: o11y_one.alerts.v1.AlertRuntimeService.ListActiveInstances:input_type -> o11y_one.alerts.v1.ListActiveAlertInstancesRequest
-	115, // 347: o11y_one.alerts.v1.AlertRuntimeService.GetIncidentCandidate:input_type -> o11y_one.alerts.v1.GetIncidentCandidateRequest
-	127, // 348: o11y_one.alerts.v1.AlertRuntimeService.ListInstances:input_type -> o11y_one.alerts.v1.ListAlertInstancesRequest
-	119, // 349: o11y_one.alerts.v1.AlertRuntimeService.ListIncidents:input_type -> o11y_one.alerts.v1.ListAlertIncidentsRequest
-	121, // 350: o11y_one.alerts.v1.AlertRuntimeService.GetIncident:input_type -> o11y_one.alerts.v1.GetAlertIncidentRequest
-	124, // 351: o11y_one.alerts.v1.AlertRuntimeService.ListIncidentTimeline:input_type -> o11y_one.alerts.v1.ListAlertIncidentTimelineRequest
-	126, // 352: o11y_one.alerts.v1.AlertRuntimeService.AcknowledgeIncident:input_type -> o11y_one.alerts.v1.AcknowledgeAlertIncidentRequest
-	177, // 353: o11y_one.alerts.v1.AlertRuntimeService.ListAudit:input_type -> o11y_one.alerts.v1.ListAlertAuditRequest
-	180, // 354: o11y_one.alerts.v1.AlertRuntimeService.GetAudit:input_type -> o11y_one.alerts.v1.GetAlertAuditRequest
-	182, // 355: o11y_one.alerts.v1.AlertRuntimeService.PreviewSuppression:input_type -> o11y_one.alerts.v1.PreviewAlertSuppressionRequest
-	111, // 356: o11y_one.alerts.v1.AlertRuntimeService.ListEvalHistory:input_type -> o11y_one.alerts.v1.AlertIdRequest
-	112, // 357: o11y_one.alerts.v1.AlertRuntimeService.ListStateHistory:input_type -> o11y_one.alerts.v1.AlertInstanceIdRequest
-	129, // 358: o11y_one.alerts.v1.AlertRuntimeService.ExplainWhyFired:input_type -> o11y_one.alerts.v1.ExplainWhyFiredRequest
-	131, // 359: o11y_one.alerts.v1.AlertRuntimeService.Acknowledge:input_type -> o11y_one.alerts.v1.AcknowledgeAlertRequest
-	132, // 360: o11y_one.alerts.v1.AlertRuntimeService.Pause:input_type -> o11y_one.alerts.v1.PauseAlertRequest
-	133, // 361: o11y_one.alerts.v1.AlertRuntimeService.Resume:input_type -> o11y_one.alerts.v1.ResumeAlertRequest
-	138, // 362: o11y_one.alerts.v1.AlertNotificationService.CreateDestination:input_type -> o11y_one.alerts.v1.UpsertDestinationRequest
-	138, // 363: o11y_one.alerts.v1.AlertNotificationService.UpdateDestination:input_type -> o11y_one.alerts.v1.UpsertDestinationRequest
-	141, // 364: o11y_one.alerts.v1.AlertNotificationService.DeleteDestination:input_type -> o11y_one.alerts.v1.DeleteDestinationRequest
-	98,  // 365: o11y_one.alerts.v1.AlertNotificationService.GetDestination:input_type -> o11y_one.alerts.v1.GetAlertResourceRequest
-	139, // 366: o11y_one.alerts.v1.AlertNotificationService.ListDestinations:input_type -> o11y_one.alerts.v1.ListDestinationsRequest
-	98,  // 367: o11y_one.alerts.v1.AlertNotificationService.GetDestinationPreflight:input_type -> o11y_one.alerts.v1.GetAlertResourceRequest
-	142, // 368: o11y_one.alerts.v1.AlertNotificationService.CreateNotificationPolicy:input_type -> o11y_one.alerts.v1.UpsertNotificationPolicyRequest
-	142, // 369: o11y_one.alerts.v1.AlertNotificationService.UpdateNotificationPolicy:input_type -> o11y_one.alerts.v1.UpsertNotificationPolicyRequest
-	98,  // 370: o11y_one.alerts.v1.AlertNotificationService.GetNotificationPolicy:input_type -> o11y_one.alerts.v1.GetAlertResourceRequest
-	155, // 371: o11y_one.alerts.v1.AlertNotificationService.ListNotificationPolicies:input_type -> o11y_one.alerts.v1.ListOperatorResourcesRequest
-	156, // 372: o11y_one.alerts.v1.AlertNotificationService.DeleteNotificationPolicy:input_type -> o11y_one.alerts.v1.DeleteOperatorResourceRequest
-	143, // 373: o11y_one.alerts.v1.AlertNotificationService.ValidateNotificationPolicy:input_type -> o11y_one.alerts.v1.ValidateNotificationPolicyRequest
-	146, // 374: o11y_one.alerts.v1.AlertNotificationService.PreviewNotificationRoute:input_type -> o11y_one.alerts.v1.PreviewNotificationRouteRequest
-	149, // 375: o11y_one.alerts.v1.AlertNotificationService.PreviewNotificationPayload:input_type -> o11y_one.alerts.v1.PreviewNotificationPayloadRequest
-	159, // 376: o11y_one.alerts.v1.AlertNotificationService.CreateMaintenanceWindow:input_type -> o11y_one.alerts.v1.UpsertMaintenanceWindowRequest
-	159, // 377: o11y_one.alerts.v1.AlertNotificationService.UpdateMaintenanceWindow:input_type -> o11y_one.alerts.v1.UpsertMaintenanceWindowRequest
-	98,  // 378: o11y_one.alerts.v1.AlertNotificationService.GetMaintenanceWindow:input_type -> o11y_one.alerts.v1.GetAlertResourceRequest
-	155, // 379: o11y_one.alerts.v1.AlertNotificationService.ListMaintenanceWindows:input_type -> o11y_one.alerts.v1.ListOperatorResourcesRequest
-	156, // 380: o11y_one.alerts.v1.AlertNotificationService.DeleteMaintenanceWindow:input_type -> o11y_one.alerts.v1.DeleteOperatorResourceRequest
-	160, // 381: o11y_one.alerts.v1.AlertNotificationService.CreateSilence:input_type -> o11y_one.alerts.v1.UpsertSilenceRequest
-	160, // 382: o11y_one.alerts.v1.AlertNotificationService.UpdateSilence:input_type -> o11y_one.alerts.v1.UpsertSilenceRequest
-	98,  // 383: o11y_one.alerts.v1.AlertNotificationService.GetSilence:input_type -> o11y_one.alerts.v1.GetAlertResourceRequest
-	155, // 384: o11y_one.alerts.v1.AlertNotificationService.ListSilences:input_type -> o11y_one.alerts.v1.ListOperatorResourcesRequest
-	156, // 385: o11y_one.alerts.v1.AlertNotificationService.DeleteSilence:input_type -> o11y_one.alerts.v1.DeleteOperatorResourceRequest
-	161, // 386: o11y_one.alerts.v1.AlertNotificationService.TestDestination:input_type -> o11y_one.alerts.v1.TestDestinationRequest
-	163, // 387: o11y_one.alerts.v1.AlertNotificationService.PutDestinationSecret:input_type -> o11y_one.alerts.v1.PutDestinationSecretRequest
-	164, // 388: o11y_one.alerts.v1.AlertNotificationService.RevokeDestinationSecret:input_type -> o11y_one.alerts.v1.RevokeDestinationSecretRequest
-	165, // 389: o11y_one.alerts.v1.AlertNotificationService.ListDestinationSecrets:input_type -> o11y_one.alerts.v1.ListDestinationSecretsRequest
-	170, // 390: o11y_one.alerts.v1.AlertNotificationService.GetDeliveryHistory:input_type -> o11y_one.alerts.v1.GetDeliveryHistoryRequest
-	172, // 391: o11y_one.alerts.v1.AlertNotificationService.ListDeliveries:input_type -> o11y_one.alerts.v1.ListAlertDeliveriesRequest
-	174, // 392: o11y_one.alerts.v1.AlertNotificationService.GetDelivery:input_type -> o11y_one.alerts.v1.GetAlertDeliveryRequest
-	213, // 393: o11y_one.alerts.v1.AlertNotificationService.ReplayDelivery:input_type -> o11y_one.alerts.v1.ReplayAlertDeliveryRequest
-	135, // 394: o11y_one.alerts.v1.AlertPreviewService.PreviewAlert:input_type -> o11y_one.alerts.v1.PreviewAlertRequest
-	111, // 395: o11y_one.alerts.v1.AlertPreviewService.ListPreviewHistory:input_type -> o11y_one.alerts.v1.AlertIdRequest
-	108, // 396: o11y_one.alerts.v1.AlertPreviewService.ActivateNotifyMode:input_type -> o11y_one.alerts.v1.ActivateNotifyModeRequest
-	107, // 397: o11y_one.alerts.v1.AlertPreviewService.ActivateCandidateRevision:input_type -> o11y_one.alerts.v1.ActivateAlertRevisionRequest
-	107, // 398: o11y_one.alerts.v1.AlertPreviewService.RollbackRevision:input_type -> o11y_one.alerts.v1.ActivateAlertRevisionRequest
-	151, // 399: o11y_one.alerts.v1.AlertPreviewService.GetActivationReadiness:input_type -> o11y_one.alerts.v1.GetActivationReadinessRequest
-	184, // 400: o11y_one.alerts.v1.AlertCanaryService.TriggerCanary:input_type -> o11y_one.alerts.v1.TriggerCanaryRequest
-	186, // 401: o11y_one.alerts.v1.AlertCanaryService.GetCanaryRun:input_type -> o11y_one.alerts.v1.GetCanaryRunRequest
-	187, // 402: o11y_one.alerts.v1.AlertCanaryService.EnsureMetaAlerts:input_type -> o11y_one.alerts.v1.EnsureMetaAlertsRequest
-	189, // 403: o11y_one.alerts.v1.AlertCanaryService.GetMetaHealth:input_type -> o11y_one.alerts.v1.GetAlertMetaHealthRequest
-	21,  // 404: o11y_one.alerts.v1.AlertSloService.CreateSli:input_type -> o11y_one.alerts.v1.CreateSliRequest
-	23,  // 405: o11y_one.alerts.v1.AlertSloService.ValidateSli:input_type -> o11y_one.alerts.v1.ValidateSliRequest
-	22,  // 406: o11y_one.alerts.v1.AlertSloService.UpdateSli:input_type -> o11y_one.alerts.v1.UpdateSliRequest
-	25,  // 407: o11y_one.alerts.v1.AlertSloService.GetSli:input_type -> o11y_one.alerts.v1.GetSliRequest
-	26,  // 408: o11y_one.alerts.v1.AlertSloService.ListSlis:input_type -> o11y_one.alerts.v1.ListSlisRequest
-	28,  // 409: o11y_one.alerts.v1.AlertSloService.ArchiveSli:input_type -> o11y_one.alerts.v1.ArchiveSliRequest
-	29,  // 410: o11y_one.alerts.v1.AlertSloService.ListSliRevisions:input_type -> o11y_one.alerts.v1.ListSliRevisionsRequest
-	31,  // 411: o11y_one.alerts.v1.AlertSloService.PreviewSli:input_type -> o11y_one.alerts.v1.PreviewSliRequest
-	36,  // 412: o11y_one.alerts.v1.AlertSloService.CreateSlo:input_type -> o11y_one.alerts.v1.CreateSloRequest
-	37,  // 413: o11y_one.alerts.v1.AlertSloService.UpdateSlo:input_type -> o11y_one.alerts.v1.UpdateSloRequest
-	38,  // 414: o11y_one.alerts.v1.AlertSloService.GetSlo:input_type -> o11y_one.alerts.v1.GetSloRequest
-	39,  // 415: o11y_one.alerts.v1.AlertSloService.ListSlos:input_type -> o11y_one.alerts.v1.ListSlosRequest
-	41,  // 416: o11y_one.alerts.v1.AlertSloService.ArchiveSlo:input_type -> o11y_one.alerts.v1.ArchiveSloRequest
-	42,  // 417: o11y_one.alerts.v1.AlertSloService.ListSloRevisions:input_type -> o11y_one.alerts.v1.ListSloRevisionsRequest
-	44,  // 418: o11y_one.alerts.v1.AlertSloService.GetSloStatus:input_type -> o11y_one.alerts.v1.GetSloStatusRequest
-	46,  // 419: o11y_one.alerts.v1.AlertSloService.GetSloBurndown:input_type -> o11y_one.alerts.v1.GetSloBurndownRequest
-	48,  // 420: o11y_one.alerts.v1.AlertSloService.ListSloHistory:input_type -> o11y_one.alerts.v1.ListSloHistoryRequest
-	50,  // 421: o11y_one.alerts.v1.AlertSloService.CreateRecommendedSloBurnAlert:input_type -> o11y_one.alerts.v1.CreateRecommendedSloBurnAlertRequest
-	95,  // 422: o11y_one.alerts.v1.AlertDefinitionService.CreateAgentQualityRegressionAlert:output_type -> o11y_one.alerts.v1.CreateAlertDefinitionResponse
-	95,  // 423: o11y_one.alerts.v1.AlertDefinitionService.CreateCostPerSuccessAlert:output_type -> o11y_one.alerts.v1.CreateAlertDefinitionResponse
-	95,  // 424: o11y_one.alerts.v1.AlertDefinitionService.CreateSloBurnAlert:output_type -> o11y_one.alerts.v1.CreateAlertDefinitionResponse
-	95,  // 425: o11y_one.alerts.v1.AlertDefinitionService.CreateAdvancedSignalAlert:output_type -> o11y_one.alerts.v1.CreateAlertDefinitionResponse
-	56,  // 426: o11y_one.alerts.v1.AlertDefinitionService.GetDefinition:output_type -> o11y_one.alerts.v1.AlertDefinitionV1
-	100, // 427: o11y_one.alerts.v1.AlertDefinitionService.ListDefinitions:output_type -> o11y_one.alerts.v1.ListAlertDefinitionsResponse
-	56,  // 428: o11y_one.alerts.v1.AlertDefinitionService.UpdateShadow:output_type -> o11y_one.alerts.v1.AlertDefinitionV1
-	62,  // 429: o11y_one.alerts.v1.AlertDefinitionService.UpsertCandidateRevision:output_type -> o11y_one.alerts.v1.AlertRevisionV1
-	62,  // 430: o11y_one.alerts.v1.AlertDefinitionService.GetRevision:output_type -> o11y_one.alerts.v1.AlertRevisionV1
-	105, // 431: o11y_one.alerts.v1.AlertDefinitionService.ListRevisions:output_type -> o11y_one.alerts.v1.ListAlertRevisionsResponse
-	64,  // 432: o11y_one.alerts.v1.AlertDefinitionService.DiffRevisions:output_type -> o11y_one.alerts.v1.AlertRevisionDiffV1
-	134, // 433: o11y_one.alerts.v1.AlertDefinitionService.DeleteDefinition:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	192, // 434: o11y_one.alerts.v1.AlertDefinitionService.GetLifecyclePreflight:output_type -> o11y_one.alerts.v1.AlertDefinitionLifecyclePreflightV1
-	134, // 435: o11y_one.alerts.v1.AlertDefinitionService.ArchiveDefinitionV2:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	134, // 436: o11y_one.alerts.v1.AlertDefinitionService.RestoreDefinition:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	134, // 437: o11y_one.alerts.v1.AlertDefinitionService.PurgeDefinition:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	197, // 438: o11y_one.alerts.v1.AlertDefinitionService.PutDraft:output_type -> o11y_one.alerts.v1.AlertDraftV1
-	197, // 439: o11y_one.alerts.v1.AlertDefinitionService.GetDraft:output_type -> o11y_one.alerts.v1.AlertDraftV1
-	201, // 440: o11y_one.alerts.v1.AlertDefinitionService.ListDrafts:output_type -> o11y_one.alerts.v1.ListAlertDraftsResponse
-	134, // 441: o11y_one.alerts.v1.AlertDefinitionService.DeleteDraft:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	206, // 442: o11y_one.alerts.v1.AlertDefinitionService.BulkMutateDefinitions:output_type -> o11y_one.alerts.v1.BulkMutateAlertDefinitionsResponse
-	208, // 443: o11y_one.alerts.v1.AlertDefinitionService.ExportDefinitions:output_type -> o11y_one.alerts.v1.AlertDefinitionExportBundleV1
-	212, // 444: o11y_one.alerts.v1.AlertDefinitionService.ImportDefinitions:output_type -> o11y_one.alerts.v1.ImportAlertDefinitionsResponse
-	110, // 445: o11y_one.alerts.v1.AlertRuntimeService.ListActiveInstances:output_type -> o11y_one.alerts.v1.ListActiveAlertInstancesResponse
-	116, // 446: o11y_one.alerts.v1.AlertRuntimeService.GetIncidentCandidate:output_type -> o11y_one.alerts.v1.GetIncidentCandidateResponse
-	128, // 447: o11y_one.alerts.v1.AlertRuntimeService.ListInstances:output_type -> o11y_one.alerts.v1.ListAlertInstancesResponse
-	120, // 448: o11y_one.alerts.v1.AlertRuntimeService.ListIncidents:output_type -> o11y_one.alerts.v1.ListAlertIncidentsResponse
-	122, // 449: o11y_one.alerts.v1.AlertRuntimeService.GetIncident:output_type -> o11y_one.alerts.v1.GetAlertIncidentResponse
-	125, // 450: o11y_one.alerts.v1.AlertRuntimeService.ListIncidentTimeline:output_type -> o11y_one.alerts.v1.ListAlertIncidentTimelineResponse
-	134, // 451: o11y_one.alerts.v1.AlertRuntimeService.AcknowledgeIncident:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	179, // 452: o11y_one.alerts.v1.AlertRuntimeService.ListAudit:output_type -> o11y_one.alerts.v1.ListAlertAuditResponse
-	181, // 453: o11y_one.alerts.v1.AlertRuntimeService.GetAudit:output_type -> o11y_one.alerts.v1.GetAlertAuditResponse
-	183, // 454: o11y_one.alerts.v1.AlertRuntimeService.PreviewSuppression:output_type -> o11y_one.alerts.v1.PreviewAlertSuppressionResponse
-	113, // 455: o11y_one.alerts.v1.AlertRuntimeService.ListEvalHistory:output_type -> o11y_one.alerts.v1.ListAlertEvalHistoryResponse
-	114, // 456: o11y_one.alerts.v1.AlertRuntimeService.ListStateHistory:output_type -> o11y_one.alerts.v1.ListAlertStateHistoryResponse
-	130, // 457: o11y_one.alerts.v1.AlertRuntimeService.ExplainWhyFired:output_type -> o11y_one.alerts.v1.ExplainWhyFiredResponse
-	134, // 458: o11y_one.alerts.v1.AlertRuntimeService.Acknowledge:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	134, // 459: o11y_one.alerts.v1.AlertRuntimeService.Pause:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	134, // 460: o11y_one.alerts.v1.AlertRuntimeService.Resume:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	80,  // 461: o11y_one.alerts.v1.AlertNotificationService.CreateDestination:output_type -> o11y_one.alerts.v1.AlertDestinationV1
-	80,  // 462: o11y_one.alerts.v1.AlertNotificationService.UpdateDestination:output_type -> o11y_one.alerts.v1.AlertDestinationV1
-	134, // 463: o11y_one.alerts.v1.AlertNotificationService.DeleteDestination:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	80,  // 464: o11y_one.alerts.v1.AlertNotificationService.GetDestination:output_type -> o11y_one.alerts.v1.AlertDestinationV1
-	140, // 465: o11y_one.alerts.v1.AlertNotificationService.ListDestinations:output_type -> o11y_one.alerts.v1.ListDestinationsResponse
-	80,  // 466: o11y_one.alerts.v1.AlertNotificationService.GetDestinationPreflight:output_type -> o11y_one.alerts.v1.AlertDestinationV1
-	87,  // 467: o11y_one.alerts.v1.AlertNotificationService.CreateNotificationPolicy:output_type -> o11y_one.alerts.v1.AlertNotificationPolicyV1
-	87,  // 468: o11y_one.alerts.v1.AlertNotificationService.UpdateNotificationPolicy:output_type -> o11y_one.alerts.v1.AlertNotificationPolicyV1
-	87,  // 469: o11y_one.alerts.v1.AlertNotificationService.GetNotificationPolicy:output_type -> o11y_one.alerts.v1.AlertNotificationPolicyV1
-	154, // 470: o11y_one.alerts.v1.AlertNotificationService.ListNotificationPolicies:output_type -> o11y_one.alerts.v1.ListNotificationPoliciesResponse
-	134, // 471: o11y_one.alerts.v1.AlertNotificationService.DeleteNotificationPolicy:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	144, // 472: o11y_one.alerts.v1.AlertNotificationService.ValidateNotificationPolicy:output_type -> o11y_one.alerts.v1.ValidateNotificationPolicyResponse
-	148, // 473: o11y_one.alerts.v1.AlertNotificationService.PreviewNotificationRoute:output_type -> o11y_one.alerts.v1.PreviewNotificationRouteResponse
-	150, // 474: o11y_one.alerts.v1.AlertNotificationService.PreviewNotificationPayload:output_type -> o11y_one.alerts.v1.PreviewNotificationPayloadResponse
-	88,  // 475: o11y_one.alerts.v1.AlertNotificationService.CreateMaintenanceWindow:output_type -> o11y_one.alerts.v1.AlertMaintenanceWindowV1
-	88,  // 476: o11y_one.alerts.v1.AlertNotificationService.UpdateMaintenanceWindow:output_type -> o11y_one.alerts.v1.AlertMaintenanceWindowV1
-	88,  // 477: o11y_one.alerts.v1.AlertNotificationService.GetMaintenanceWindow:output_type -> o11y_one.alerts.v1.AlertMaintenanceWindowV1
-	157, // 478: o11y_one.alerts.v1.AlertNotificationService.ListMaintenanceWindows:output_type -> o11y_one.alerts.v1.ListMaintenanceWindowsResponse
-	134, // 479: o11y_one.alerts.v1.AlertNotificationService.DeleteMaintenanceWindow:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	89,  // 480: o11y_one.alerts.v1.AlertNotificationService.CreateSilence:output_type -> o11y_one.alerts.v1.AlertSilenceV1
-	89,  // 481: o11y_one.alerts.v1.AlertNotificationService.UpdateSilence:output_type -> o11y_one.alerts.v1.AlertSilenceV1
-	89,  // 482: o11y_one.alerts.v1.AlertNotificationService.GetSilence:output_type -> o11y_one.alerts.v1.AlertSilenceV1
-	158, // 483: o11y_one.alerts.v1.AlertNotificationService.ListSilences:output_type -> o11y_one.alerts.v1.ListSilencesResponse
-	134, // 484: o11y_one.alerts.v1.AlertNotificationService.DeleteSilence:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	162, // 485: o11y_one.alerts.v1.AlertNotificationService.TestDestination:output_type -> o11y_one.alerts.v1.TestDestinationResponse
-	167, // 486: o11y_one.alerts.v1.AlertNotificationService.PutDestinationSecret:output_type -> o11y_one.alerts.v1.PutDestinationSecretResponse
-	168, // 487: o11y_one.alerts.v1.AlertNotificationService.RevokeDestinationSecret:output_type -> o11y_one.alerts.v1.RevokeDestinationSecretResponse
-	169, // 488: o11y_one.alerts.v1.AlertNotificationService.ListDestinationSecrets:output_type -> o11y_one.alerts.v1.ListDestinationSecretsResponse
-	171, // 489: o11y_one.alerts.v1.AlertNotificationService.GetDeliveryHistory:output_type -> o11y_one.alerts.v1.GetDeliveryHistoryResponse
-	173, // 490: o11y_one.alerts.v1.AlertNotificationService.ListDeliveries:output_type -> o11y_one.alerts.v1.ListAlertDeliveriesResponse
-	175, // 491: o11y_one.alerts.v1.AlertNotificationService.GetDelivery:output_type -> o11y_one.alerts.v1.GetAlertDeliveryResponse
-	214, // 492: o11y_one.alerts.v1.AlertNotificationService.ReplayDelivery:output_type -> o11y_one.alerts.v1.ReplayAlertDeliveryResponse
-	136, // 493: o11y_one.alerts.v1.AlertPreviewService.PreviewAlert:output_type -> o11y_one.alerts.v1.PreviewAlertResponse
-	137, // 494: o11y_one.alerts.v1.AlertPreviewService.ListPreviewHistory:output_type -> o11y_one.alerts.v1.ListPreviewHistoryResponse
-	56,  // 495: o11y_one.alerts.v1.AlertPreviewService.ActivateNotifyMode:output_type -> o11y_one.alerts.v1.AlertDefinitionV1
-	56,  // 496: o11y_one.alerts.v1.AlertPreviewService.ActivateCandidateRevision:output_type -> o11y_one.alerts.v1.AlertDefinitionV1
-	56,  // 497: o11y_one.alerts.v1.AlertPreviewService.RollbackRevision:output_type -> o11y_one.alerts.v1.AlertDefinitionV1
-	153, // 498: o11y_one.alerts.v1.AlertPreviewService.GetActivationReadiness:output_type -> o11y_one.alerts.v1.GetActivationReadinessResponse
-	185, // 499: o11y_one.alerts.v1.AlertCanaryService.TriggerCanary:output_type -> o11y_one.alerts.v1.TriggerCanaryResponse
-	185, // 500: o11y_one.alerts.v1.AlertCanaryService.GetCanaryRun:output_type -> o11y_one.alerts.v1.TriggerCanaryResponse
-	188, // 501: o11y_one.alerts.v1.AlertCanaryService.EnsureMetaAlerts:output_type -> o11y_one.alerts.v1.EnsureMetaAlertsResponse
-	190, // 502: o11y_one.alerts.v1.AlertCanaryService.GetMetaHealth:output_type -> o11y_one.alerts.v1.GetAlertMetaHealthResponse
-	19,  // 503: o11y_one.alerts.v1.AlertSloService.CreateSli:output_type -> o11y_one.alerts.v1.AlertSliV1
-	24,  // 504: o11y_one.alerts.v1.AlertSloService.ValidateSli:output_type -> o11y_one.alerts.v1.ValidateSliResponse
-	19,  // 505: o11y_one.alerts.v1.AlertSloService.UpdateSli:output_type -> o11y_one.alerts.v1.AlertSliV1
-	19,  // 506: o11y_one.alerts.v1.AlertSloService.GetSli:output_type -> o11y_one.alerts.v1.AlertSliV1
-	27,  // 507: o11y_one.alerts.v1.AlertSloService.ListSlis:output_type -> o11y_one.alerts.v1.ListSlisResponse
-	134, // 508: o11y_one.alerts.v1.AlertSloService.ArchiveSli:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	30,  // 509: o11y_one.alerts.v1.AlertSloService.ListSliRevisions:output_type -> o11y_one.alerts.v1.ListSliRevisionsResponse
-	32,  // 510: o11y_one.alerts.v1.AlertSloService.PreviewSli:output_type -> o11y_one.alerts.v1.SliPreviewV1
-	34,  // 511: o11y_one.alerts.v1.AlertSloService.CreateSlo:output_type -> o11y_one.alerts.v1.AlertSloV1
-	34,  // 512: o11y_one.alerts.v1.AlertSloService.UpdateSlo:output_type -> o11y_one.alerts.v1.AlertSloV1
-	34,  // 513: o11y_one.alerts.v1.AlertSloService.GetSlo:output_type -> o11y_one.alerts.v1.AlertSloV1
-	40,  // 514: o11y_one.alerts.v1.AlertSloService.ListSlos:output_type -> o11y_one.alerts.v1.ListSlosResponse
-	134, // 515: o11y_one.alerts.v1.AlertSloService.ArchiveSlo:output_type -> o11y_one.alerts.v1.AlertMutationResponse
-	43,  // 516: o11y_one.alerts.v1.AlertSloService.ListSloRevisions:output_type -> o11y_one.alerts.v1.ListSloRevisionsResponse
-	45,  // 517: o11y_one.alerts.v1.AlertSloService.GetSloStatus:output_type -> o11y_one.alerts.v1.SloStatusV1
-	47,  // 518: o11y_one.alerts.v1.AlertSloService.GetSloBurndown:output_type -> o11y_one.alerts.v1.GetSloBurndownResponse
-	49,  // 519: o11y_one.alerts.v1.AlertSloService.ListSloHistory:output_type -> o11y_one.alerts.v1.ListSloHistoryResponse
-	51,  // 520: o11y_one.alerts.v1.AlertSloService.CreateRecommendedSloBurnAlert:output_type -> o11y_one.alerts.v1.CreateRecommendedSloBurnAlertResponse
-	422, // [422:521] is the sub-list for method output_type
-	323, // [323:422] is the sub-list for method input_type
-	323, // [323:323] is the sub-list for extension type_name
-	323, // [323:323] is the sub-list for extension extendee
-	0,   // [0:323] is the sub-list for field type_name
+	237, // 232: o11y_one.alerts.v1.UpsertDestinationRequest.config:type_name -> google.protobuf.Struct
+	237, // 233: o11y_one.alerts.v1.UpsertDestinationRequest.secret_refs:type_name -> google.protobuf.Struct
+	82,  // 234: o11y_one.alerts.v1.ListDestinationsResponse.items:type_name -> o11y_one.alerts.v1.AlertDestinationV1
+	12,  // 235: o11y_one.alerts.v1.AlertContactV1.status:type_name -> o11y_one.alerts.v1.AlertContactStatusV1
+	238, // 236: o11y_one.alerts.v1.AlertContactV1.archived_at:type_name -> google.protobuf.Timestamp
+	238, // 237: o11y_one.alerts.v1.AlertContactV1.created_at:type_name -> google.protobuf.Timestamp
+	238, // 238: o11y_one.alerts.v1.AlertContactV1.updated_at:type_name -> google.protobuf.Timestamp
+	144, // 239: o11y_one.alerts.v1.ListAlertContactsResponse.items:type_name -> o11y_one.alerts.v1.AlertContactV1
+	238, // 240: o11y_one.alerts.v1.BeginAlertContactVerificationResponse.expires_at:type_name -> google.protobuf.Timestamp
+	13,  // 241: o11y_one.alerts.v1.AlertNotificationGroupMemberV1.kind:type_name -> o11y_one.alerts.v1.AlertNotificationGroupMemberKindV1
+	238, // 242: o11y_one.alerts.v1.AlertNotificationGroupV1.archived_at:type_name -> google.protobuf.Timestamp
+	152, // 243: o11y_one.alerts.v1.AlertNotificationGroupV1.members:type_name -> o11y_one.alerts.v1.AlertNotificationGroupMemberV1
+	238, // 244: o11y_one.alerts.v1.AlertNotificationGroupV1.created_at:type_name -> google.protobuf.Timestamp
+	238, // 245: o11y_one.alerts.v1.AlertNotificationGroupV1.updated_at:type_name -> google.protobuf.Timestamp
+	152, // 246: o11y_one.alerts.v1.UpsertAlertNotificationGroupRequest.members:type_name -> o11y_one.alerts.v1.AlertNotificationGroupMemberV1
+	153, // 247: o11y_one.alerts.v1.ListAlertNotificationGroupsResponse.items:type_name -> o11y_one.alerts.v1.AlertNotificationGroupV1
+	3,   // 248: o11y_one.alerts.v1.AlertNotificationRecipientV1.destination_kind:type_name -> o11y_one.alerts.v1.AlertDestinationKindV1
+	13,  // 249: o11y_one.alerts.v1.AlertNotificationRecipientV1.source_kind:type_name -> o11y_one.alerts.v1.AlertNotificationGroupMemberKindV1
+	162, // 250: o11y_one.alerts.v1.PreviewAlertNotificationGroupExpansionResponse.recipients:type_name -> o11y_one.alerts.v1.AlertNotificationRecipientV1
+	237, // 251: o11y_one.alerts.v1.UpsertNotificationPolicyRequest.config:type_name -> google.protobuf.Struct
+	87,  // 252: o11y_one.alerts.v1.UpsertNotificationPolicyRequest.typed_policy:type_name -> o11y_one.alerts.v1.AlertNotificationPolicyConfigV1
+	87,  // 253: o11y_one.alerts.v1.ValidateNotificationPolicyRequest.policy:type_name -> o11y_one.alerts.v1.AlertNotificationPolicyConfigV1
+	87,  // 254: o11y_one.alerts.v1.ValidateNotificationPolicyResponse.normalized_policy:type_name -> o11y_one.alerts.v1.AlertNotificationPolicyConfigV1
+	88,  // 255: o11y_one.alerts.v1.ValidateNotificationPolicyResponse.diagnostics:type_name -> o11y_one.alerts.v1.AlertPolicyDiagnosticV1
+	1,   // 256: o11y_one.alerts.v1.AlertRoutingSubjectV1.mode:type_name -> o11y_one.alerts.v1.AlertModeV1
+	2,   // 257: o11y_one.alerts.v1.AlertRoutingSubjectV1.severity:type_name -> o11y_one.alerts.v1.AlertSeverityV1
+	237, // 258: o11y_one.alerts.v1.AlertRoutingSubjectV1.scope:type_name -> google.protobuf.Struct
+	15,  // 259: o11y_one.alerts.v1.AlertRoutingSubjectV1.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
+	16,  // 260: o11y_one.alerts.v1.AlertRoutingSubjectV1.action:type_name -> o11y_one.alerts.v1.AlertActionV1
+	167, // 261: o11y_one.alerts.v1.PreviewNotificationRouteRequest.candidate:type_name -> o11y_one.alerts.v1.AlertRoutingSubjectV1
+	84,  // 262: o11y_one.alerts.v1.PreviewNotificationRouteRequest.dimensions:type_name -> o11y_one.alerts.v1.AlertMatcherClauseV1
+	84,  // 263: o11y_one.alerts.v1.PreviewNotificationRouteRequest.correlation_hints:type_name -> o11y_one.alerts.v1.AlertMatcherClauseV1
+	11,  // 264: o11y_one.alerts.v1.AlertRouteEvaluationV1.behavior:type_name -> o11y_one.alerts.v1.AlertNotificationRouteBehaviorV1
+	10,  // 265: o11y_one.alerts.v1.AlertRouteEvaluationV1.destination_verification_state:type_name -> o11y_one.alerts.v1.AlertDestinationVerificationStateV1
+	169, // 266: o11y_one.alerts.v1.PreviewNotificationRouteResponse.routes:type_name -> o11y_one.alerts.v1.AlertRouteEvaluationV1
+	237, // 267: o11y_one.alerts.v1.PreviewNotificationRouteResponse.noise_budget_status:type_name -> google.protobuf.Struct
+	237, // 268: o11y_one.alerts.v1.PreviewNotificationPayloadRequest.representative_evidence:type_name -> google.protobuf.Struct
+	3,   // 269: o11y_one.alerts.v1.PreviewNotificationPayloadResponse.destination_kind:type_name -> o11y_one.alerts.v1.AlertDestinationKindV1
+	237, // 270: o11y_one.alerts.v1.PreviewNotificationPayloadResponse.fields:type_name -> google.protobuf.Struct
+	88,  // 271: o11y_one.alerts.v1.PreviewNotificationPayloadResponse.template_diagnostics:type_name -> o11y_one.alerts.v1.AlertPolicyDiagnosticV1
+	238, // 272: o11y_one.alerts.v1.GetActivationReadinessResponse.observed_at:type_name -> google.protobuf.Timestamp
+	174, // 273: o11y_one.alerts.v1.GetActivationReadinessResponse.blockers:type_name -> o11y_one.alerts.v1.AlertActivationBlockerV1
+	89,  // 274: o11y_one.alerts.v1.ListNotificationPoliciesResponse.items:type_name -> o11y_one.alerts.v1.AlertNotificationPolicyV1
+	90,  // 275: o11y_one.alerts.v1.ListMaintenanceWindowsResponse.items:type_name -> o11y_one.alerts.v1.AlertMaintenanceWindowV1
+	91,  // 276: o11y_one.alerts.v1.ListSilencesResponse.items:type_name -> o11y_one.alerts.v1.AlertSilenceV1
+	237, // 277: o11y_one.alerts.v1.UpsertMaintenanceWindowRequest.scope:type_name -> google.protobuf.Struct
+	238, // 278: o11y_one.alerts.v1.UpsertMaintenanceWindowRequest.starts_at:type_name -> google.protobuf.Timestamp
+	238, // 279: o11y_one.alerts.v1.UpsertMaintenanceWindowRequest.ends_at:type_name -> google.protobuf.Timestamp
+	237, // 280: o11y_one.alerts.v1.UpsertSilenceRequest.matcher:type_name -> google.protobuf.Struct
+	238, // 281: o11y_one.alerts.v1.UpsertSilenceRequest.starts_at:type_name -> google.protobuf.Timestamp
+	238, // 282: o11y_one.alerts.v1.UpsertSilenceRequest.ends_at:type_name -> google.protobuf.Timestamp
+	238, // 283: o11y_one.alerts.v1.DestinationSecretMetadataV1.activated_at:type_name -> google.protobuf.Timestamp
+	238, // 284: o11y_one.alerts.v1.DestinationSecretMetadataV1.revoked_at:type_name -> google.protobuf.Timestamp
+	238, // 285: o11y_one.alerts.v1.DestinationSecretMetadataV1.created_at:type_name -> google.protobuf.Timestamp
+	188, // 286: o11y_one.alerts.v1.PutDestinationSecretResponse.metadata:type_name -> o11y_one.alerts.v1.DestinationSecretMetadataV1
+	188, // 287: o11y_one.alerts.v1.ListDestinationSecretsResponse.items:type_name -> o11y_one.alerts.v1.DestinationSecretMetadataV1
+	75,  // 288: o11y_one.alerts.v1.GetDeliveryHistoryResponse.items:type_name -> o11y_one.alerts.v1.AlertDeliveryHistoryV1
+	238, // 289: o11y_one.alerts.v1.ListAlertDeliveriesRequest.updated_after:type_name -> google.protobuf.Timestamp
+	238, // 290: o11y_one.alerts.v1.ListAlertDeliveriesRequest.updated_before:type_name -> google.protobuf.Timestamp
+	198, // 291: o11y_one.alerts.v1.ListAlertDeliveriesResponse.items:type_name -> o11y_one.alerts.v1.AlertDeliveryV1
+	198, // 292: o11y_one.alerts.v1.GetAlertDeliveryResponse.delivery:type_name -> o11y_one.alerts.v1.AlertDeliveryV1
+	3,   // 293: o11y_one.alerts.v1.AlertDeliveryV1.destination_kind:type_name -> o11y_one.alerts.v1.AlertDestinationKindV1
+	238, // 294: o11y_one.alerts.v1.AlertDeliveryV1.next_attempt_at:type_name -> google.protobuf.Timestamp
+	238, // 295: o11y_one.alerts.v1.AlertDeliveryV1.sent_at:type_name -> google.protobuf.Timestamp
+	238, // 296: o11y_one.alerts.v1.AlertDeliveryV1.failed_at:type_name -> google.protobuf.Timestamp
+	238, // 297: o11y_one.alerts.v1.AlertDeliveryV1.dead_lettered_at:type_name -> google.protobuf.Timestamp
+	238, // 298: o11y_one.alerts.v1.AlertDeliveryV1.created_at:type_name -> google.protobuf.Timestamp
+	238, // 299: o11y_one.alerts.v1.AlertDeliveryV1.updated_at:type_name -> google.protobuf.Timestamp
+	76,  // 300: o11y_one.alerts.v1.AlertDeliveryV1.attempts:type_name -> o11y_one.alerts.v1.AlertDeliveryAttemptV1
+	238, // 301: o11y_one.alerts.v1.ListAlertAuditRequest.occurred_after:type_name -> google.protobuf.Timestamp
+	238, // 302: o11y_one.alerts.v1.ListAlertAuditRequest.occurred_before:type_name -> google.protobuf.Timestamp
+	237, // 303: o11y_one.alerts.v1.AlertAuditEventV1.details:type_name -> google.protobuf.Struct
+	238, // 304: o11y_one.alerts.v1.AlertAuditEventV1.occurred_at:type_name -> google.protobuf.Timestamp
+	200, // 305: o11y_one.alerts.v1.ListAlertAuditResponse.items:type_name -> o11y_one.alerts.v1.AlertAuditEventV1
+	200, // 306: o11y_one.alerts.v1.GetAlertAuditResponse.event:type_name -> o11y_one.alerts.v1.AlertAuditEventV1
+	237, // 307: o11y_one.alerts.v1.PreviewAlertSuppressionRequest.matcher:type_name -> google.protobuf.Struct
+	58,  // 308: o11y_one.alerts.v1.EnsureMetaAlertsResponse.definitions:type_name -> o11y_one.alerts.v1.AlertDefinitionV1
+	213, // 309: o11y_one.alerts.v1.GetAlertMetaHealthResponse.health:type_name -> o11y_one.alerts.v1.AlertMetaHealthV1
+	238, // 310: o11y_one.alerts.v1.AlertMetaHealthV1.canary_completed_at:type_name -> google.protobuf.Timestamp
+	238, // 311: o11y_one.alerts.v1.AlertMetaHealthV1.as_of:type_name -> google.protobuf.Timestamp
+	1,   // 312: o11y_one.alerts.v1.AlertDefinitionLifecyclePreflightV1.mode:type_name -> o11y_one.alerts.v1.AlertModeV1
+	238, // 313: o11y_one.alerts.v1.AlertDefinitionLifecyclePreflightV1.archived_at:type_name -> google.protobuf.Timestamp
+	238, // 314: o11y_one.alerts.v1.AlertDefinitionLifecyclePreflightV1.restore_expires_at:type_name -> google.protobuf.Timestamp
+	238, // 315: o11y_one.alerts.v1.AlertDefinitionLifecyclePreflightV1.purged_at:type_name -> google.protobuf.Timestamp
+	237, // 316: o11y_one.alerts.v1.AlertDraftV1.payload:type_name -> google.protobuf.Struct
+	238, // 317: o11y_one.alerts.v1.AlertDraftV1.expires_at:type_name -> google.protobuf.Timestamp
+	238, // 318: o11y_one.alerts.v1.AlertDraftV1.created_at:type_name -> google.protobuf.Timestamp
+	238, // 319: o11y_one.alerts.v1.AlertDraftV1.updated_at:type_name -> google.protobuf.Timestamp
+	237, // 320: o11y_one.alerts.v1.PutAlertDraftRequest.payload:type_name -> google.protobuf.Struct
+	219, // 321: o11y_one.alerts.v1.ListAlertDraftsResponse.items:type_name -> o11y_one.alerts.v1.AlertDraftV1
+	14,  // 322: o11y_one.alerts.v1.BulkMutateAlertDefinitionsRequest.action:type_name -> o11y_one.alerts.v1.AlertDefinitionLifecycleActionV1
+	225, // 323: o11y_one.alerts.v1.BulkMutateAlertDefinitionsRequest.items:type_name -> o11y_one.alerts.v1.AlertBulkDefinitionItemV1
+	226, // 324: o11y_one.alerts.v1.BulkMutateAlertDefinitionsResponse.results:type_name -> o11y_one.alerts.v1.AlertBulkDefinitionResultV1
+	0,   // 325: o11y_one.alerts.v1.PortableAlertDefinitionV1.class:type_name -> o11y_one.alerts.v1.AlertClassV1
+	2,   // 326: o11y_one.alerts.v1.PortableAlertDefinitionV1.severity:type_name -> o11y_one.alerts.v1.AlertSeverityV1
+	237, // 327: o11y_one.alerts.v1.PortableAlertDefinitionV1.scope:type_name -> google.protobuf.Struct
+	15,  // 328: o11y_one.alerts.v1.PortableAlertDefinitionV1.owner:type_name -> o11y_one.alerts.v1.AlertOwnerRefV1
+	16,  // 329: o11y_one.alerts.v1.PortableAlertDefinitionV1.action:type_name -> o11y_one.alerts.v1.AlertActionV1
+	237, // 330: o11y_one.alerts.v1.PortableAlertDefinitionV1.evaluation_settings:type_name -> google.protobuf.Struct
+	237, // 331: o11y_one.alerts.v1.PortableAlertDefinitionV1.sample_guard:type_name -> google.protobuf.Struct
+	55,  // 332: o11y_one.alerts.v1.PortableAlertDefinitionV1.detector_config:type_name -> o11y_one.alerts.v1.AlertDetectorConfigV1
+	238, // 333: o11y_one.alerts.v1.AlertDefinitionExportBundleV1.exported_at:type_name -> google.protobuf.Timestamp
+	229, // 334: o11y_one.alerts.v1.AlertDefinitionExportBundleV1.definitions:type_name -> o11y_one.alerts.v1.PortableAlertDefinitionV1
+	230, // 335: o11y_one.alerts.v1.ImportAlertDefinitionsRequest.bundle:type_name -> o11y_one.alerts.v1.AlertDefinitionExportBundleV1
+	56,  // 336: o11y_one.alerts.v1.AlertDefinitionImportResultV1.violations:type_name -> o11y_one.alerts.v1.AlertFieldViolationV1
+	233, // 337: o11y_one.alerts.v1.ImportAlertDefinitionsResponse.results:type_name -> o11y_one.alerts.v1.AlertDefinitionImportResultV1
+	238, // 338: o11y_one.alerts.v1.ReplayAlertDeliveryResponse.created_at:type_name -> google.protobuf.Timestamp
+	93,  // 339: o11y_one.alerts.v1.AlertDefinitionService.CreateAgentQualityRegressionAlert:input_type -> o11y_one.alerts.v1.CreateAgentQualityRegressionAlertRequest
+	94,  // 340: o11y_one.alerts.v1.AlertDefinitionService.CreateCostPerSuccessAlert:input_type -> o11y_one.alerts.v1.CreateCostPerSuccessAlertRequest
+	95,  // 341: o11y_one.alerts.v1.AlertDefinitionService.CreateSloBurnAlert:input_type -> o11y_one.alerts.v1.CreateSloBurnAlertRequest
+	96,  // 342: o11y_one.alerts.v1.AlertDefinitionService.CreateAdvancedSignalAlert:input_type -> o11y_one.alerts.v1.CreateAdvancedSignalAlertRequest
+	98,  // 343: o11y_one.alerts.v1.AlertDefinitionService.GetDefinition:input_type -> o11y_one.alerts.v1.GetAlertDefinitionRequest
+	101, // 344: o11y_one.alerts.v1.AlertDefinitionService.ListDefinitions:input_type -> o11y_one.alerts.v1.ListAlertDefinitionsRequest
+	103, // 345: o11y_one.alerts.v1.AlertDefinitionService.UpdateShadow:input_type -> o11y_one.alerts.v1.UpdateShadowAlertRequest
+	104, // 346: o11y_one.alerts.v1.AlertDefinitionService.UpsertCandidateRevision:input_type -> o11y_one.alerts.v1.UpsertAlertCandidateRevisionRequest
+	105, // 347: o11y_one.alerts.v1.AlertDefinitionService.GetRevision:input_type -> o11y_one.alerts.v1.GetAlertRevisionRequest
+	106, // 348: o11y_one.alerts.v1.AlertDefinitionService.ListRevisions:input_type -> o11y_one.alerts.v1.ListAlertRevisionsRequest
+	108, // 349: o11y_one.alerts.v1.AlertDefinitionService.DiffRevisions:input_type -> o11y_one.alerts.v1.DiffAlertRevisionsRequest
+	99,  // 350: o11y_one.alerts.v1.AlertDefinitionService.DeleteDefinition:input_type -> o11y_one.alerts.v1.DeleteAlertDefinitionRequest
+	215, // 351: o11y_one.alerts.v1.AlertDefinitionService.GetLifecyclePreflight:input_type -> o11y_one.alerts.v1.GetAlertDefinitionLifecyclePreflightRequest
+	216, // 352: o11y_one.alerts.v1.AlertDefinitionService.ArchiveDefinitionV2:input_type -> o11y_one.alerts.v1.ArchiveAlertDefinitionV2Request
+	217, // 353: o11y_one.alerts.v1.AlertDefinitionService.RestoreDefinition:input_type -> o11y_one.alerts.v1.RestoreAlertDefinitionRequest
+	218, // 354: o11y_one.alerts.v1.AlertDefinitionService.PurgeDefinition:input_type -> o11y_one.alerts.v1.PurgeAlertDefinitionRequest
+	220, // 355: o11y_one.alerts.v1.AlertDefinitionService.PutDraft:input_type -> o11y_one.alerts.v1.PutAlertDraftRequest
+	221, // 356: o11y_one.alerts.v1.AlertDefinitionService.GetDraft:input_type -> o11y_one.alerts.v1.GetAlertDraftRequest
+	222, // 357: o11y_one.alerts.v1.AlertDefinitionService.ListDrafts:input_type -> o11y_one.alerts.v1.ListAlertDraftsRequest
+	224, // 358: o11y_one.alerts.v1.AlertDefinitionService.DeleteDraft:input_type -> o11y_one.alerts.v1.DeleteAlertDraftRequest
+	227, // 359: o11y_one.alerts.v1.AlertDefinitionService.BulkMutateDefinitions:input_type -> o11y_one.alerts.v1.BulkMutateAlertDefinitionsRequest
+	231, // 360: o11y_one.alerts.v1.AlertDefinitionService.ExportDefinitions:input_type -> o11y_one.alerts.v1.ExportAlertDefinitionsRequest
+	232, // 361: o11y_one.alerts.v1.AlertDefinitionService.ImportDefinitions:input_type -> o11y_one.alerts.v1.ImportAlertDefinitionsRequest
+	111, // 362: o11y_one.alerts.v1.AlertRuntimeService.ListActiveInstances:input_type -> o11y_one.alerts.v1.ListActiveAlertInstancesRequest
+	117, // 363: o11y_one.alerts.v1.AlertRuntimeService.GetIncidentCandidate:input_type -> o11y_one.alerts.v1.GetIncidentCandidateRequest
+	129, // 364: o11y_one.alerts.v1.AlertRuntimeService.ListInstances:input_type -> o11y_one.alerts.v1.ListAlertInstancesRequest
+	121, // 365: o11y_one.alerts.v1.AlertRuntimeService.ListIncidents:input_type -> o11y_one.alerts.v1.ListAlertIncidentsRequest
+	123, // 366: o11y_one.alerts.v1.AlertRuntimeService.GetIncident:input_type -> o11y_one.alerts.v1.GetAlertIncidentRequest
+	126, // 367: o11y_one.alerts.v1.AlertRuntimeService.ListIncidentTimeline:input_type -> o11y_one.alerts.v1.ListAlertIncidentTimelineRequest
+	128, // 368: o11y_one.alerts.v1.AlertRuntimeService.AcknowledgeIncident:input_type -> o11y_one.alerts.v1.AcknowledgeAlertIncidentRequest
+	199, // 369: o11y_one.alerts.v1.AlertRuntimeService.ListAudit:input_type -> o11y_one.alerts.v1.ListAlertAuditRequest
+	202, // 370: o11y_one.alerts.v1.AlertRuntimeService.GetAudit:input_type -> o11y_one.alerts.v1.GetAlertAuditRequest
+	204, // 371: o11y_one.alerts.v1.AlertRuntimeService.PreviewSuppression:input_type -> o11y_one.alerts.v1.PreviewAlertSuppressionRequest
+	113, // 372: o11y_one.alerts.v1.AlertRuntimeService.ListEvalHistory:input_type -> o11y_one.alerts.v1.AlertIdRequest
+	114, // 373: o11y_one.alerts.v1.AlertRuntimeService.ListStateHistory:input_type -> o11y_one.alerts.v1.AlertInstanceIdRequest
+	131, // 374: o11y_one.alerts.v1.AlertRuntimeService.ExplainWhyFired:input_type -> o11y_one.alerts.v1.ExplainWhyFiredRequest
+	133, // 375: o11y_one.alerts.v1.AlertRuntimeService.Acknowledge:input_type -> o11y_one.alerts.v1.AcknowledgeAlertRequest
+	134, // 376: o11y_one.alerts.v1.AlertRuntimeService.Pause:input_type -> o11y_one.alerts.v1.PauseAlertRequest
+	135, // 377: o11y_one.alerts.v1.AlertRuntimeService.Resume:input_type -> o11y_one.alerts.v1.ResumeAlertRequest
+	140, // 378: o11y_one.alerts.v1.AlertNotificationService.CreateDestination:input_type -> o11y_one.alerts.v1.UpsertDestinationRequest
+	140, // 379: o11y_one.alerts.v1.AlertNotificationService.UpdateDestination:input_type -> o11y_one.alerts.v1.UpsertDestinationRequest
+	143, // 380: o11y_one.alerts.v1.AlertNotificationService.DeleteDestination:input_type -> o11y_one.alerts.v1.DeleteDestinationRequest
+	100, // 381: o11y_one.alerts.v1.AlertNotificationService.GetDestination:input_type -> o11y_one.alerts.v1.GetAlertResourceRequest
+	141, // 382: o11y_one.alerts.v1.AlertNotificationService.ListDestinations:input_type -> o11y_one.alerts.v1.ListDestinationsRequest
+	100, // 383: o11y_one.alerts.v1.AlertNotificationService.GetDestinationPreflight:input_type -> o11y_one.alerts.v1.GetAlertResourceRequest
+	145, // 384: o11y_one.alerts.v1.AlertNotificationService.CreateContact:input_type -> o11y_one.alerts.v1.UpsertAlertContactRequest
+	145, // 385: o11y_one.alerts.v1.AlertNotificationService.UpdateContact:input_type -> o11y_one.alerts.v1.UpsertAlertContactRequest
+	100, // 386: o11y_one.alerts.v1.AlertNotificationService.GetContact:input_type -> o11y_one.alerts.v1.GetAlertResourceRequest
+	146, // 387: o11y_one.alerts.v1.AlertNotificationService.ListContacts:input_type -> o11y_one.alerts.v1.ListAlertContactsRequest
+	148, // 388: o11y_one.alerts.v1.AlertNotificationService.SetContactArchived:input_type -> o11y_one.alerts.v1.SetAlertContactArchivedRequest
+	149, // 389: o11y_one.alerts.v1.AlertNotificationService.BeginContactVerification:input_type -> o11y_one.alerts.v1.BeginAlertContactVerificationRequest
+	151, // 390: o11y_one.alerts.v1.AlertNotificationService.ConfirmContactVerification:input_type -> o11y_one.alerts.v1.ConfirmAlertContactVerificationRequest
+	154, // 391: o11y_one.alerts.v1.AlertNotificationService.CreateNotificationGroup:input_type -> o11y_one.alerts.v1.UpsertAlertNotificationGroupRequest
+	154, // 392: o11y_one.alerts.v1.AlertNotificationService.UpdateNotificationGroup:input_type -> o11y_one.alerts.v1.UpsertAlertNotificationGroupRequest
+	100, // 393: o11y_one.alerts.v1.AlertNotificationService.GetNotificationGroup:input_type -> o11y_one.alerts.v1.GetAlertResourceRequest
+	155, // 394: o11y_one.alerts.v1.AlertNotificationService.ListNotificationGroups:input_type -> o11y_one.alerts.v1.ListAlertNotificationGroupsRequest
+	157, // 395: o11y_one.alerts.v1.AlertNotificationService.SetNotificationGroupArchived:input_type -> o11y_one.alerts.v1.SetAlertNotificationGroupArchivedRequest
+	158, // 396: o11y_one.alerts.v1.AlertNotificationService.PurgeNotificationGroup:input_type -> o11y_one.alerts.v1.PurgeAlertNotificationGroupRequest
+	159, // 397: o11y_one.alerts.v1.AlertNotificationService.GetNotificationGroupUsage:input_type -> o11y_one.alerts.v1.GetAlertNotificationGroupUsageRequest
+	161, // 398: o11y_one.alerts.v1.AlertNotificationService.PreviewNotificationGroupExpansion:input_type -> o11y_one.alerts.v1.PreviewAlertNotificationGroupExpansionRequest
+	164, // 399: o11y_one.alerts.v1.AlertNotificationService.CreateNotificationPolicy:input_type -> o11y_one.alerts.v1.UpsertNotificationPolicyRequest
+	164, // 400: o11y_one.alerts.v1.AlertNotificationService.UpdateNotificationPolicy:input_type -> o11y_one.alerts.v1.UpsertNotificationPolicyRequest
+	100, // 401: o11y_one.alerts.v1.AlertNotificationService.GetNotificationPolicy:input_type -> o11y_one.alerts.v1.GetAlertResourceRequest
+	177, // 402: o11y_one.alerts.v1.AlertNotificationService.ListNotificationPolicies:input_type -> o11y_one.alerts.v1.ListOperatorResourcesRequest
+	178, // 403: o11y_one.alerts.v1.AlertNotificationService.DeleteNotificationPolicy:input_type -> o11y_one.alerts.v1.DeleteOperatorResourceRequest
+	165, // 404: o11y_one.alerts.v1.AlertNotificationService.ValidateNotificationPolicy:input_type -> o11y_one.alerts.v1.ValidateNotificationPolicyRequest
+	168, // 405: o11y_one.alerts.v1.AlertNotificationService.PreviewNotificationRoute:input_type -> o11y_one.alerts.v1.PreviewNotificationRouteRequest
+	171, // 406: o11y_one.alerts.v1.AlertNotificationService.PreviewNotificationPayload:input_type -> o11y_one.alerts.v1.PreviewNotificationPayloadRequest
+	181, // 407: o11y_one.alerts.v1.AlertNotificationService.CreateMaintenanceWindow:input_type -> o11y_one.alerts.v1.UpsertMaintenanceWindowRequest
+	181, // 408: o11y_one.alerts.v1.AlertNotificationService.UpdateMaintenanceWindow:input_type -> o11y_one.alerts.v1.UpsertMaintenanceWindowRequest
+	100, // 409: o11y_one.alerts.v1.AlertNotificationService.GetMaintenanceWindow:input_type -> o11y_one.alerts.v1.GetAlertResourceRequest
+	177, // 410: o11y_one.alerts.v1.AlertNotificationService.ListMaintenanceWindows:input_type -> o11y_one.alerts.v1.ListOperatorResourcesRequest
+	178, // 411: o11y_one.alerts.v1.AlertNotificationService.DeleteMaintenanceWindow:input_type -> o11y_one.alerts.v1.DeleteOperatorResourceRequest
+	182, // 412: o11y_one.alerts.v1.AlertNotificationService.CreateSilence:input_type -> o11y_one.alerts.v1.UpsertSilenceRequest
+	182, // 413: o11y_one.alerts.v1.AlertNotificationService.UpdateSilence:input_type -> o11y_one.alerts.v1.UpsertSilenceRequest
+	100, // 414: o11y_one.alerts.v1.AlertNotificationService.GetSilence:input_type -> o11y_one.alerts.v1.GetAlertResourceRequest
+	177, // 415: o11y_one.alerts.v1.AlertNotificationService.ListSilences:input_type -> o11y_one.alerts.v1.ListOperatorResourcesRequest
+	178, // 416: o11y_one.alerts.v1.AlertNotificationService.DeleteSilence:input_type -> o11y_one.alerts.v1.DeleteOperatorResourceRequest
+	183, // 417: o11y_one.alerts.v1.AlertNotificationService.TestDestination:input_type -> o11y_one.alerts.v1.TestDestinationRequest
+	185, // 418: o11y_one.alerts.v1.AlertNotificationService.PutDestinationSecret:input_type -> o11y_one.alerts.v1.PutDestinationSecretRequest
+	186, // 419: o11y_one.alerts.v1.AlertNotificationService.RevokeDestinationSecret:input_type -> o11y_one.alerts.v1.RevokeDestinationSecretRequest
+	187, // 420: o11y_one.alerts.v1.AlertNotificationService.ListDestinationSecrets:input_type -> o11y_one.alerts.v1.ListDestinationSecretsRequest
+	192, // 421: o11y_one.alerts.v1.AlertNotificationService.GetDeliveryHistory:input_type -> o11y_one.alerts.v1.GetDeliveryHistoryRequest
+	194, // 422: o11y_one.alerts.v1.AlertNotificationService.ListDeliveries:input_type -> o11y_one.alerts.v1.ListAlertDeliveriesRequest
+	196, // 423: o11y_one.alerts.v1.AlertNotificationService.GetDelivery:input_type -> o11y_one.alerts.v1.GetAlertDeliveryRequest
+	235, // 424: o11y_one.alerts.v1.AlertNotificationService.ReplayDelivery:input_type -> o11y_one.alerts.v1.ReplayAlertDeliveryRequest
+	137, // 425: o11y_one.alerts.v1.AlertPreviewService.PreviewAlert:input_type -> o11y_one.alerts.v1.PreviewAlertRequest
+	113, // 426: o11y_one.alerts.v1.AlertPreviewService.ListPreviewHistory:input_type -> o11y_one.alerts.v1.AlertIdRequest
+	110, // 427: o11y_one.alerts.v1.AlertPreviewService.ActivateNotifyMode:input_type -> o11y_one.alerts.v1.ActivateNotifyModeRequest
+	109, // 428: o11y_one.alerts.v1.AlertPreviewService.ActivateCandidateRevision:input_type -> o11y_one.alerts.v1.ActivateAlertRevisionRequest
+	109, // 429: o11y_one.alerts.v1.AlertPreviewService.RollbackRevision:input_type -> o11y_one.alerts.v1.ActivateAlertRevisionRequest
+	173, // 430: o11y_one.alerts.v1.AlertPreviewService.GetActivationReadiness:input_type -> o11y_one.alerts.v1.GetActivationReadinessRequest
+	206, // 431: o11y_one.alerts.v1.AlertCanaryService.TriggerCanary:input_type -> o11y_one.alerts.v1.TriggerCanaryRequest
+	208, // 432: o11y_one.alerts.v1.AlertCanaryService.GetCanaryRun:input_type -> o11y_one.alerts.v1.GetCanaryRunRequest
+	209, // 433: o11y_one.alerts.v1.AlertCanaryService.EnsureMetaAlerts:input_type -> o11y_one.alerts.v1.EnsureMetaAlertsRequest
+	211, // 434: o11y_one.alerts.v1.AlertCanaryService.GetMetaHealth:input_type -> o11y_one.alerts.v1.GetAlertMetaHealthRequest
+	23,  // 435: o11y_one.alerts.v1.AlertSloService.CreateSli:input_type -> o11y_one.alerts.v1.CreateSliRequest
+	25,  // 436: o11y_one.alerts.v1.AlertSloService.ValidateSli:input_type -> o11y_one.alerts.v1.ValidateSliRequest
+	24,  // 437: o11y_one.alerts.v1.AlertSloService.UpdateSli:input_type -> o11y_one.alerts.v1.UpdateSliRequest
+	27,  // 438: o11y_one.alerts.v1.AlertSloService.GetSli:input_type -> o11y_one.alerts.v1.GetSliRequest
+	28,  // 439: o11y_one.alerts.v1.AlertSloService.ListSlis:input_type -> o11y_one.alerts.v1.ListSlisRequest
+	30,  // 440: o11y_one.alerts.v1.AlertSloService.ArchiveSli:input_type -> o11y_one.alerts.v1.ArchiveSliRequest
+	31,  // 441: o11y_one.alerts.v1.AlertSloService.ListSliRevisions:input_type -> o11y_one.alerts.v1.ListSliRevisionsRequest
+	33,  // 442: o11y_one.alerts.v1.AlertSloService.PreviewSli:input_type -> o11y_one.alerts.v1.PreviewSliRequest
+	38,  // 443: o11y_one.alerts.v1.AlertSloService.CreateSlo:input_type -> o11y_one.alerts.v1.CreateSloRequest
+	39,  // 444: o11y_one.alerts.v1.AlertSloService.UpdateSlo:input_type -> o11y_one.alerts.v1.UpdateSloRequest
+	40,  // 445: o11y_one.alerts.v1.AlertSloService.GetSlo:input_type -> o11y_one.alerts.v1.GetSloRequest
+	41,  // 446: o11y_one.alerts.v1.AlertSloService.ListSlos:input_type -> o11y_one.alerts.v1.ListSlosRequest
+	43,  // 447: o11y_one.alerts.v1.AlertSloService.ArchiveSlo:input_type -> o11y_one.alerts.v1.ArchiveSloRequest
+	44,  // 448: o11y_one.alerts.v1.AlertSloService.ListSloRevisions:input_type -> o11y_one.alerts.v1.ListSloRevisionsRequest
+	46,  // 449: o11y_one.alerts.v1.AlertSloService.GetSloStatus:input_type -> o11y_one.alerts.v1.GetSloStatusRequest
+	48,  // 450: o11y_one.alerts.v1.AlertSloService.GetSloBurndown:input_type -> o11y_one.alerts.v1.GetSloBurndownRequest
+	50,  // 451: o11y_one.alerts.v1.AlertSloService.ListSloHistory:input_type -> o11y_one.alerts.v1.ListSloHistoryRequest
+	52,  // 452: o11y_one.alerts.v1.AlertSloService.CreateRecommendedSloBurnAlert:input_type -> o11y_one.alerts.v1.CreateRecommendedSloBurnAlertRequest
+	97,  // 453: o11y_one.alerts.v1.AlertDefinitionService.CreateAgentQualityRegressionAlert:output_type -> o11y_one.alerts.v1.CreateAlertDefinitionResponse
+	97,  // 454: o11y_one.alerts.v1.AlertDefinitionService.CreateCostPerSuccessAlert:output_type -> o11y_one.alerts.v1.CreateAlertDefinitionResponse
+	97,  // 455: o11y_one.alerts.v1.AlertDefinitionService.CreateSloBurnAlert:output_type -> o11y_one.alerts.v1.CreateAlertDefinitionResponse
+	97,  // 456: o11y_one.alerts.v1.AlertDefinitionService.CreateAdvancedSignalAlert:output_type -> o11y_one.alerts.v1.CreateAlertDefinitionResponse
+	58,  // 457: o11y_one.alerts.v1.AlertDefinitionService.GetDefinition:output_type -> o11y_one.alerts.v1.AlertDefinitionV1
+	102, // 458: o11y_one.alerts.v1.AlertDefinitionService.ListDefinitions:output_type -> o11y_one.alerts.v1.ListAlertDefinitionsResponse
+	58,  // 459: o11y_one.alerts.v1.AlertDefinitionService.UpdateShadow:output_type -> o11y_one.alerts.v1.AlertDefinitionV1
+	64,  // 460: o11y_one.alerts.v1.AlertDefinitionService.UpsertCandidateRevision:output_type -> o11y_one.alerts.v1.AlertRevisionV1
+	64,  // 461: o11y_one.alerts.v1.AlertDefinitionService.GetRevision:output_type -> o11y_one.alerts.v1.AlertRevisionV1
+	107, // 462: o11y_one.alerts.v1.AlertDefinitionService.ListRevisions:output_type -> o11y_one.alerts.v1.ListAlertRevisionsResponse
+	66,  // 463: o11y_one.alerts.v1.AlertDefinitionService.DiffRevisions:output_type -> o11y_one.alerts.v1.AlertRevisionDiffV1
+	136, // 464: o11y_one.alerts.v1.AlertDefinitionService.DeleteDefinition:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	214, // 465: o11y_one.alerts.v1.AlertDefinitionService.GetLifecyclePreflight:output_type -> o11y_one.alerts.v1.AlertDefinitionLifecyclePreflightV1
+	136, // 466: o11y_one.alerts.v1.AlertDefinitionService.ArchiveDefinitionV2:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	136, // 467: o11y_one.alerts.v1.AlertDefinitionService.RestoreDefinition:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	136, // 468: o11y_one.alerts.v1.AlertDefinitionService.PurgeDefinition:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	219, // 469: o11y_one.alerts.v1.AlertDefinitionService.PutDraft:output_type -> o11y_one.alerts.v1.AlertDraftV1
+	219, // 470: o11y_one.alerts.v1.AlertDefinitionService.GetDraft:output_type -> o11y_one.alerts.v1.AlertDraftV1
+	223, // 471: o11y_one.alerts.v1.AlertDefinitionService.ListDrafts:output_type -> o11y_one.alerts.v1.ListAlertDraftsResponse
+	136, // 472: o11y_one.alerts.v1.AlertDefinitionService.DeleteDraft:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	228, // 473: o11y_one.alerts.v1.AlertDefinitionService.BulkMutateDefinitions:output_type -> o11y_one.alerts.v1.BulkMutateAlertDefinitionsResponse
+	230, // 474: o11y_one.alerts.v1.AlertDefinitionService.ExportDefinitions:output_type -> o11y_one.alerts.v1.AlertDefinitionExportBundleV1
+	234, // 475: o11y_one.alerts.v1.AlertDefinitionService.ImportDefinitions:output_type -> o11y_one.alerts.v1.ImportAlertDefinitionsResponse
+	112, // 476: o11y_one.alerts.v1.AlertRuntimeService.ListActiveInstances:output_type -> o11y_one.alerts.v1.ListActiveAlertInstancesResponse
+	118, // 477: o11y_one.alerts.v1.AlertRuntimeService.GetIncidentCandidate:output_type -> o11y_one.alerts.v1.GetIncidentCandidateResponse
+	130, // 478: o11y_one.alerts.v1.AlertRuntimeService.ListInstances:output_type -> o11y_one.alerts.v1.ListAlertInstancesResponse
+	122, // 479: o11y_one.alerts.v1.AlertRuntimeService.ListIncidents:output_type -> o11y_one.alerts.v1.ListAlertIncidentsResponse
+	124, // 480: o11y_one.alerts.v1.AlertRuntimeService.GetIncident:output_type -> o11y_one.alerts.v1.GetAlertIncidentResponse
+	127, // 481: o11y_one.alerts.v1.AlertRuntimeService.ListIncidentTimeline:output_type -> o11y_one.alerts.v1.ListAlertIncidentTimelineResponse
+	136, // 482: o11y_one.alerts.v1.AlertRuntimeService.AcknowledgeIncident:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	201, // 483: o11y_one.alerts.v1.AlertRuntimeService.ListAudit:output_type -> o11y_one.alerts.v1.ListAlertAuditResponse
+	203, // 484: o11y_one.alerts.v1.AlertRuntimeService.GetAudit:output_type -> o11y_one.alerts.v1.GetAlertAuditResponse
+	205, // 485: o11y_one.alerts.v1.AlertRuntimeService.PreviewSuppression:output_type -> o11y_one.alerts.v1.PreviewAlertSuppressionResponse
+	115, // 486: o11y_one.alerts.v1.AlertRuntimeService.ListEvalHistory:output_type -> o11y_one.alerts.v1.ListAlertEvalHistoryResponse
+	116, // 487: o11y_one.alerts.v1.AlertRuntimeService.ListStateHistory:output_type -> o11y_one.alerts.v1.ListAlertStateHistoryResponse
+	132, // 488: o11y_one.alerts.v1.AlertRuntimeService.ExplainWhyFired:output_type -> o11y_one.alerts.v1.ExplainWhyFiredResponse
+	136, // 489: o11y_one.alerts.v1.AlertRuntimeService.Acknowledge:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	136, // 490: o11y_one.alerts.v1.AlertRuntimeService.Pause:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	136, // 491: o11y_one.alerts.v1.AlertRuntimeService.Resume:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	82,  // 492: o11y_one.alerts.v1.AlertNotificationService.CreateDestination:output_type -> o11y_one.alerts.v1.AlertDestinationV1
+	82,  // 493: o11y_one.alerts.v1.AlertNotificationService.UpdateDestination:output_type -> o11y_one.alerts.v1.AlertDestinationV1
+	136, // 494: o11y_one.alerts.v1.AlertNotificationService.DeleteDestination:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	82,  // 495: o11y_one.alerts.v1.AlertNotificationService.GetDestination:output_type -> o11y_one.alerts.v1.AlertDestinationV1
+	142, // 496: o11y_one.alerts.v1.AlertNotificationService.ListDestinations:output_type -> o11y_one.alerts.v1.ListDestinationsResponse
+	82,  // 497: o11y_one.alerts.v1.AlertNotificationService.GetDestinationPreflight:output_type -> o11y_one.alerts.v1.AlertDestinationV1
+	144, // 498: o11y_one.alerts.v1.AlertNotificationService.CreateContact:output_type -> o11y_one.alerts.v1.AlertContactV1
+	144, // 499: o11y_one.alerts.v1.AlertNotificationService.UpdateContact:output_type -> o11y_one.alerts.v1.AlertContactV1
+	144, // 500: o11y_one.alerts.v1.AlertNotificationService.GetContact:output_type -> o11y_one.alerts.v1.AlertContactV1
+	147, // 501: o11y_one.alerts.v1.AlertNotificationService.ListContacts:output_type -> o11y_one.alerts.v1.ListAlertContactsResponse
+	144, // 502: o11y_one.alerts.v1.AlertNotificationService.SetContactArchived:output_type -> o11y_one.alerts.v1.AlertContactV1
+	150, // 503: o11y_one.alerts.v1.AlertNotificationService.BeginContactVerification:output_type -> o11y_one.alerts.v1.BeginAlertContactVerificationResponse
+	144, // 504: o11y_one.alerts.v1.AlertNotificationService.ConfirmContactVerification:output_type -> o11y_one.alerts.v1.AlertContactV1
+	153, // 505: o11y_one.alerts.v1.AlertNotificationService.CreateNotificationGroup:output_type -> o11y_one.alerts.v1.AlertNotificationGroupV1
+	153, // 506: o11y_one.alerts.v1.AlertNotificationService.UpdateNotificationGroup:output_type -> o11y_one.alerts.v1.AlertNotificationGroupV1
+	153, // 507: o11y_one.alerts.v1.AlertNotificationService.GetNotificationGroup:output_type -> o11y_one.alerts.v1.AlertNotificationGroupV1
+	156, // 508: o11y_one.alerts.v1.AlertNotificationService.ListNotificationGroups:output_type -> o11y_one.alerts.v1.ListAlertNotificationGroupsResponse
+	153, // 509: o11y_one.alerts.v1.AlertNotificationService.SetNotificationGroupArchived:output_type -> o11y_one.alerts.v1.AlertNotificationGroupV1
+	136, // 510: o11y_one.alerts.v1.AlertNotificationService.PurgeNotificationGroup:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	160, // 511: o11y_one.alerts.v1.AlertNotificationService.GetNotificationGroupUsage:output_type -> o11y_one.alerts.v1.AlertNotificationGroupUsageV1
+	163, // 512: o11y_one.alerts.v1.AlertNotificationService.PreviewNotificationGroupExpansion:output_type -> o11y_one.alerts.v1.PreviewAlertNotificationGroupExpansionResponse
+	89,  // 513: o11y_one.alerts.v1.AlertNotificationService.CreateNotificationPolicy:output_type -> o11y_one.alerts.v1.AlertNotificationPolicyV1
+	89,  // 514: o11y_one.alerts.v1.AlertNotificationService.UpdateNotificationPolicy:output_type -> o11y_one.alerts.v1.AlertNotificationPolicyV1
+	89,  // 515: o11y_one.alerts.v1.AlertNotificationService.GetNotificationPolicy:output_type -> o11y_one.alerts.v1.AlertNotificationPolicyV1
+	176, // 516: o11y_one.alerts.v1.AlertNotificationService.ListNotificationPolicies:output_type -> o11y_one.alerts.v1.ListNotificationPoliciesResponse
+	136, // 517: o11y_one.alerts.v1.AlertNotificationService.DeleteNotificationPolicy:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	166, // 518: o11y_one.alerts.v1.AlertNotificationService.ValidateNotificationPolicy:output_type -> o11y_one.alerts.v1.ValidateNotificationPolicyResponse
+	170, // 519: o11y_one.alerts.v1.AlertNotificationService.PreviewNotificationRoute:output_type -> o11y_one.alerts.v1.PreviewNotificationRouteResponse
+	172, // 520: o11y_one.alerts.v1.AlertNotificationService.PreviewNotificationPayload:output_type -> o11y_one.alerts.v1.PreviewNotificationPayloadResponse
+	90,  // 521: o11y_one.alerts.v1.AlertNotificationService.CreateMaintenanceWindow:output_type -> o11y_one.alerts.v1.AlertMaintenanceWindowV1
+	90,  // 522: o11y_one.alerts.v1.AlertNotificationService.UpdateMaintenanceWindow:output_type -> o11y_one.alerts.v1.AlertMaintenanceWindowV1
+	90,  // 523: o11y_one.alerts.v1.AlertNotificationService.GetMaintenanceWindow:output_type -> o11y_one.alerts.v1.AlertMaintenanceWindowV1
+	179, // 524: o11y_one.alerts.v1.AlertNotificationService.ListMaintenanceWindows:output_type -> o11y_one.alerts.v1.ListMaintenanceWindowsResponse
+	136, // 525: o11y_one.alerts.v1.AlertNotificationService.DeleteMaintenanceWindow:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	91,  // 526: o11y_one.alerts.v1.AlertNotificationService.CreateSilence:output_type -> o11y_one.alerts.v1.AlertSilenceV1
+	91,  // 527: o11y_one.alerts.v1.AlertNotificationService.UpdateSilence:output_type -> o11y_one.alerts.v1.AlertSilenceV1
+	91,  // 528: o11y_one.alerts.v1.AlertNotificationService.GetSilence:output_type -> o11y_one.alerts.v1.AlertSilenceV1
+	180, // 529: o11y_one.alerts.v1.AlertNotificationService.ListSilences:output_type -> o11y_one.alerts.v1.ListSilencesResponse
+	136, // 530: o11y_one.alerts.v1.AlertNotificationService.DeleteSilence:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	184, // 531: o11y_one.alerts.v1.AlertNotificationService.TestDestination:output_type -> o11y_one.alerts.v1.TestDestinationResponse
+	189, // 532: o11y_one.alerts.v1.AlertNotificationService.PutDestinationSecret:output_type -> o11y_one.alerts.v1.PutDestinationSecretResponse
+	190, // 533: o11y_one.alerts.v1.AlertNotificationService.RevokeDestinationSecret:output_type -> o11y_one.alerts.v1.RevokeDestinationSecretResponse
+	191, // 534: o11y_one.alerts.v1.AlertNotificationService.ListDestinationSecrets:output_type -> o11y_one.alerts.v1.ListDestinationSecretsResponse
+	193, // 535: o11y_one.alerts.v1.AlertNotificationService.GetDeliveryHistory:output_type -> o11y_one.alerts.v1.GetDeliveryHistoryResponse
+	195, // 536: o11y_one.alerts.v1.AlertNotificationService.ListDeliveries:output_type -> o11y_one.alerts.v1.ListAlertDeliveriesResponse
+	197, // 537: o11y_one.alerts.v1.AlertNotificationService.GetDelivery:output_type -> o11y_one.alerts.v1.GetAlertDeliveryResponse
+	236, // 538: o11y_one.alerts.v1.AlertNotificationService.ReplayDelivery:output_type -> o11y_one.alerts.v1.ReplayAlertDeliveryResponse
+	138, // 539: o11y_one.alerts.v1.AlertPreviewService.PreviewAlert:output_type -> o11y_one.alerts.v1.PreviewAlertResponse
+	139, // 540: o11y_one.alerts.v1.AlertPreviewService.ListPreviewHistory:output_type -> o11y_one.alerts.v1.ListPreviewHistoryResponse
+	58,  // 541: o11y_one.alerts.v1.AlertPreviewService.ActivateNotifyMode:output_type -> o11y_one.alerts.v1.AlertDefinitionV1
+	58,  // 542: o11y_one.alerts.v1.AlertPreviewService.ActivateCandidateRevision:output_type -> o11y_one.alerts.v1.AlertDefinitionV1
+	58,  // 543: o11y_one.alerts.v1.AlertPreviewService.RollbackRevision:output_type -> o11y_one.alerts.v1.AlertDefinitionV1
+	175, // 544: o11y_one.alerts.v1.AlertPreviewService.GetActivationReadiness:output_type -> o11y_one.alerts.v1.GetActivationReadinessResponse
+	207, // 545: o11y_one.alerts.v1.AlertCanaryService.TriggerCanary:output_type -> o11y_one.alerts.v1.TriggerCanaryResponse
+	207, // 546: o11y_one.alerts.v1.AlertCanaryService.GetCanaryRun:output_type -> o11y_one.alerts.v1.TriggerCanaryResponse
+	210, // 547: o11y_one.alerts.v1.AlertCanaryService.EnsureMetaAlerts:output_type -> o11y_one.alerts.v1.EnsureMetaAlertsResponse
+	212, // 548: o11y_one.alerts.v1.AlertCanaryService.GetMetaHealth:output_type -> o11y_one.alerts.v1.GetAlertMetaHealthResponse
+	21,  // 549: o11y_one.alerts.v1.AlertSloService.CreateSli:output_type -> o11y_one.alerts.v1.AlertSliV1
+	26,  // 550: o11y_one.alerts.v1.AlertSloService.ValidateSli:output_type -> o11y_one.alerts.v1.ValidateSliResponse
+	21,  // 551: o11y_one.alerts.v1.AlertSloService.UpdateSli:output_type -> o11y_one.alerts.v1.AlertSliV1
+	21,  // 552: o11y_one.alerts.v1.AlertSloService.GetSli:output_type -> o11y_one.alerts.v1.AlertSliV1
+	29,  // 553: o11y_one.alerts.v1.AlertSloService.ListSlis:output_type -> o11y_one.alerts.v1.ListSlisResponse
+	136, // 554: o11y_one.alerts.v1.AlertSloService.ArchiveSli:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	32,  // 555: o11y_one.alerts.v1.AlertSloService.ListSliRevisions:output_type -> o11y_one.alerts.v1.ListSliRevisionsResponse
+	34,  // 556: o11y_one.alerts.v1.AlertSloService.PreviewSli:output_type -> o11y_one.alerts.v1.SliPreviewV1
+	36,  // 557: o11y_one.alerts.v1.AlertSloService.CreateSlo:output_type -> o11y_one.alerts.v1.AlertSloV1
+	36,  // 558: o11y_one.alerts.v1.AlertSloService.UpdateSlo:output_type -> o11y_one.alerts.v1.AlertSloV1
+	36,  // 559: o11y_one.alerts.v1.AlertSloService.GetSlo:output_type -> o11y_one.alerts.v1.AlertSloV1
+	42,  // 560: o11y_one.alerts.v1.AlertSloService.ListSlos:output_type -> o11y_one.alerts.v1.ListSlosResponse
+	136, // 561: o11y_one.alerts.v1.AlertSloService.ArchiveSlo:output_type -> o11y_one.alerts.v1.AlertMutationResponse
+	45,  // 562: o11y_one.alerts.v1.AlertSloService.ListSloRevisions:output_type -> o11y_one.alerts.v1.ListSloRevisionsResponse
+	47,  // 563: o11y_one.alerts.v1.AlertSloService.GetSloStatus:output_type -> o11y_one.alerts.v1.SloStatusV1
+	49,  // 564: o11y_one.alerts.v1.AlertSloService.GetSloBurndown:output_type -> o11y_one.alerts.v1.GetSloBurndownResponse
+	51,  // 565: o11y_one.alerts.v1.AlertSloService.ListSloHistory:output_type -> o11y_one.alerts.v1.ListSloHistoryResponse
+	53,  // 566: o11y_one.alerts.v1.AlertSloService.CreateRecommendedSloBurnAlert:output_type -> o11y_one.alerts.v1.CreateRecommendedSloBurnAlertResponse
+	453, // [453:567] is the sub-list for method output_type
+	339, // [339:453] is the sub-list for method input_type
+	339, // [339:339] is the sub-list for extension type_name
+	339, // [339:339] is the sub-list for extension extendee
+	0,   // [0:339] is the sub-list for field type_name
 }
 
 func init() { file_proto_o11y_one_alerts_v1_alerts_proto_init() }
@@ -19112,20 +20998,24 @@ func file_proto_o11y_one_alerts_v1_alerts_proto_init() {
 	file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[70].OneofWrappers = []any{
 		(*AlertNotificationRouteTargetV1_DestinationId)(nil),
 		(*AlertNotificationRouteTargetV1_DestinationKey)(nil),
+		(*AlertNotificationRouteTargetV1_GroupId)(nil),
+		(*AlertNotificationRouteTargetV1_GroupKey)(nil),
 	}
 	file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[72].OneofWrappers = []any{}
 	file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[88].OneofWrappers = []any{}
 	file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[89].OneofWrappers = []any{}
 	file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[122].OneofWrappers = []any{}
-	file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[129].OneofWrappers = []any{}
-	file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[185].OneofWrappers = []any{}
+	file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[130].OneofWrappers = []any{}
+	file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[139].OneofWrappers = []any{}
+	file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[149].OneofWrappers = []any{}
+	file_proto_o11y_one_alerts_v1_alerts_proto_msgTypes[205].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_proto_o11y_one_alerts_v1_alerts_proto_rawDesc), len(file_proto_o11y_one_alerts_v1_alerts_proto_rawDesc)),
-			NumEnums:      13,
-			NumMessages:   202,
+			NumEnums:      15,
+			NumMessages:   222,
 			NumExtensions: 0,
 			NumServices:   6,
 		},

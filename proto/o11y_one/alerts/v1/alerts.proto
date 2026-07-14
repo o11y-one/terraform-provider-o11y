@@ -763,6 +763,8 @@ message AlertNotificationRouteTargetV1 {
   oneof target {
     string destination_id = 1;
     string destination_key = 2;
+    string group_id = 3;
+    string group_key = 4;
   }
 }
 
@@ -1185,6 +1187,174 @@ message DeleteDestinationRequest {
   string idempotency_key = 2;
 }
 
+enum AlertContactStatusV1 {
+  ALERT_CONTACT_STATUS_V1_UNSPECIFIED = 0;
+  ALERT_CONTACT_STATUS_V1_PENDING = 1;
+  ALERT_CONTACT_STATUS_V1_VERIFIED = 2;
+  ALERT_CONTACT_STATUS_V1_DISABLED = 3;
+  ALERT_CONTACT_STATUS_V1_ARCHIVED = 4;
+}
+
+message AlertContactV1 {
+  string id = 1;
+  string contact_key = 2;
+  string display_name = 3;
+  string email = 4;
+  AlertContactStatusV1 status = 5;
+  int64 generation = 6;
+  int64 verified_generation = 7;
+  int64 revision = 8;
+  string delivery_destination_id = 9;
+  google.protobuf.Timestamp archived_at = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+}
+
+message UpsertAlertContactRequest {
+  string id = 1;
+  string contact_key = 2;
+  string display_name = 3;
+  string email = 4;
+  optional int64 expected_revision = 5;
+  string idempotency_key = 6;
+  string org_id = 7;
+}
+
+message ListAlertContactsRequest {
+  string org_id = 1;
+  bool include_archived = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message ListAlertContactsResponse { repeated AlertContactV1 items = 1; }
+
+message SetAlertContactArchivedRequest {
+  string org_id = 1;
+  string contact_id = 2;
+  int64 expected_revision = 3;
+  bool archived = 4;
+  string reason = 5;
+  string idempotency_key = 6;
+}
+
+message BeginAlertContactVerificationRequest {
+  string org_id = 1;
+  string contact_id = 2;
+  int64 expected_generation = 3;
+  string idempotency_key = 4;
+}
+
+message BeginAlertContactVerificationResponse {
+  string verification_id = 1;
+  int64 contact_generation = 2;
+  string status = 3;
+  google.protobuf.Timestamp expires_at = 4;
+}
+
+message ConfirmAlertContactVerificationRequest {
+  string org_id = 1;
+  string verification_id = 2;
+  string token = 3;
+  string idempotency_key = 4;
+}
+
+enum AlertNotificationGroupMemberKindV1 {
+  ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_UNSPECIFIED = 0;
+  ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_CONTACT = 1;
+  ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_DESTINATION = 2;
+  ALERT_NOTIFICATION_GROUP_MEMBER_KIND_V1_GROUP = 3;
+}
+
+message AlertNotificationGroupMemberV1 {
+  string id = 1;
+  AlertNotificationGroupMemberKindV1 kind = 2;
+  string member_id = 3;
+  int32 position = 4;
+  bool enabled = 5;
+}
+
+message AlertNotificationGroupV1 {
+  string id = 1;
+  string group_key = 2;
+  string name = 3;
+  bool enabled = 4;
+  int64 revision = 5;
+  google.protobuf.Timestamp archived_at = 6;
+  repeated AlertNotificationGroupMemberV1 members = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message UpsertAlertNotificationGroupRequest {
+  string id = 1;
+  string group_key = 2;
+  string name = 3;
+  bool enabled = 4;
+  optional int64 expected_revision = 5;
+  repeated AlertNotificationGroupMemberV1 members = 6;
+  string idempotency_key = 7;
+  string org_id = 8;
+}
+
+message ListAlertNotificationGroupsRequest {
+  string org_id = 1;
+  bool include_archived = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message ListAlertNotificationGroupsResponse { repeated AlertNotificationGroupV1 items = 1; }
+
+message SetAlertNotificationGroupArchivedRequest {
+  string org_id = 1;
+  string group_id = 2;
+  int64 expected_revision = 3;
+  bool archived = 4;
+  string reason = 5;
+  string idempotency_key = 6;
+}
+
+message PurgeAlertNotificationGroupRequest {
+  string org_id = 1;
+  string group_id = 2;
+  string reason = 3;
+  string idempotency_key = 4;
+}
+
+message GetAlertNotificationGroupUsageRequest {
+  string org_id = 1;
+  string group_id = 2;
+}
+
+message AlertNotificationGroupUsageV1 {
+  repeated string policy_route_ids = 1;
+  repeated string parent_group_ids = 2;
+  bool can_purge = 3;
+}
+
+message PreviewAlertNotificationGroupExpansionRequest {
+  string org_id = 1;
+  string group_id = 2;
+}
+
+message AlertNotificationRecipientV1 {
+  string destination_id = 1;
+  string destination_key = 2;
+  AlertDestinationKindV1 destination_kind = 3;
+  AlertNotificationGroupMemberKindV1 source_kind = 4;
+  string source_id = 5;
+  bool verified = 6;
+  bool enabled = 7;
+}
+
+message PreviewAlertNotificationGroupExpansionResponse {
+  string group_id = 1;
+  repeated AlertNotificationRecipientV1 recipients = 2;
+  repeated string diagnostics = 3;
+  bool truncated = 4;
+}
+
 message UpsertNotificationPolicyRequest {
   string id = 1;
   string policy_key = 2;
@@ -1238,6 +1408,8 @@ message AlertRouteEvaluationV1 {
   bool stopped = 10;
   string reason = 11;
   AlertDestinationVerificationStateV1 destination_verification_state = 12;
+  string group_id = 13;
+  repeated string expanded_destination_ids = 14;
 }
 
 message PreviewNotificationRouteResponse {
@@ -1771,6 +1943,21 @@ service AlertNotificationService {
   rpc GetDestination(GetAlertResourceRequest) returns (AlertDestinationV1);
   rpc ListDestinations(ListDestinationsRequest) returns (ListDestinationsResponse);
   rpc GetDestinationPreflight(GetAlertResourceRequest) returns (AlertDestinationV1);
+  rpc CreateContact(UpsertAlertContactRequest) returns (AlertContactV1);
+  rpc UpdateContact(UpsertAlertContactRequest) returns (AlertContactV1);
+  rpc GetContact(GetAlertResourceRequest) returns (AlertContactV1);
+  rpc ListContacts(ListAlertContactsRequest) returns (ListAlertContactsResponse);
+  rpc SetContactArchived(SetAlertContactArchivedRequest) returns (AlertContactV1);
+  rpc BeginContactVerification(BeginAlertContactVerificationRequest) returns (BeginAlertContactVerificationResponse);
+  rpc ConfirmContactVerification(ConfirmAlertContactVerificationRequest) returns (AlertContactV1);
+  rpc CreateNotificationGroup(UpsertAlertNotificationGroupRequest) returns (AlertNotificationGroupV1);
+  rpc UpdateNotificationGroup(UpsertAlertNotificationGroupRequest) returns (AlertNotificationGroupV1);
+  rpc GetNotificationGroup(GetAlertResourceRequest) returns (AlertNotificationGroupV1);
+  rpc ListNotificationGroups(ListAlertNotificationGroupsRequest) returns (ListAlertNotificationGroupsResponse);
+  rpc SetNotificationGroupArchived(SetAlertNotificationGroupArchivedRequest) returns (AlertNotificationGroupV1);
+  rpc PurgeNotificationGroup(PurgeAlertNotificationGroupRequest) returns (AlertMutationResponse);
+  rpc GetNotificationGroupUsage(GetAlertNotificationGroupUsageRequest) returns (AlertNotificationGroupUsageV1);
+  rpc PreviewNotificationGroupExpansion(PreviewAlertNotificationGroupExpansionRequest) returns (PreviewAlertNotificationGroupExpansionResponse);
   rpc CreateNotificationPolicy(UpsertNotificationPolicyRequest) returns (AlertNotificationPolicyV1);
   rpc UpdateNotificationPolicy(UpsertNotificationPolicyRequest) returns (AlertNotificationPolicyV1);
   rpc GetNotificationPolicy(GetAlertResourceRequest) returns (AlertNotificationPolicyV1);
