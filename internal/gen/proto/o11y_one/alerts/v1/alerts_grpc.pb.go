@@ -958,22 +958,29 @@ var AlertDefinitionService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	AlertRuntimeService_ListActiveInstances_FullMethodName  = "/o11y_one.alerts.v1.AlertRuntimeService/ListActiveInstances"
-	AlertRuntimeService_GetIncidentCandidate_FullMethodName = "/o11y_one.alerts.v1.AlertRuntimeService/GetIncidentCandidate"
-	AlertRuntimeService_ListInstances_FullMethodName        = "/o11y_one.alerts.v1.AlertRuntimeService/ListInstances"
-	AlertRuntimeService_ListIncidents_FullMethodName        = "/o11y_one.alerts.v1.AlertRuntimeService/ListIncidents"
-	AlertRuntimeService_GetIncident_FullMethodName          = "/o11y_one.alerts.v1.AlertRuntimeService/GetIncident"
-	AlertRuntimeService_ListIncidentTimeline_FullMethodName = "/o11y_one.alerts.v1.AlertRuntimeService/ListIncidentTimeline"
-	AlertRuntimeService_AcknowledgeIncident_FullMethodName  = "/o11y_one.alerts.v1.AlertRuntimeService/AcknowledgeIncident"
-	AlertRuntimeService_ListAudit_FullMethodName            = "/o11y_one.alerts.v1.AlertRuntimeService/ListAudit"
-	AlertRuntimeService_GetAudit_FullMethodName             = "/o11y_one.alerts.v1.AlertRuntimeService/GetAudit"
-	AlertRuntimeService_PreviewSuppression_FullMethodName   = "/o11y_one.alerts.v1.AlertRuntimeService/PreviewSuppression"
-	AlertRuntimeService_ListEvalHistory_FullMethodName      = "/o11y_one.alerts.v1.AlertRuntimeService/ListEvalHistory"
-	AlertRuntimeService_ListStateHistory_FullMethodName     = "/o11y_one.alerts.v1.AlertRuntimeService/ListStateHistory"
-	AlertRuntimeService_ExplainWhyFired_FullMethodName      = "/o11y_one.alerts.v1.AlertRuntimeService/ExplainWhyFired"
-	AlertRuntimeService_Acknowledge_FullMethodName          = "/o11y_one.alerts.v1.AlertRuntimeService/Acknowledge"
-	AlertRuntimeService_Pause_FullMethodName                = "/o11y_one.alerts.v1.AlertRuntimeService/Pause"
-	AlertRuntimeService_Resume_FullMethodName               = "/o11y_one.alerts.v1.AlertRuntimeService/Resume"
+	AlertRuntimeService_ListActiveInstances_FullMethodName       = "/o11y_one.alerts.v1.AlertRuntimeService/ListActiveInstances"
+	AlertRuntimeService_GetIncidentCandidate_FullMethodName      = "/o11y_one.alerts.v1.AlertRuntimeService/GetIncidentCandidate"
+	AlertRuntimeService_ListInstances_FullMethodName             = "/o11y_one.alerts.v1.AlertRuntimeService/ListInstances"
+	AlertRuntimeService_ListIncidents_FullMethodName             = "/o11y_one.alerts.v1.AlertRuntimeService/ListIncidents"
+	AlertRuntimeService_GetIncident_FullMethodName               = "/o11y_one.alerts.v1.AlertRuntimeService/GetIncident"
+	AlertRuntimeService_ListIncidentTimeline_FullMethodName      = "/o11y_one.alerts.v1.AlertRuntimeService/ListIncidentTimeline"
+	AlertRuntimeService_AssignIncident_FullMethodName            = "/o11y_one.alerts.v1.AlertRuntimeService/AssignIncident"
+	AlertRuntimeService_AddIncidentComment_FullMethodName        = "/o11y_one.alerts.v1.AlertRuntimeService/AddIncidentComment"
+	AlertRuntimeService_ListIncidentComments_FullMethodName      = "/o11y_one.alerts.v1.AlertRuntimeService/ListIncidentComments"
+	AlertRuntimeService_RedactIncidentComment_FullMethodName     = "/o11y_one.alerts.v1.AlertRuntimeService/RedactIncidentComment"
+	AlertRuntimeService_ChangeIncidentLifecycle_FullMethodName   = "/o11y_one.alerts.v1.AlertRuntimeService/ChangeIncidentLifecycle"
+	AlertRuntimeService_CorrectIncidentMembership_FullMethodName = "/o11y_one.alerts.v1.AlertRuntimeService/CorrectIncidentMembership"
+	AlertRuntimeService_AcknowledgeIncident_FullMethodName       = "/o11y_one.alerts.v1.AlertRuntimeService/AcknowledgeIncident"
+	AlertRuntimeService_ListAudit_FullMethodName                 = "/o11y_one.alerts.v1.AlertRuntimeService/ListAudit"
+	AlertRuntimeService_GetAudit_FullMethodName                  = "/o11y_one.alerts.v1.AlertRuntimeService/GetAudit"
+	AlertRuntimeService_PreviewSuppression_FullMethodName        = "/o11y_one.alerts.v1.AlertRuntimeService/PreviewSuppression"
+	AlertRuntimeService_ListEvalHistory_FullMethodName           = "/o11y_one.alerts.v1.AlertRuntimeService/ListEvalHistory"
+	AlertRuntimeService_ListStateHistory_FullMethodName          = "/o11y_one.alerts.v1.AlertRuntimeService/ListStateHistory"
+	AlertRuntimeService_ExplainWhyFired_FullMethodName           = "/o11y_one.alerts.v1.AlertRuntimeService/ExplainWhyFired"
+	AlertRuntimeService_Acknowledge_FullMethodName               = "/o11y_one.alerts.v1.AlertRuntimeService/Acknowledge"
+	AlertRuntimeService_Pause_FullMethodName                     = "/o11y_one.alerts.v1.AlertRuntimeService/Pause"
+	AlertRuntimeService_Resume_FullMethodName                    = "/o11y_one.alerts.v1.AlertRuntimeService/Resume"
+	AlertRuntimeService_StreamOperatorEvents_FullMethodName      = "/o11y_one.alerts.v1.AlertRuntimeService/StreamOperatorEvents"
 )
 
 // AlertRuntimeServiceClient is the client API for AlertRuntimeService service.
@@ -986,6 +993,12 @@ type AlertRuntimeServiceClient interface {
 	ListIncidents(ctx context.Context, in *ListAlertIncidentsRequest, opts ...grpc.CallOption) (*ListAlertIncidentsResponse, error)
 	GetIncident(ctx context.Context, in *GetAlertIncidentRequest, opts ...grpc.CallOption) (*GetAlertIncidentResponse, error)
 	ListIncidentTimeline(ctx context.Context, in *ListAlertIncidentTimelineRequest, opts ...grpc.CallOption) (*ListAlertIncidentTimelineResponse, error)
+	AssignIncident(ctx context.Context, in *AssignAlertIncidentRequest, opts ...grpc.CallOption) (*AlertIncidentMutationResultV1, error)
+	AddIncidentComment(ctx context.Context, in *AddAlertIncidentCommentRequest, opts ...grpc.CallOption) (*AlertIncidentCommentV1, error)
+	ListIncidentComments(ctx context.Context, in *ListAlertIncidentCommentsRequest, opts ...grpc.CallOption) (*ListAlertIncidentCommentsResponse, error)
+	RedactIncidentComment(ctx context.Context, in *RedactAlertIncidentCommentRequest, opts ...grpc.CallOption) (*AlertIncidentCommentV1, error)
+	ChangeIncidentLifecycle(ctx context.Context, in *ChangeAlertIncidentLifecycleRequest, opts ...grpc.CallOption) (*AlertIncidentMutationResultV1, error)
+	CorrectIncidentMembership(ctx context.Context, in *CorrectAlertIncidentMembershipRequest, opts ...grpc.CallOption) (*AlertIncidentMutationResultV1, error)
 	AcknowledgeIncident(ctx context.Context, in *AcknowledgeAlertIncidentRequest, opts ...grpc.CallOption) (*AlertMutationResponse, error)
 	ListAudit(ctx context.Context, in *ListAlertAuditRequest, opts ...grpc.CallOption) (*ListAlertAuditResponse, error)
 	GetAudit(ctx context.Context, in *GetAlertAuditRequest, opts ...grpc.CallOption) (*GetAlertAuditResponse, error)
@@ -996,6 +1009,7 @@ type AlertRuntimeServiceClient interface {
 	Acknowledge(ctx context.Context, in *AcknowledgeAlertRequest, opts ...grpc.CallOption) (*AlertMutationResponse, error)
 	Pause(ctx context.Context, in *PauseAlertRequest, opts ...grpc.CallOption) (*AlertMutationResponse, error)
 	Resume(ctx context.Context, in *ResumeAlertRequest, opts ...grpc.CallOption) (*AlertMutationResponse, error)
+	StreamOperatorEvents(ctx context.Context, in *StreamAlertOperatorEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[AlertOperatorStreamEventV1], error)
 }
 
 type alertRuntimeServiceClient struct {
@@ -1060,6 +1074,66 @@ func (c *alertRuntimeServiceClient) ListIncidentTimeline(ctx context.Context, in
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListAlertIncidentTimelineResponse)
 	err := c.cc.Invoke(ctx, AlertRuntimeService_ListIncidentTimeline_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertRuntimeServiceClient) AssignIncident(ctx context.Context, in *AssignAlertIncidentRequest, opts ...grpc.CallOption) (*AlertIncidentMutationResultV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertIncidentMutationResultV1)
+	err := c.cc.Invoke(ctx, AlertRuntimeService_AssignIncident_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertRuntimeServiceClient) AddIncidentComment(ctx context.Context, in *AddAlertIncidentCommentRequest, opts ...grpc.CallOption) (*AlertIncidentCommentV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertIncidentCommentV1)
+	err := c.cc.Invoke(ctx, AlertRuntimeService_AddIncidentComment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertRuntimeServiceClient) ListIncidentComments(ctx context.Context, in *ListAlertIncidentCommentsRequest, opts ...grpc.CallOption) (*ListAlertIncidentCommentsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAlertIncidentCommentsResponse)
+	err := c.cc.Invoke(ctx, AlertRuntimeService_ListIncidentComments_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertRuntimeServiceClient) RedactIncidentComment(ctx context.Context, in *RedactAlertIncidentCommentRequest, opts ...grpc.CallOption) (*AlertIncidentCommentV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertIncidentCommentV1)
+	err := c.cc.Invoke(ctx, AlertRuntimeService_RedactIncidentComment_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertRuntimeServiceClient) ChangeIncidentLifecycle(ctx context.Context, in *ChangeAlertIncidentLifecycleRequest, opts ...grpc.CallOption) (*AlertIncidentMutationResultV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertIncidentMutationResultV1)
+	err := c.cc.Invoke(ctx, AlertRuntimeService_ChangeIncidentLifecycle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertRuntimeServiceClient) CorrectIncidentMembership(ctx context.Context, in *CorrectAlertIncidentMembershipRequest, opts ...grpc.CallOption) (*AlertIncidentMutationResultV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertIncidentMutationResultV1)
+	err := c.cc.Invoke(ctx, AlertRuntimeService_CorrectIncidentMembership_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1166,6 +1240,25 @@ func (c *alertRuntimeServiceClient) Resume(ctx context.Context, in *ResumeAlertR
 	return out, nil
 }
 
+func (c *alertRuntimeServiceClient) StreamOperatorEvents(ctx context.Context, in *StreamAlertOperatorEventsRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[AlertOperatorStreamEventV1], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &AlertRuntimeService_ServiceDesc.Streams[0], AlertRuntimeService_StreamOperatorEvents_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[StreamAlertOperatorEventsRequest, AlertOperatorStreamEventV1]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type AlertRuntimeService_StreamOperatorEventsClient = grpc.ServerStreamingClient[AlertOperatorStreamEventV1]
+
 // AlertRuntimeServiceServer is the server API for AlertRuntimeService service.
 // All implementations must embed UnimplementedAlertRuntimeServiceServer
 // for forward compatibility.
@@ -1176,6 +1269,12 @@ type AlertRuntimeServiceServer interface {
 	ListIncidents(context.Context, *ListAlertIncidentsRequest) (*ListAlertIncidentsResponse, error)
 	GetIncident(context.Context, *GetAlertIncidentRequest) (*GetAlertIncidentResponse, error)
 	ListIncidentTimeline(context.Context, *ListAlertIncidentTimelineRequest) (*ListAlertIncidentTimelineResponse, error)
+	AssignIncident(context.Context, *AssignAlertIncidentRequest) (*AlertIncidentMutationResultV1, error)
+	AddIncidentComment(context.Context, *AddAlertIncidentCommentRequest) (*AlertIncidentCommentV1, error)
+	ListIncidentComments(context.Context, *ListAlertIncidentCommentsRequest) (*ListAlertIncidentCommentsResponse, error)
+	RedactIncidentComment(context.Context, *RedactAlertIncidentCommentRequest) (*AlertIncidentCommentV1, error)
+	ChangeIncidentLifecycle(context.Context, *ChangeAlertIncidentLifecycleRequest) (*AlertIncidentMutationResultV1, error)
+	CorrectIncidentMembership(context.Context, *CorrectAlertIncidentMembershipRequest) (*AlertIncidentMutationResultV1, error)
 	AcknowledgeIncident(context.Context, *AcknowledgeAlertIncidentRequest) (*AlertMutationResponse, error)
 	ListAudit(context.Context, *ListAlertAuditRequest) (*ListAlertAuditResponse, error)
 	GetAudit(context.Context, *GetAlertAuditRequest) (*GetAlertAuditResponse, error)
@@ -1186,6 +1285,7 @@ type AlertRuntimeServiceServer interface {
 	Acknowledge(context.Context, *AcknowledgeAlertRequest) (*AlertMutationResponse, error)
 	Pause(context.Context, *PauseAlertRequest) (*AlertMutationResponse, error)
 	Resume(context.Context, *ResumeAlertRequest) (*AlertMutationResponse, error)
+	StreamOperatorEvents(*StreamAlertOperatorEventsRequest, grpc.ServerStreamingServer[AlertOperatorStreamEventV1]) error
 	mustEmbedUnimplementedAlertRuntimeServiceServer()
 }
 
@@ -1213,6 +1313,24 @@ func (UnimplementedAlertRuntimeServiceServer) GetIncident(context.Context, *GetA
 }
 func (UnimplementedAlertRuntimeServiceServer) ListIncidentTimeline(context.Context, *ListAlertIncidentTimelineRequest) (*ListAlertIncidentTimelineResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListIncidentTimeline not implemented")
+}
+func (UnimplementedAlertRuntimeServiceServer) AssignIncident(context.Context, *AssignAlertIncidentRequest) (*AlertIncidentMutationResultV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method AssignIncident not implemented")
+}
+func (UnimplementedAlertRuntimeServiceServer) AddIncidentComment(context.Context, *AddAlertIncidentCommentRequest) (*AlertIncidentCommentV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method AddIncidentComment not implemented")
+}
+func (UnimplementedAlertRuntimeServiceServer) ListIncidentComments(context.Context, *ListAlertIncidentCommentsRequest) (*ListAlertIncidentCommentsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListIncidentComments not implemented")
+}
+func (UnimplementedAlertRuntimeServiceServer) RedactIncidentComment(context.Context, *RedactAlertIncidentCommentRequest) (*AlertIncidentCommentV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method RedactIncidentComment not implemented")
+}
+func (UnimplementedAlertRuntimeServiceServer) ChangeIncidentLifecycle(context.Context, *ChangeAlertIncidentLifecycleRequest) (*AlertIncidentMutationResultV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method ChangeIncidentLifecycle not implemented")
+}
+func (UnimplementedAlertRuntimeServiceServer) CorrectIncidentMembership(context.Context, *CorrectAlertIncidentMembershipRequest) (*AlertIncidentMutationResultV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method CorrectIncidentMembership not implemented")
 }
 func (UnimplementedAlertRuntimeServiceServer) AcknowledgeIncident(context.Context, *AcknowledgeAlertIncidentRequest) (*AlertMutationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method AcknowledgeIncident not implemented")
@@ -1243,6 +1361,9 @@ func (UnimplementedAlertRuntimeServiceServer) Pause(context.Context, *PauseAlert
 }
 func (UnimplementedAlertRuntimeServiceServer) Resume(context.Context, *ResumeAlertRequest) (*AlertMutationResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Resume not implemented")
+}
+func (UnimplementedAlertRuntimeServiceServer) StreamOperatorEvents(*StreamAlertOperatorEventsRequest, grpc.ServerStreamingServer[AlertOperatorStreamEventV1]) error {
+	return status.Error(codes.Unimplemented, "method StreamOperatorEvents not implemented")
 }
 func (UnimplementedAlertRuntimeServiceServer) mustEmbedUnimplementedAlertRuntimeServiceServer() {}
 func (UnimplementedAlertRuntimeServiceServer) testEmbeddedByValue()                             {}
@@ -1369,6 +1490,114 @@ func _AlertRuntimeService_ListIncidentTimeline_Handler(srv interface{}, ctx cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AlertRuntimeServiceServer).ListIncidentTimeline(ctx, req.(*ListAlertIncidentTimelineRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertRuntimeService_AssignIncident_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssignAlertIncidentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRuntimeServiceServer).AssignIncident(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRuntimeService_AssignIncident_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRuntimeServiceServer).AssignIncident(ctx, req.(*AssignAlertIncidentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertRuntimeService_AddIncidentComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddAlertIncidentCommentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRuntimeServiceServer).AddIncidentComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRuntimeService_AddIncidentComment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRuntimeServiceServer).AddIncidentComment(ctx, req.(*AddAlertIncidentCommentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertRuntimeService_ListIncidentComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAlertIncidentCommentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRuntimeServiceServer).ListIncidentComments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRuntimeService_ListIncidentComments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRuntimeServiceServer).ListIncidentComments(ctx, req.(*ListAlertIncidentCommentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertRuntimeService_RedactIncidentComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RedactAlertIncidentCommentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRuntimeServiceServer).RedactIncidentComment(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRuntimeService_RedactIncidentComment_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRuntimeServiceServer).RedactIncidentComment(ctx, req.(*RedactAlertIncidentCommentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertRuntimeService_ChangeIncidentLifecycle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ChangeAlertIncidentLifecycleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRuntimeServiceServer).ChangeIncidentLifecycle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRuntimeService_ChangeIncidentLifecycle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRuntimeServiceServer).ChangeIncidentLifecycle(ctx, req.(*ChangeAlertIncidentLifecycleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertRuntimeService_CorrectIncidentMembership_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CorrectAlertIncidentMembershipRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRuntimeServiceServer).CorrectIncidentMembership(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRuntimeService_CorrectIncidentMembership_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRuntimeServiceServer).CorrectIncidentMembership(ctx, req.(*CorrectAlertIncidentMembershipRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1553,6 +1782,17 @@ func _AlertRuntimeService_Resume_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AlertRuntimeService_StreamOperatorEvents_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(StreamAlertOperatorEventsRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(AlertRuntimeServiceServer).StreamOperatorEvents(m, &grpc.GenericServerStream[StreamAlertOperatorEventsRequest, AlertOperatorStreamEventV1]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type AlertRuntimeService_StreamOperatorEventsServer = grpc.ServerStreamingServer[AlertOperatorStreamEventV1]
+
 // AlertRuntimeService_ServiceDesc is the grpc.ServiceDesc for AlertRuntimeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1583,6 +1823,30 @@ var AlertRuntimeService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListIncidentTimeline",
 			Handler:    _AlertRuntimeService_ListIncidentTimeline_Handler,
+		},
+		{
+			MethodName: "AssignIncident",
+			Handler:    _AlertRuntimeService_AssignIncident_Handler,
+		},
+		{
+			MethodName: "AddIncidentComment",
+			Handler:    _AlertRuntimeService_AddIncidentComment_Handler,
+		},
+		{
+			MethodName: "ListIncidentComments",
+			Handler:    _AlertRuntimeService_ListIncidentComments_Handler,
+		},
+		{
+			MethodName: "RedactIncidentComment",
+			Handler:    _AlertRuntimeService_RedactIncidentComment_Handler,
+		},
+		{
+			MethodName: "ChangeIncidentLifecycle",
+			Handler:    _AlertRuntimeService_ChangeIncidentLifecycle_Handler,
+		},
+		{
+			MethodName: "CorrectIncidentMembership",
+			Handler:    _AlertRuntimeService_CorrectIncidentMembership_Handler,
 		},
 		{
 			MethodName: "AcknowledgeIncident",
@@ -1625,7 +1889,13 @@ var AlertRuntimeService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AlertRuntimeService_Resume_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "StreamOperatorEvents",
+			Handler:       _AlertRuntimeService_StreamOperatorEvents_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "proto/o11y_one/alerts/v1/alerts.proto",
 }
 

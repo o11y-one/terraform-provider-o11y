@@ -93,6 +93,10 @@ message SloBurnConfigV1 {
   string fact_family = 13;
   string eligible_event_field = 14;
   string good_event_field = 15;
+  SloWindowModeV1 window_mode = 16;
+  SloCalendarPeriodV1 calendar_period = 17;
+  string calendar_timezone = 18;
+  google.protobuf.Timestamp revision_effective_from = 19;
 }
 
 enum SliIndicatorKindV1 {
@@ -116,6 +120,20 @@ enum SliMissingDataBehaviorV1 {
   SLI_MISSING_DATA_BEHAVIOR_V1_UNKNOWN = 1;
   SLI_MISSING_DATA_BEHAVIOR_V1_GOOD = 2;
   SLI_MISSING_DATA_BEHAVIOR_V1_BAD = 3;
+}
+
+enum SloWindowModeV1 {
+  SLO_WINDOW_MODE_V1_UNSPECIFIED = 0;
+  SLO_WINDOW_MODE_V1_ROLLING = 1;
+  SLO_WINDOW_MODE_V1_CALENDAR = 2;
+}
+
+enum SloCalendarPeriodV1 {
+  SLO_CALENDAR_PERIOD_V1_UNSPECIFIED = 0;
+  SLO_CALENDAR_PERIOD_V1_DAY = 1;
+  SLO_CALENDAR_PERIOD_V1_WEEK = 2;
+  SLO_CALENDAR_PERIOD_V1_MONTH = 3;
+  SLO_CALENDAR_PERIOD_V1_QUARTER = 4;
 }
 
 enum SliCoverageStateV1 {
@@ -258,6 +276,11 @@ message AlertSloRevisionV1 {
   string config_hash = 10;
   string created_by = 11;
   google.protobuf.Timestamp created_at = 12;
+  SloWindowModeV1 window_mode = 13;
+  SloCalendarPeriodV1 calendar_period = 14;
+  string calendar_timezone = 15;
+  google.protobuf.Timestamp effective_from = 16;
+  int64 maximum_window_seconds = 17;
 }
 
 message AlertSloV1 {
@@ -280,6 +303,9 @@ message SloRevisionInputV1 {
   int64 rolling_window_seconds = 4;
   AlertOwnerRefV1 owner = 5;
   google.protobuf.Struct labels = 6;
+  SloWindowModeV1 window_mode = 7;
+  SloCalendarPeriodV1 calendar_period = 8;
+  string calendar_timezone = 9;
 }
 
 message CreateSloRequest {
@@ -349,6 +375,13 @@ message SloStatusV1 {
   optional double fast_burn_rate = 17;
   optional double slow_burn_rate = 18;
   repeated string linked_alert_definition_ids = 19;
+  SloWindowModeV1 window_mode = 20;
+  SloCalendarPeriodV1 calendar_period = 21;
+  string calendar_timezone = 22;
+  google.protobuf.Timestamp revision_effective_from = 23;
+  google.protobuf.Timestamp period_start = 24;
+  google.protobuf.Timestamp period_end = 25;
+  google.protobuf.Timestamp error_budget_resets_at = 26;
 }
 
 message GetSloBurndownRequest {
@@ -1081,6 +1114,7 @@ message AlertIncidentMemberV1 {
   google.protobuf.Timestamp first_observed_at = 16;
   google.protobuf.Timestamp last_observed_at = 17;
   google.protobuf.Timestamp resolved_at = 18;
+  bool active_link = 19;
 }
 
 message AlertIncidentV1 {
@@ -1099,6 +1133,17 @@ message AlertIncidentV1 {
   google.protobuf.Timestamp updated_at = 13;
   repeated AlertIncidentMemberV1 members = 14;
   AlertRunbookRevisionV1 runbook_revision = 15;
+  int64 revision = 16;
+  AlertOwnerRefV1 assignee = 17;
+  string assigned_by = 18;
+  google.protobuf.Timestamp assigned_at = 19;
+  string manual_state = 20;
+  string manual_state_reason = 21;
+  string manual_state_actor_id = 22;
+  google.protobuf.Timestamp manual_state_at = 23;
+  string reopened_from_incident_id = 24;
+  string reopened_as_incident_id = 25;
+  string manual_primary_membership_id = 26;
 }
 
 message AlertRunbookRevisionV1 {
@@ -1237,6 +1282,94 @@ message ListAlertIncidentTimelineRequest {
   int32 limit = 2;
 }
 message ListAlertIncidentTimelineResponse { repeated AlertIncidentTimelineEventV1 items = 1; }
+
+enum AlertIncidentLifecycleMutationV1 {
+  ALERT_INCIDENT_LIFECYCLE_MUTATION_V1_UNSPECIFIED = 0;
+  ALERT_INCIDENT_LIFECYCLE_MUTATION_V1_RESOLVE = 1;
+  ALERT_INCIDENT_LIFECYCLE_MUTATION_V1_REOPEN = 2;
+}
+
+enum AlertIncidentMembershipMutationV1 {
+  ALERT_INCIDENT_MEMBERSHIP_MUTATION_V1_UNSPECIFIED = 0;
+  ALERT_INCIDENT_MEMBERSHIP_MUTATION_V1_LINK = 1;
+  ALERT_INCIDENT_MEMBERSHIP_MUTATION_V1_UNLINK = 2;
+}
+
+message AlertIncidentCommentV1 {
+  string id = 1;
+  string incident_id = 2;
+  string kind = 3;
+  string body = 4;
+  string status = 5;
+  string author_id = 6;
+  string redacted_by = 7;
+  string redaction_reason = 8;
+  google.protobuf.Timestamp redacted_at = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message AssignAlertIncidentRequest {
+  string incident_id = 1;
+  int64 expected_revision = 2;
+  AlertOwnerRefV1 assignee = 3;
+  string reason = 4;
+  string idempotency_key = 5;
+}
+
+message AddAlertIncidentCommentRequest {
+  string incident_id = 1;
+  string kind = 2;
+  string body = 3;
+  string idempotency_key = 4;
+}
+
+message ListAlertIncidentCommentsRequest {
+  string incident_id = 1;
+  int32 limit = 2;
+  string cursor = 3;
+}
+
+message ListAlertIncidentCommentsResponse {
+  repeated AlertIncidentCommentV1 items = 1;
+  string next_cursor = 2;
+}
+
+message RedactAlertIncidentCommentRequest {
+  string incident_id = 1;
+  string comment_id = 2;
+  string reason = 3;
+  string idempotency_key = 4;
+}
+
+message ChangeAlertIncidentLifecycleRequest {
+  string incident_id = 1;
+  int64 expected_revision = 2;
+  AlertIncidentLifecycleMutationV1 mutation = 3;
+  string reason = 4;
+  string idempotency_key = 5;
+}
+
+message CorrectAlertIncidentMembershipRequest {
+  string source_incident_id = 1;
+  string target_incident_id = 2;
+  string membership_id = 3;
+  int64 expected_source_revision = 4;
+  optional int64 expected_target_revision = 5;
+  AlertIncidentMembershipMutationV1 mutation = 6;
+  string role = 7;
+  string reason = 8;
+  string idempotency_key = 9;
+}
+
+message AlertIncidentMutationResultV1 {
+  AlertIncidentV1 source_incident = 1;
+  AlertIncidentV1 result_incident = 2;
+  int64 source_revision = 3;
+  int64 result_revision = 4;
+  string notification_effect = 5;
+  bool idempotent_replay = 6;
+}
 
 message AcknowledgeAlertIncidentRequest {
   string incident_id = 1;
@@ -1875,6 +2008,47 @@ message AlertMetaHealthV1 {
   bool stale = 12;
 }
 
+enum AlertOperatorStreamKindV1 {
+  ALERT_OPERATOR_STREAM_KIND_V1_UNSPECIFIED = 0;
+  ALERT_OPERATOR_STREAM_KIND_V1_INCIDENT = 1;
+  ALERT_OPERATOR_STREAM_KIND_V1_DELIVERY = 2;
+  ALERT_OPERATOR_STREAM_KIND_V1_META_HEALTH = 3;
+}
+
+enum AlertOperatorStreamOperationV1 {
+  ALERT_OPERATOR_STREAM_OPERATION_V1_UNSPECIFIED = 0;
+  ALERT_OPERATOR_STREAM_OPERATION_V1_UPSERT = 1;
+  ALERT_OPERATOR_STREAM_OPERATION_V1_DELETE = 2;
+  ALERT_OPERATOR_STREAM_OPERATION_V1_REFRESH = 3;
+}
+
+message StreamAlertOperatorEventsRequest {
+  repeated AlertOperatorStreamKindV1 kinds = 1;
+  string resume_cursor = 2;
+  int32 replay_limit = 3;
+  int32 heartbeat_seconds = 4;
+  bool include_snapshot = 5;
+}
+
+message AlertOperatorStreamEventV1 {
+  string cursor = 1;
+  AlertOperatorStreamKindV1 kind = 2;
+  AlertOperatorStreamOperationV1 operation = 3;
+  bool snapshot = 4;
+  bool heartbeat = 5;
+  bool snapshot_complete = 6;
+  bool snapshot_truncated = 7;
+  bool deleted = 8;
+  google.protobuf.Timestamp occurred_at = 9;
+  oneof payload {
+    AlertIncidentV1 incident = 10;
+    AlertDeliveryV1 delivery = 11;
+    AlertMetaHealthV1 meta_health = 12;
+  }
+  bool checkpoint = 13;
+  string entity_id = 14;
+}
+
 enum AlertDefinitionLifecycleActionV1 {
   ALERT_DEFINITION_LIFECYCLE_ACTION_V1_UNSPECIFIED = 0;
   ALERT_DEFINITION_LIFECYCLE_ACTION_V1_PAUSE = 1;
@@ -2089,6 +2263,12 @@ service AlertRuntimeService {
   rpc ListIncidents(ListAlertIncidentsRequest) returns (ListAlertIncidentsResponse);
   rpc GetIncident(GetAlertIncidentRequest) returns (GetAlertIncidentResponse);
   rpc ListIncidentTimeline(ListAlertIncidentTimelineRequest) returns (ListAlertIncidentTimelineResponse);
+  rpc AssignIncident(AssignAlertIncidentRequest) returns (AlertIncidentMutationResultV1);
+  rpc AddIncidentComment(AddAlertIncidentCommentRequest) returns (AlertIncidentCommentV1);
+  rpc ListIncidentComments(ListAlertIncidentCommentsRequest) returns (ListAlertIncidentCommentsResponse);
+  rpc RedactIncidentComment(RedactAlertIncidentCommentRequest) returns (AlertIncidentCommentV1);
+  rpc ChangeIncidentLifecycle(ChangeAlertIncidentLifecycleRequest) returns (AlertIncidentMutationResultV1);
+  rpc CorrectIncidentMembership(CorrectAlertIncidentMembershipRequest) returns (AlertIncidentMutationResultV1);
   rpc AcknowledgeIncident(AcknowledgeAlertIncidentRequest) returns (AlertMutationResponse);
   rpc ListAudit(ListAlertAuditRequest) returns (ListAlertAuditResponse);
   rpc GetAudit(GetAlertAuditRequest) returns (GetAlertAuditResponse);
@@ -2099,6 +2279,7 @@ service AlertRuntimeService {
   rpc Acknowledge(AcknowledgeAlertRequest) returns (AlertMutationResponse);
   rpc Pause(PauseAlertRequest) returns (AlertMutationResponse);
   rpc Resume(ResumeAlertRequest) returns (AlertMutationResponse);
+  rpc StreamOperatorEvents(StreamAlertOperatorEventsRequest) returns (stream AlertOperatorStreamEventV1);
 }
 
 service AlertNotificationService {

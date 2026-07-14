@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"regexp"
+	"strings"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -23,7 +24,7 @@ func TestProviderProtocolAlertingLifecycle(t *testing.T) {
 		CheckDestroy: func(_ *terraform.State) error {
 			service.mu.Lock()
 			defer service.mu.Unlock()
-			if len(service.destinations) != 0 || len(service.policies) != 0 || len(service.definitions) != 0 || len(service.windows) != 0 || len(service.silences) != 0 {
+			if len(service.destinations) != 0 || len(service.policies) != 0 || len(service.definitions) != 0 || len(service.windows) != 0 || len(service.silences) != 0 || len(service.slos) != 0 {
 				return fmt.Errorf("remote alert resources remain after Terraform destroy")
 			}
 			return nil
@@ -65,6 +66,62 @@ func TestProviderProtocolAlertingLifecycle(t *testing.T) {
 	})
 }
 
+func TestProviderProtocolSLOCalendarLifecycle(t *testing.T) {
+	endpoint, service, cleanup := startProtocolTestServer(t)
+	defer cleanup()
+
+	terraformresource.UnitTest(t, terraformresource.TestCase{
+		ProtoV6ProviderFactories: protocolProviderFactories(),
+		CheckDestroy: func(_ *terraform.State) error {
+			service.mu.Lock()
+			defer service.mu.Unlock()
+			if len(service.slos) != 0 {
+				return fmt.Errorf("remote SLO resources remain after Terraform destroy")
+			}
+			return nil
+		},
+		Steps: []terraformresource.TestStep{
+			{
+				Config: protocolSLOConfig(endpoint, "calendar"),
+				Check: terraformresource.ComposeAggregateTestCheckFunc(
+					terraformresource.TestCheckResourceAttrSet("o11y_slo.checkout", "id"),
+					terraformresource.TestCheckResourceAttr("o11y_slo.checkout", "window_mode", "calendar"),
+					terraformresource.TestCheckResourceAttr("o11y_slo.checkout", "rolling_window_seconds", "0"),
+					terraformresource.TestCheckResourceAttr("o11y_slo.checkout", "calendar_period", "month"),
+					terraformresource.TestCheckResourceAttr("o11y_slo.checkout", "calendar_timezone", "America/New_York"),
+					terraformresource.TestCheckResourceAttr("o11y_slo.checkout", "revision_number", "1"),
+					terraformresource.TestCheckResourceAttr("o11y_slo.checkout", "maximum_window_seconds", "8640000"),
+				),
+			},
+			{
+				Config: protocolSLOConfig(endpoint, "rolling"),
+				Check: terraformresource.ComposeAggregateTestCheckFunc(
+					terraformresource.TestCheckResourceAttr("o11y_slo.checkout", "window_mode", "rolling"),
+					terraformresource.TestCheckResourceAttr("o11y_slo.checkout", "rolling_window_seconds", "2419200"),
+					terraformresource.TestCheckNoResourceAttr("o11y_slo.checkout", "calendar_period"),
+					terraformresource.TestCheckNoResourceAttr("o11y_slo.checkout", "calendar_timezone"),
+					terraformresource.TestCheckResourceAttr("o11y_slo.checkout", "revision_number", "2"),
+				),
+			},
+			{ResourceName: "o11y_slo.checkout", ImportState: true, ImportStateVerify: true},
+		},
+	})
+}
+
+func TestProviderProtocolSLORejectsInvalidTimezone(t *testing.T) {
+	endpoint, _, cleanup := startProtocolTestServer(t)
+	defer cleanup()
+
+	config := strings.Replace(protocolSLOConfig(endpoint, "calendar"), "America/New_York", "Mars/Olympus", 1)
+	terraformresource.UnitTest(t, terraformresource.TestCase{
+		ProtoV6ProviderFactories: protocolProviderFactories(),
+		Steps: []terraformresource.TestStep{{
+			Config: config, PlanOnly: true,
+			ExpectError: regexp.MustCompile(`Invalid IANA timezone`),
+		}},
+	})
+}
+
 func TestProviderProtocolNotifyFailsClosed(t *testing.T) {
 	endpoint, _, cleanup := startProtocolTestServer(t)
 	defer cleanup()
@@ -97,11 +154,36 @@ func startProtocolTestServer(t *testing.T) (string, *alertTestServer, func()) {
 	alertsv1.RegisterAlertRuntimeServiceServer(server, service)
 	alertsv1.RegisterAlertNotificationServiceServer(server, service)
 	alertsv1.RegisterAlertPreviewServiceServer(server, service)
+	alertsv1.RegisterAlertSloServiceServer(server, service)
 	go func() { _ = server.Serve(listener) }()
 	return "http://" + listener.Addr().String(), service, func() {
 		server.Stop()
 		_ = listener.Close()
 	}
+}
+
+func protocolSLOConfig(endpoint, mode string) string {
+	window := `
+  window_mode = "calendar"
+  calendar_period = "month"
+  calendar_timezone = "America/New_York"`
+	if mode == "rolling" {
+		window = `
+  window_mode = "rolling"
+  rolling_window_seconds = 2419200`
+	}
+	return protocolProviderConfig(endpoint) + fmt.Sprintf(`
+resource "o11y_slo" "checkout" {
+  slo_key = "checkout-availability"
+  name = "Checkout availability"
+  description = "Calendar-aware error budget"
+  sli_id = "019f7aa2-6c7f-7000-8000-000000000001"
+  sli_revision_id = "019f7aa2-6c7f-7000-8000-000000000002"
+  target_ratio = 0.999
+  labels_json = jsonencode({ service = "checkout" })
+  %s
+}
+`, window)
 }
 
 func protocolAlertingConfig(endpoint, destinationName, alertName string) string {
