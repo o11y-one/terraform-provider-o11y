@@ -32,6 +32,7 @@ Keep the token in the environment or a secret-backed Terraform variable. Althoug
 
 ## Resources and data sources
 
+- `o11y_alert_runbook`: versioned managed runbook CRUD, archive/restore, import, sanitized Markdown, and exact revision state.
 - `o11y_alert_destination`: destination CRUD, import, and direct-read drift detection. `secret_refs_json` accepts only opaque values beginning with `secret:`; inline secret-like keys are rejected from `config_json`.
 - `o11y_alert_notification_policy`: policy CRUD, import, drift detection, and arbitrary route configuration through `config_json`.
 - `o11y_alert_maintenance_window`: maintenance-window CRUD and import.
@@ -41,17 +42,22 @@ Keep the token in the environment or a secret-backed Terraform variable. Althoug
 - `o11y_slo_burn_alert`: SLO burn shadow alert.
 - `o11y_advanced_signal_alert`: advanced signal/symptom shadow alert.
 - `o11y_alert_preview`: runs `PreviewAlert` for an existing definition.
+- `o11y_alert_runbook`: reads a runbook's current authoritative revision.
+- `o11y_alert_runbook_revisions`: lists immutable runbook revision history.
+- `o11y_alert_runbook_preview`: validates and renders candidate Markdown without persistence.
+- `o11y_alert_runbook_usage`: lists linked definitions, revisions, and incidents.
 
 All mutation idempotency keys are deterministic over tenant, organization, resource type, operation, and stable resource identity. Alert resources require `notify = false`; this provider never calls `ActivateNotifyMode` implicitly.
 
 ## Import
 
-Destinations, policies, and shadow alerts import by backend ID:
+Runbooks, destinations, policies, and shadow alerts import by backend ID:
 
 ```shell
 terraform import o11y_alert_destination.primary 019abc...
 terraform import o11y_alert_notification_policy.default 019def...
 terraform import o11y_agent_quality_alert.quality 019fed...
+terraform import o11y_alert_runbook.checkout 019cab...
 ```
 
 Destination, policy, and alert imports use exact `Get*` RPCs. Alert readback includes detector kind, recipe configuration, and evaluation interval so imported state is reconstructable.

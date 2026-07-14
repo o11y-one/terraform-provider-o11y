@@ -49,6 +49,7 @@ message AlertActionV1 {
   string first_action = 2;
   string managed_runbook_id = 3;
   string external_runbook_url = 4;
+  string managed_runbook_revision_id = 5;
 }
 
 message AgentQualityRegressionConfigV1 {
@@ -1097,6 +1098,105 @@ message AlertIncidentV1 {
   google.protobuf.Timestamp resolved_at = 12;
   google.protobuf.Timestamp updated_at = 13;
   repeated AlertIncidentMemberV1 members = 14;
+  AlertRunbookRevisionV1 runbook_revision = 15;
+}
+
+message AlertRunbookRevisionV1 {
+  string id = 1;
+  string runbook_id = 2;
+  int64 revision_number = 3;
+  string title = 4;
+  AlertOwnerRefV1 owner = 5;
+  string markdown = 6;
+  string rendered_html = 7;
+  string content_hash = 8;
+  string change_reason = 9;
+  string created_by = 10;
+  google.protobuf.Timestamp created_at = 11;
+}
+
+message AlertRunbookV1 {
+  string id = 1;
+  string runbook_key = 2;
+  string title = 3;
+  AlertOwnerRefV1 owner = 4;
+  string current_revision_id = 5;
+  int64 revision = 6;
+  string provenance = 7;
+  string provenance_ref = 8;
+  google.protobuf.Timestamp archived_at = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+  AlertRunbookRevisionV1 current_revision = 12;
+  bool idempotent_replay = 13;
+}
+
+message UpsertAlertRunbookRequest {
+  string id = 1;
+  string org_id = 2;
+  string runbook_key = 3;
+  string title = 4;
+  AlertOwnerRefV1 owner = 5;
+  string markdown = 6;
+  optional int64 expected_revision = 7;
+  string change_reason = 8;
+  string provenance = 9;
+  string provenance_ref = 10;
+  string idempotency_key = 11;
+}
+
+message GetAlertRunbookRequest {
+  string org_id = 1;
+  string runbook_id = 2;
+}
+
+message ListAlertRunbooksRequest {
+  string org_id = 1;
+  bool include_archived = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message ListAlertRunbooksResponse { repeated AlertRunbookV1 items = 1; }
+
+message GetAlertRunbookRevisionRequest {
+  string org_id = 1;
+  string runbook_id = 2;
+  string revision_id = 3;
+}
+
+message ListAlertRunbookRevisionsRequest {
+  string org_id = 1;
+  string runbook_id = 2;
+  int32 limit = 3;
+}
+
+message ListAlertRunbookRevisionsResponse { repeated AlertRunbookRevisionV1 items = 1; }
+
+message PreviewAlertRunbookRequest { string markdown = 1; }
+message PreviewAlertRunbookResponse {
+  string normalized_markdown = 1;
+  string rendered_html = 2;
+}
+
+message SetAlertRunbookArchivedRequest {
+  string org_id = 1;
+  string runbook_id = 2;
+  int64 expected_revision = 3;
+  bool archived = 4;
+  string reason = 5;
+  string idempotency_key = 6;
+}
+
+message GetAlertRunbookUsageRequest {
+  string org_id = 1;
+  string runbook_id = 2;
+}
+
+message AlertRunbookUsageV1 {
+  repeated string definition_ids = 1;
+  repeated string definition_revision_ids = 2;
+  repeated string incident_ids = 3;
 }
 
 message ListAlertIncidentsRequest {
@@ -2065,6 +2165,18 @@ service AlertCanaryService {
   rpc GetCanaryRun(GetCanaryRunRequest) returns (TriggerCanaryResponse);
   rpc EnsureMetaAlerts(EnsureMetaAlertsRequest) returns (EnsureMetaAlertsResponse);
   rpc GetMetaHealth(GetAlertMetaHealthRequest) returns (GetAlertMetaHealthResponse);
+}
+
+service AlertRunbookService {
+  rpc CreateRunbook(UpsertAlertRunbookRequest) returns (AlertRunbookV1);
+  rpc UpdateRunbook(UpsertAlertRunbookRequest) returns (AlertRunbookV1);
+  rpc GetRunbook(GetAlertRunbookRequest) returns (AlertRunbookV1);
+  rpc ListRunbooks(ListAlertRunbooksRequest) returns (ListAlertRunbooksResponse);
+  rpc GetRunbookRevision(GetAlertRunbookRevisionRequest) returns (AlertRunbookRevisionV1);
+  rpc ListRunbookRevisions(ListAlertRunbookRevisionsRequest) returns (ListAlertRunbookRevisionsResponse);
+  rpc PreviewRunbook(PreviewAlertRunbookRequest) returns (PreviewAlertRunbookResponse);
+  rpc GetRunbookUsage(GetAlertRunbookUsageRequest) returns (AlertRunbookUsageV1);
+  rpc SetRunbookArchived(SetAlertRunbookArchivedRequest) returns (AlertRunbookV1);
 }
 
 service AlertSloService {

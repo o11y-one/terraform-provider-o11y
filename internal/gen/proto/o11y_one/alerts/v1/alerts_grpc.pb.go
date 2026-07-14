@@ -3989,6 +3989,412 @@ var AlertCanaryService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
+	AlertRunbookService_CreateRunbook_FullMethodName        = "/o11y_one.alerts.v1.AlertRunbookService/CreateRunbook"
+	AlertRunbookService_UpdateRunbook_FullMethodName        = "/o11y_one.alerts.v1.AlertRunbookService/UpdateRunbook"
+	AlertRunbookService_GetRunbook_FullMethodName           = "/o11y_one.alerts.v1.AlertRunbookService/GetRunbook"
+	AlertRunbookService_ListRunbooks_FullMethodName         = "/o11y_one.alerts.v1.AlertRunbookService/ListRunbooks"
+	AlertRunbookService_GetRunbookRevision_FullMethodName   = "/o11y_one.alerts.v1.AlertRunbookService/GetRunbookRevision"
+	AlertRunbookService_ListRunbookRevisions_FullMethodName = "/o11y_one.alerts.v1.AlertRunbookService/ListRunbookRevisions"
+	AlertRunbookService_PreviewRunbook_FullMethodName       = "/o11y_one.alerts.v1.AlertRunbookService/PreviewRunbook"
+	AlertRunbookService_GetRunbookUsage_FullMethodName      = "/o11y_one.alerts.v1.AlertRunbookService/GetRunbookUsage"
+	AlertRunbookService_SetRunbookArchived_FullMethodName   = "/o11y_one.alerts.v1.AlertRunbookService/SetRunbookArchived"
+)
+
+// AlertRunbookServiceClient is the client API for AlertRunbookService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type AlertRunbookServiceClient interface {
+	CreateRunbook(ctx context.Context, in *UpsertAlertRunbookRequest, opts ...grpc.CallOption) (*AlertRunbookV1, error)
+	UpdateRunbook(ctx context.Context, in *UpsertAlertRunbookRequest, opts ...grpc.CallOption) (*AlertRunbookV1, error)
+	GetRunbook(ctx context.Context, in *GetAlertRunbookRequest, opts ...grpc.CallOption) (*AlertRunbookV1, error)
+	ListRunbooks(ctx context.Context, in *ListAlertRunbooksRequest, opts ...grpc.CallOption) (*ListAlertRunbooksResponse, error)
+	GetRunbookRevision(ctx context.Context, in *GetAlertRunbookRevisionRequest, opts ...grpc.CallOption) (*AlertRunbookRevisionV1, error)
+	ListRunbookRevisions(ctx context.Context, in *ListAlertRunbookRevisionsRequest, opts ...grpc.CallOption) (*ListAlertRunbookRevisionsResponse, error)
+	PreviewRunbook(ctx context.Context, in *PreviewAlertRunbookRequest, opts ...grpc.CallOption) (*PreviewAlertRunbookResponse, error)
+	GetRunbookUsage(ctx context.Context, in *GetAlertRunbookUsageRequest, opts ...grpc.CallOption) (*AlertRunbookUsageV1, error)
+	SetRunbookArchived(ctx context.Context, in *SetAlertRunbookArchivedRequest, opts ...grpc.CallOption) (*AlertRunbookV1, error)
+}
+
+type alertRunbookServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewAlertRunbookServiceClient(cc grpc.ClientConnInterface) AlertRunbookServiceClient {
+	return &alertRunbookServiceClient{cc}
+}
+
+func (c *alertRunbookServiceClient) CreateRunbook(ctx context.Context, in *UpsertAlertRunbookRequest, opts ...grpc.CallOption) (*AlertRunbookV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertRunbookV1)
+	err := c.cc.Invoke(ctx, AlertRunbookService_CreateRunbook_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertRunbookServiceClient) UpdateRunbook(ctx context.Context, in *UpsertAlertRunbookRequest, opts ...grpc.CallOption) (*AlertRunbookV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertRunbookV1)
+	err := c.cc.Invoke(ctx, AlertRunbookService_UpdateRunbook_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertRunbookServiceClient) GetRunbook(ctx context.Context, in *GetAlertRunbookRequest, opts ...grpc.CallOption) (*AlertRunbookV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertRunbookV1)
+	err := c.cc.Invoke(ctx, AlertRunbookService_GetRunbook_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertRunbookServiceClient) ListRunbooks(ctx context.Context, in *ListAlertRunbooksRequest, opts ...grpc.CallOption) (*ListAlertRunbooksResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAlertRunbooksResponse)
+	err := c.cc.Invoke(ctx, AlertRunbookService_ListRunbooks_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertRunbookServiceClient) GetRunbookRevision(ctx context.Context, in *GetAlertRunbookRevisionRequest, opts ...grpc.CallOption) (*AlertRunbookRevisionV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertRunbookRevisionV1)
+	err := c.cc.Invoke(ctx, AlertRunbookService_GetRunbookRevision_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertRunbookServiceClient) ListRunbookRevisions(ctx context.Context, in *ListAlertRunbookRevisionsRequest, opts ...grpc.CallOption) (*ListAlertRunbookRevisionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAlertRunbookRevisionsResponse)
+	err := c.cc.Invoke(ctx, AlertRunbookService_ListRunbookRevisions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertRunbookServiceClient) PreviewRunbook(ctx context.Context, in *PreviewAlertRunbookRequest, opts ...grpc.CallOption) (*PreviewAlertRunbookResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PreviewAlertRunbookResponse)
+	err := c.cc.Invoke(ctx, AlertRunbookService_PreviewRunbook_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertRunbookServiceClient) GetRunbookUsage(ctx context.Context, in *GetAlertRunbookUsageRequest, opts ...grpc.CallOption) (*AlertRunbookUsageV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertRunbookUsageV1)
+	err := c.cc.Invoke(ctx, AlertRunbookService_GetRunbookUsage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertRunbookServiceClient) SetRunbookArchived(ctx context.Context, in *SetAlertRunbookArchivedRequest, opts ...grpc.CallOption) (*AlertRunbookV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertRunbookV1)
+	err := c.cc.Invoke(ctx, AlertRunbookService_SetRunbookArchived_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// AlertRunbookServiceServer is the server API for AlertRunbookService service.
+// All implementations must embed UnimplementedAlertRunbookServiceServer
+// for forward compatibility.
+type AlertRunbookServiceServer interface {
+	CreateRunbook(context.Context, *UpsertAlertRunbookRequest) (*AlertRunbookV1, error)
+	UpdateRunbook(context.Context, *UpsertAlertRunbookRequest) (*AlertRunbookV1, error)
+	GetRunbook(context.Context, *GetAlertRunbookRequest) (*AlertRunbookV1, error)
+	ListRunbooks(context.Context, *ListAlertRunbooksRequest) (*ListAlertRunbooksResponse, error)
+	GetRunbookRevision(context.Context, *GetAlertRunbookRevisionRequest) (*AlertRunbookRevisionV1, error)
+	ListRunbookRevisions(context.Context, *ListAlertRunbookRevisionsRequest) (*ListAlertRunbookRevisionsResponse, error)
+	PreviewRunbook(context.Context, *PreviewAlertRunbookRequest) (*PreviewAlertRunbookResponse, error)
+	GetRunbookUsage(context.Context, *GetAlertRunbookUsageRequest) (*AlertRunbookUsageV1, error)
+	SetRunbookArchived(context.Context, *SetAlertRunbookArchivedRequest) (*AlertRunbookV1, error)
+	mustEmbedUnimplementedAlertRunbookServiceServer()
+}
+
+// UnimplementedAlertRunbookServiceServer must be embedded to have
+// forward compatible implementations.
+//
+// NOTE: this should be embedded by value instead of pointer to avoid a nil
+// pointer dereference when methods are called.
+type UnimplementedAlertRunbookServiceServer struct{}
+
+func (UnimplementedAlertRunbookServiceServer) CreateRunbook(context.Context, *UpsertAlertRunbookRequest) (*AlertRunbookV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateRunbook not implemented")
+}
+func (UnimplementedAlertRunbookServiceServer) UpdateRunbook(context.Context, *UpsertAlertRunbookRequest) (*AlertRunbookV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateRunbook not implemented")
+}
+func (UnimplementedAlertRunbookServiceServer) GetRunbook(context.Context, *GetAlertRunbookRequest) (*AlertRunbookV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetRunbook not implemented")
+}
+func (UnimplementedAlertRunbookServiceServer) ListRunbooks(context.Context, *ListAlertRunbooksRequest) (*ListAlertRunbooksResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListRunbooks not implemented")
+}
+func (UnimplementedAlertRunbookServiceServer) GetRunbookRevision(context.Context, *GetAlertRunbookRevisionRequest) (*AlertRunbookRevisionV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetRunbookRevision not implemented")
+}
+func (UnimplementedAlertRunbookServiceServer) ListRunbookRevisions(context.Context, *ListAlertRunbookRevisionsRequest) (*ListAlertRunbookRevisionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListRunbookRevisions not implemented")
+}
+func (UnimplementedAlertRunbookServiceServer) PreviewRunbook(context.Context, *PreviewAlertRunbookRequest) (*PreviewAlertRunbookResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PreviewRunbook not implemented")
+}
+func (UnimplementedAlertRunbookServiceServer) GetRunbookUsage(context.Context, *GetAlertRunbookUsageRequest) (*AlertRunbookUsageV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetRunbookUsage not implemented")
+}
+func (UnimplementedAlertRunbookServiceServer) SetRunbookArchived(context.Context, *SetAlertRunbookArchivedRequest) (*AlertRunbookV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetRunbookArchived not implemented")
+}
+func (UnimplementedAlertRunbookServiceServer) mustEmbedUnimplementedAlertRunbookServiceServer() {}
+func (UnimplementedAlertRunbookServiceServer) testEmbeddedByValue()                             {}
+
+// UnsafeAlertRunbookServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to AlertRunbookServiceServer will
+// result in compilation errors.
+type UnsafeAlertRunbookServiceServer interface {
+	mustEmbedUnimplementedAlertRunbookServiceServer()
+}
+
+func RegisterAlertRunbookServiceServer(s grpc.ServiceRegistrar, srv AlertRunbookServiceServer) {
+	// If the following call panics, it indicates UnimplementedAlertRunbookServiceServer was
+	// embedded by pointer and is nil.  This will cause panics if an
+	// unimplemented method is ever invoked, so we test this at initialization
+	// time to prevent it from happening at runtime later due to I/O.
+	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
+		t.testEmbeddedByValue()
+	}
+	s.RegisterService(&AlertRunbookService_ServiceDesc, srv)
+}
+
+func _AlertRunbookService_CreateRunbook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertAlertRunbookRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRunbookServiceServer).CreateRunbook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRunbookService_CreateRunbook_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRunbookServiceServer).CreateRunbook(ctx, req.(*UpsertAlertRunbookRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertRunbookService_UpdateRunbook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertAlertRunbookRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRunbookServiceServer).UpdateRunbook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRunbookService_UpdateRunbook_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRunbookServiceServer).UpdateRunbook(ctx, req.(*UpsertAlertRunbookRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertRunbookService_GetRunbook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAlertRunbookRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRunbookServiceServer).GetRunbook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRunbookService_GetRunbook_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRunbookServiceServer).GetRunbook(ctx, req.(*GetAlertRunbookRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertRunbookService_ListRunbooks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAlertRunbooksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRunbookServiceServer).ListRunbooks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRunbookService_ListRunbooks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRunbookServiceServer).ListRunbooks(ctx, req.(*ListAlertRunbooksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertRunbookService_GetRunbookRevision_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAlertRunbookRevisionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRunbookServiceServer).GetRunbookRevision(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRunbookService_GetRunbookRevision_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRunbookServiceServer).GetRunbookRevision(ctx, req.(*GetAlertRunbookRevisionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertRunbookService_ListRunbookRevisions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAlertRunbookRevisionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRunbookServiceServer).ListRunbookRevisions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRunbookService_ListRunbookRevisions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRunbookServiceServer).ListRunbookRevisions(ctx, req.(*ListAlertRunbookRevisionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertRunbookService_PreviewRunbook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PreviewAlertRunbookRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRunbookServiceServer).PreviewRunbook(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRunbookService_PreviewRunbook_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRunbookServiceServer).PreviewRunbook(ctx, req.(*PreviewAlertRunbookRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertRunbookService_GetRunbookUsage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAlertRunbookUsageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRunbookServiceServer).GetRunbookUsage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRunbookService_GetRunbookUsage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRunbookServiceServer).GetRunbookUsage(ctx, req.(*GetAlertRunbookUsageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertRunbookService_SetRunbookArchived_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetAlertRunbookArchivedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertRunbookServiceServer).SetRunbookArchived(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertRunbookService_SetRunbookArchived_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertRunbookServiceServer).SetRunbookArchived(ctx, req.(*SetAlertRunbookArchivedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// AlertRunbookService_ServiceDesc is the grpc.ServiceDesc for AlertRunbookService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var AlertRunbookService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "o11y_one.alerts.v1.AlertRunbookService",
+	HandlerType: (*AlertRunbookServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateRunbook",
+			Handler:    _AlertRunbookService_CreateRunbook_Handler,
+		},
+		{
+			MethodName: "UpdateRunbook",
+			Handler:    _AlertRunbookService_UpdateRunbook_Handler,
+		},
+		{
+			MethodName: "GetRunbook",
+			Handler:    _AlertRunbookService_GetRunbook_Handler,
+		},
+		{
+			MethodName: "ListRunbooks",
+			Handler:    _AlertRunbookService_ListRunbooks_Handler,
+		},
+		{
+			MethodName: "GetRunbookRevision",
+			Handler:    _AlertRunbookService_GetRunbookRevision_Handler,
+		},
+		{
+			MethodName: "ListRunbookRevisions",
+			Handler:    _AlertRunbookService_ListRunbookRevisions_Handler,
+		},
+		{
+			MethodName: "PreviewRunbook",
+			Handler:    _AlertRunbookService_PreviewRunbook_Handler,
+		},
+		{
+			MethodName: "GetRunbookUsage",
+			Handler:    _AlertRunbookService_GetRunbookUsage_Handler,
+		},
+		{
+			MethodName: "SetRunbookArchived",
+			Handler:    _AlertRunbookService_SetRunbookArchived_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "proto/o11y_one/alerts/v1/alerts.proto",
+}
+
+const (
 	AlertSloService_CreateSli_FullMethodName                     = "/o11y_one.alerts.v1.AlertSloService/CreateSli"
 	AlertSloService_ValidateSli_FullMethodName                   = "/o11y_one.alerts.v1.AlertSloService/ValidateSli"
 	AlertSloService_UpdateSli_FullMethodName                     = "/o11y_one.alerts.v1.AlertSloService/UpdateSli"
