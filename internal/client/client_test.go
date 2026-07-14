@@ -29,4 +29,7 @@ func TestContextUsesPlatformAPIKeyMetadata(t *testing.T) {
 	if got := values.Get("x-o11y-org-id"); len(got) != 1 || got[0] != client.orgID {
 		t.Fatalf("organization metadata = %v", got)
 	}
+	if got := values.Get("x-o11y-managed-by"); len(got) != 1 || got[0] != "terraform" {
+		t.Fatalf("management provenance metadata = %v", got)
+	}
 }

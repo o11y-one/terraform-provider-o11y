@@ -43,7 +43,7 @@ func newAlertTestServer() *alertTestServer {
 }
 func (s *alertTestServer) authorize(ctx context.Context) error {
 	md, _ := metadata.FromIncomingContext(ctx)
-	if first(md.Get("x-o11y-key")) != "test-token" || len(md.Get("authorization")) != 0 || first(md.Get("x-o11y-tenant-id")) != testTenantID || first(md.Get("x-o11y-org-id")) != testOrgID {
+	if first(md.Get("x-o11y-key")) != "test-token" || len(md.Get("authorization")) != 0 || first(md.Get("x-o11y-tenant-id")) != testTenantID || first(md.Get("x-o11y-org-id")) != testOrgID || first(md.Get("x-o11y-managed-by")) != "terraform" {
 		return status.Error(codes.PermissionDenied, "invalid provider scope")
 	}
 	return nil
