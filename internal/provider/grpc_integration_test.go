@@ -321,6 +321,22 @@ func (s *alertTestServer) DeleteDefinition(ctx context.Context, req *alertsv1.De
 	delete(s.definitions, req.Id)
 	return &alertsv1.AlertMutationResponse{Ok: true, ResourceId: req.Id}, nil
 }
+func (s *alertTestServer) ArchiveDefinitionV2(ctx context.Context, req *alertsv1.ArchiveAlertDefinitionV2Request) (*alertsv1.AlertMutationResponse, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	item := s.definitions[req.DefinitionId]
+	if item == nil {
+		return nil, status.Error(codes.NotFound, "alert")
+	}
+	if item.CurrentRevisionId != req.ExpectedRevisionId {
+		return nil, status.Error(codes.Aborted, "stale alert revision")
+	}
+	delete(s.definitions, req.DefinitionId)
+	return &alertsv1.AlertMutationResponse{Ok: true, ResourceId: req.DefinitionId}, nil
+}
 func (s *alertTestServer) GetDefinition(ctx context.Context, req *alertsv1.GetAlertDefinitionRequest) (*alertsv1.AlertDefinitionV1, error) {
 	if err := s.authorize(ctx); err != nil {
 		return nil, err
