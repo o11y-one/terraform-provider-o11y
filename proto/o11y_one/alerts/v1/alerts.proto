@@ -35,6 +35,382 @@ enum AlertDestinationKindV1 {
   ALERT_DESTINATION_KIND_V1_PAGERDUTY = 4;
 }
 
+message AlertOwnerRefV1 {
+  oneof owner {
+    string team_id = 1;
+    string user_id = 2;
+  }
+  string display_name = 3;
+  bool active = 4;
+}
+
+message AlertActionV1 {
+  string summary = 1;
+  string first_action = 2;
+  string managed_runbook_id = 3;
+  string external_runbook_url = 4;
+}
+
+message AgentQualityRegressionConfigV1 {
+  optional int64 short_window_seconds = 1;
+  optional int64 long_window_seconds = 2;
+  optional int64 baseline_window_seconds = 3;
+  optional uint64 min_run_count = 4;
+  optional double max_bad_outcome_rate = 5;
+  optional double max_eval_fail_rate = 6;
+  optional double min_eval_pass_rate = 7;
+  optional double baseline_bad_outcome_rate = 8;
+  optional double regression_multiplier = 9;
+  optional uint32 evidence_limit = 10;
+}
+
+message CostPerSuccessConfigV1 {
+  optional int64 window_seconds = 1;
+  optional uint64 min_success_count = 2;
+  optional double max_cost_per_success_usd = 3;
+  optional double baseline_cost_per_success_usd = 4;
+  optional double regression_multiplier = 5;
+  optional bool allow_estimated_cost = 6;
+  optional double budget_remaining_usd = 7;
+  optional double imminent_exhaustion_hours = 8;
+  optional uint32 evidence_limit = 9;
+}
+
+message SloBurnConfigV1 {
+  optional int64 fast_short_window_seconds = 1;
+  optional int64 fast_long_window_seconds = 2;
+  optional int64 slow_short_window_seconds = 3;
+  optional int64 slow_long_window_seconds = 4;
+  optional int64 slo_window_seconds = 5;
+  optional double target_percent = 6;
+  optional double fast_burn_threshold = 7;
+  optional double slow_burn_threshold = 8;
+  optional uint64 min_request_count = 9;
+  optional uint32 evidence_limit = 10;
+  string slo_id = 11;
+  string slo_revision_id = 12;
+  string fact_family = 13;
+  string eligible_event_field = 14;
+  string good_event_field = 15;
+}
+
+enum SliIndicatorKindV1 {
+  SLI_INDICATOR_KIND_V1_UNSPECIFIED = 0;
+  SLI_INDICATOR_KIND_V1_AVAILABILITY = 1;
+  SLI_INDICATOR_KIND_V1_LATENCY = 2;
+  SLI_INDICATOR_KIND_V1_AGENT_OUTCOME = 3;
+  SLI_INDICATOR_KIND_V1_EVAL_QUALITY = 4;
+  SLI_INDICATOR_KIND_V1_TOOL_SUCCESS = 5;
+  SLI_INDICATOR_KIND_V1_COST_PER_SUCCESSFUL_OUTCOME = 6;
+}
+
+enum SliAggregationV1 {
+  SLI_AGGREGATION_V1_UNSPECIFIED = 0;
+  SLI_AGGREGATION_V1_EVENT_RATIO = 1;
+  SLI_AGGREGATION_V1_THRESHOLD_RATIO = 2;
+}
+
+enum SliMissingDataBehaviorV1 {
+  SLI_MISSING_DATA_BEHAVIOR_V1_UNSPECIFIED = 0;
+  SLI_MISSING_DATA_BEHAVIOR_V1_UNKNOWN = 1;
+  SLI_MISSING_DATA_BEHAVIOR_V1_GOOD = 2;
+  SLI_MISSING_DATA_BEHAVIOR_V1_BAD = 3;
+}
+
+enum SliCoverageStateV1 {
+  SLI_COVERAGE_STATE_V1_UNSPECIFIED = 0;
+  SLI_COVERAGE_STATE_V1_COMPLETE = 1;
+  SLI_COVERAGE_STATE_V1_NO_DATA = 2;
+  SLI_COVERAGE_STATE_V1_PARTIAL = 3;
+  SLI_COVERAGE_STATE_V1_UNAVAILABLE = 4;
+}
+
+message AlertSliRevisionV1 {
+  string id = 1;
+  string sli_id = 2;
+  int32 revision_number = 3;
+  SliIndicatorKindV1 indicator_kind = 4;
+  google.protobuf.Struct scope = 5;
+  AlertOwnerRefV1 owner = 6;
+  google.protobuf.Struct eligible_events = 7;
+  google.protobuf.Struct good_events = 8;
+  google.protobuf.Struct excluded_events = 9;
+  SliAggregationV1 aggregation = 10;
+  optional double threshold = 11;
+  SliMissingDataBehaviorV1 missing_data_behavior = 12;
+  string config_hash = 13;
+  string created_by = 14;
+  google.protobuf.Timestamp created_at = 15;
+}
+
+message AlertSliV1 {
+  string id = 1;
+  string sli_key = 2;
+  string name = 3;
+  string description = 4;
+  string current_revision_id = 5;
+  string provenance = 6;
+  google.protobuf.Timestamp archived_at = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+  AlertSliRevisionV1 current_revision = 10;
+}
+
+message SliRevisionInputV1 {
+  SliIndicatorKindV1 indicator_kind = 1;
+  google.protobuf.Struct scope = 2;
+  AlertOwnerRefV1 owner = 3;
+  google.protobuf.Struct eligible_events = 4;
+  google.protobuf.Struct good_events = 5;
+  google.protobuf.Struct excluded_events = 6;
+  SliAggregationV1 aggregation = 7;
+  optional double threshold = 8;
+  SliMissingDataBehaviorV1 missing_data_behavior = 9;
+}
+
+message CreateSliRequest {
+  string sli_key = 1;
+  string name = 2;
+  string description = 3;
+  SliRevisionInputV1 revision = 4;
+  string idempotency_key = 5;
+}
+
+message UpdateSliRequest {
+  string sli_id = 1;
+  string expected_revision_id = 2;
+  string name = 3;
+  string description = 4;
+  SliRevisionInputV1 revision = 5;
+  string idempotency_key = 6;
+}
+
+message ValidateSliRequest { SliRevisionInputV1 revision = 1; }
+
+message ValidateSliResponse {
+  bool valid = 1;
+  repeated AlertFieldViolationV1 violations = 2;
+  repeated double supported_latency_thresholds_ms = 3;
+  repeated double supported_cost_thresholds_usd = 4;
+}
+
+message GetSliRequest { string sli_id = 1; }
+
+message ListSlisRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+  bool include_archived = 3;
+}
+
+message ListSlisResponse {
+  repeated AlertSliV1 items = 1;
+  int64 total_count = 2;
+}
+
+message ArchiveSliRequest {
+  string sli_id = 1;
+  string idempotency_key = 2;
+}
+
+message ListSliRevisionsRequest {
+  string sli_id = 1;
+  int32 limit = 2;
+}
+
+message ListSliRevisionsResponse { repeated AlertSliRevisionV1 items = 1; }
+
+message PreviewSliRequest {
+  string sli_id = 1;
+  string sli_revision_id = 2;
+  google.protobuf.Timestamp range_start = 3;
+  google.protobuf.Timestamp range_end = 4;
+  optional uint32 evidence_limit = 5;
+}
+
+message SliPreviewV1 {
+  string sli_id = 1;
+  string sli_revision_id = 2;
+  google.protobuf.Timestamp range_start = 3;
+  google.protobuf.Timestamp range_end = 4;
+  int64 eligible_event_count = 5;
+  int64 good_event_count = 6;
+  int64 bad_event_count = 7;
+  int64 excluded_event_count = 8;
+  optional double indicator_value = 9;
+  SliCoverageStateV1 coverage_state = 10;
+  string coverage_reason = 11;
+  google.protobuf.Timestamp source_frontier = 12;
+  repeated google.protobuf.Struct evidence = 13;
+  bool evidence_truncated = 14;
+}
+
+message AlertSloRevisionV1 {
+  string id = 1;
+  string slo_id = 2;
+  int32 revision_number = 3;
+  string sli_id = 4;
+  string sli_revision_id = 5;
+  double target_ratio = 6;
+  int64 rolling_window_seconds = 7;
+  AlertOwnerRefV1 owner = 8;
+  google.protobuf.Struct labels = 9;
+  string config_hash = 10;
+  string created_by = 11;
+  google.protobuf.Timestamp created_at = 12;
+}
+
+message AlertSloV1 {
+  string id = 1;
+  string slo_key = 2;
+  string name = 3;
+  string description = 4;
+  string current_revision_id = 5;
+  string provenance = 6;
+  google.protobuf.Timestamp archived_at = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+  AlertSloRevisionV1 current_revision = 10;
+}
+
+message SloRevisionInputV1 {
+  string sli_id = 1;
+  string sli_revision_id = 2;
+  double target_ratio = 3;
+  int64 rolling_window_seconds = 4;
+  AlertOwnerRefV1 owner = 5;
+  google.protobuf.Struct labels = 6;
+}
+
+message CreateSloRequest {
+  string slo_key = 1;
+  string name = 2;
+  string description = 3;
+  SloRevisionInputV1 revision = 4;
+  string idempotency_key = 5;
+}
+
+message UpdateSloRequest {
+  string slo_id = 1;
+  string expected_revision_id = 2;
+  string name = 3;
+  string description = 4;
+  SloRevisionInputV1 revision = 5;
+  string idempotency_key = 6;
+}
+
+message GetSloRequest { string slo_id = 1; }
+
+message ListSlosRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+  bool include_archived = 3;
+}
+
+message ListSlosResponse {
+  repeated AlertSloV1 items = 1;
+  int64 total_count = 2;
+}
+
+message ArchiveSloRequest {
+  string slo_id = 1;
+  string idempotency_key = 2;
+}
+
+message ListSloRevisionsRequest {
+  string slo_id = 1;
+  int32 limit = 2;
+}
+
+message ListSloRevisionsResponse { repeated AlertSloRevisionV1 items = 1; }
+
+message GetSloStatusRequest {
+  string slo_id = 1;
+  google.protobuf.Timestamp evaluated_at = 2;
+}
+
+message SloStatusV1 {
+  string slo_id = 1;
+  string slo_revision_id = 2;
+  string sli_id = 3;
+  string sli_revision_id = 4;
+  google.protobuf.Timestamp window_start = 5;
+  google.protobuf.Timestamp window_end = 6;
+  double target_ratio = 7;
+  optional double attainment_ratio = 8;
+  optional double remaining_budget_ratio = 9;
+  int64 eligible_event_count = 10;
+  int64 good_event_count = 11;
+  int64 bad_event_count = 12;
+  int64 excluded_event_count = 13;
+  SliCoverageStateV1 coverage_state = 14;
+  string coverage_reason = 15;
+  google.protobuf.Timestamp source_frontier = 16;
+  optional double fast_burn_rate = 17;
+  optional double slow_burn_rate = 18;
+  repeated string linked_alert_definition_ids = 19;
+}
+
+message GetSloBurndownRequest {
+  string slo_id = 1;
+  google.protobuf.Timestamp range_start = 2;
+  google.protobuf.Timestamp range_end = 3;
+  int64 step_seconds = 4;
+  int32 max_points = 5;
+}
+
+message GetSloBurndownResponse { repeated SloStatusV1 points = 1; }
+
+message ListSloHistoryRequest {
+  string slo_id = 1;
+  int32 limit = 2;
+}
+
+message ListSloHistoryResponse { repeated SloStatusV1 points = 1; }
+
+message CreateRecommendedSloBurnAlertRequest {
+  string slo_id = 1;
+  AlertSeverityV1 severity = 2;
+  AlertOwnerRefV1 owner = 3;
+  AlertActionV1 action = 4;
+  string idempotency_key = 5;
+}
+
+message CreateRecommendedSloBurnAlertResponse {
+  repeated AlertDefinitionV1 definitions = 1;
+}
+
+message AdvancedSignalConfigV1 {
+  optional uint64 min_log_errors = 1;
+  optional double max_log_error_rate = 2;
+  optional uint64 min_tool_failures = 3;
+  optional uint64 min_fallback_count = 4;
+  optional double max_cache_miss_rate = 5;
+  optional bool symptom_only_page_override = 6;
+  optional uint32 evidence_limit = 7;
+}
+
+message AlertDetectorConfigV1 {
+  oneof config {
+    AgentQualityRegressionConfigV1 agent_quality_regression = 1;
+    CostPerSuccessConfigV1 cost_per_success = 2;
+    SloBurnConfigV1 slo_burn = 3;
+    AdvancedSignalConfigV1 advanced_signal = 4;
+  }
+}
+
+message AlertFieldViolationV1 {
+  string field = 1;
+  string description = 2;
+}
+
+message AlertErrorDetailsV1 {
+  string code = 1;
+  repeated AlertFieldViolationV1 field_violations = 2;
+  string current_revision_id = 3;
+  string dependency = 4;
+  string request_id = 5;
+}
+
 message AlertDefinitionV1 {
   string id = 1;
   string tenant_id = 2;
@@ -56,6 +432,111 @@ message AlertDefinitionV1 {
   string detector_kind = 18;
   google.protobuf.Struct recipe_config = 19;
   int64 evaluation_interval_seconds = 20;
+  AlertDetectorConfigV1 detector_config = 21;
+  AlertOwnerRefV1 owner_ref = 22;
+  AlertActionV1 alert_action = 23;
+  string candidate_revision_id = 24;
+  AlertDefinitionRuntimeSummaryV1 runtime = 25;
+  AlertManagedResourceV1 management = 26;
+}
+
+message AlertManagedResourceV1 {
+  string managed_by = 1;
+  string management_ref = 2;
+  string actor_id = 3;
+  int64 revision = 4;
+  string config_hash = 5;
+  bool editable = 6;
+  string immutable_reason = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message AlertDefinitionRuntimeSummaryV1 {
+  google.protobuf.Timestamp last_evaluated_at = 1;
+  google.protobuf.Timestamp next_evaluation_at = 2;
+  string evaluation_health = 3;
+  int64 active_instance_count = 4;
+  string highest_lifecycle_state = 5;
+  bool preview_approved = 6;
+  bool activation_ready = 7;
+  int64 matching_route_count = 8;
+  string delivery_health = 9;
+  bool paused = 10;
+  bool archived = 11;
+}
+
+enum AlertNoDataBehaviorV1 {
+  ALERT_NO_DATA_BEHAVIOR_V1_UNSPECIFIED = 0;
+  ALERT_NO_DATA_BEHAVIOR_V1_HOLD_STATE = 1;
+  ALERT_NO_DATA_BEHAVIOR_V1_RESOLVE = 2;
+  ALERT_NO_DATA_BEHAVIOR_V1_ALERT = 3;
+}
+
+message AlertScopeV1 {
+  repeated string service_names = 1;
+  repeated string service_namespaces = 2;
+  repeated string environments = 3;
+  repeated string customer_cohorts = 4;
+  repeated string agent_names = 5;
+  repeated string model_providers = 6;
+  repeated string models = 7;
+  repeated string tool_names = 8;
+}
+
+message AlertEvaluationSettingsV1 {
+  int64 interval_seconds = 1;
+  int64 pending_for_seconds = 2;
+  int64 recovering_for_seconds = 3;
+  AlertNoDataBehaviorV1 no_data_behavior = 4;
+  int64 preview_horizon_seconds = 5;
+  uint32 evidence_limit = 6;
+}
+
+message AlertSampleGuardV1 {
+  uint64 minimum_events = 1;
+  bool require_complete_coverage = 2;
+}
+
+message AlertRevisionV1 {
+  string id = 1;
+  string definition_id = 2;
+  int32 revision_number = 3;
+  string name = 4;
+  optional string description = 5;
+  string config_hash = 6;
+  string revision_hash = 7;
+  AlertClassV1 class = 8;
+  AlertModeV1 mode = 9;
+  AlertSeverityV1 severity = 10;
+  AlertScopeV1 scope = 11;
+  AlertOwnerRefV1 owner = 12;
+  AlertActionV1 action = 13;
+  AlertEvaluationSettingsV1 evaluation_settings = 14;
+  AlertSampleGuardV1 sample_guard = 15;
+  AlertDetectorConfigV1 detector_config = 16;
+  string detector_kind = 17;
+  string lifecycle_state = 18;
+  string source_revision_id = 19;
+  string change_reason = 20;
+  string created_by = 21;
+  google.protobuf.Timestamp activated_at = 22;
+  google.protobuf.Timestamp superseded_at = 23;
+  google.protobuf.Timestamp created_at = 24;
+}
+
+message AlertRevisionDiffEntryV1 {
+  string field = 1;
+  string before_value = 2;
+  string after_value = 3;
+  bool sensitive = 4;
+}
+
+message AlertRevisionDiffV1 {
+  string from_revision_id = 1;
+  string to_revision_id = 2;
+  repeated AlertRevisionDiffEntryV1 changes = 3;
+  bool truncated = 4;
 }
 
 message AlertInstanceV1 {
@@ -73,6 +554,7 @@ message AlertInstanceV1 {
   google.protobuf.Timestamp first_firing_at = 12;
   google.protobuf.Timestamp last_state_change_at = 13;
   google.protobuf.Timestamp resolved_at = 14;
+  google.protobuf.Timestamp updated_at = 15;
 }
 
 message AlertEvalRunV1 {
@@ -115,6 +597,50 @@ message AlertPreviewRunV1 {
   google.protobuf.Value activation_blockers = 8;
   google.protobuf.Struct result = 9;
   google.protobuf.Timestamp created_at = 10;
+  AlertPreviewCoverageV1 coverage = 11;
+  AlertPreviewSampleGuardResultV1 typed_sample_guard = 12;
+  repeated AlertPreviewRouteDecisionV1 route_decisions = 13;
+  AlertPreviewNoiseBudgetEffectV1 noise_budget_effect = 14;
+  google.protobuf.Timestamp range_start = 15;
+  google.protobuf.Timestamp range_end = 16;
+  uint32 evidence_limit = 17;
+}
+
+enum AlertPreviewCoverageStateV1 {
+  ALERT_PREVIEW_COVERAGE_STATE_V1_UNSPECIFIED = 0;
+  ALERT_PREVIEW_COVERAGE_STATE_V1_COMPLETE = 1;
+  ALERT_PREVIEW_COVERAGE_STATE_V1_NO_DATA = 2;
+  ALERT_PREVIEW_COVERAGE_STATE_V1_PARTIAL = 3;
+  ALERT_PREVIEW_COVERAGE_STATE_V1_ERROR = 4;
+}
+
+message AlertPreviewCoverageV1 {
+  AlertPreviewCoverageStateV1 state = 1;
+  string reason = 2;
+  repeated string fact_families = 3;
+  bool horizon_complete = 4;
+}
+
+message AlertPreviewSampleGuardResultV1 {
+  bool passed = 1;
+  uint64 observed_events = 2;
+  uint64 required_events = 3;
+  string reason = 4;
+}
+
+message AlertPreviewRouteDecisionV1 {
+  google.protobuf.Timestamp evaluated_at = 1;
+  string instance_key = 2;
+  string routing_state = 3;
+  repeated string selected_destination_ids = 4;
+  repeated string blockers = 5;
+}
+
+message AlertPreviewNoiseBudgetEffectV1 {
+  int64 projected_notifications_per_day = 1;
+  bool hard_gate_applied = 2;
+  string projection_confidence = 3;
+  repeated string blockers = 4;
 }
 
 message AlertDeliveryHistoryV1 {
@@ -148,6 +674,62 @@ message AlertDeliveryAttemptV1 {
   google.protobuf.Timestamp attempted_at = 8;
 }
 
+enum AlertDestinationVerificationStateV1 {
+  ALERT_DESTINATION_VERIFICATION_STATE_V1_UNSPECIFIED = 0;
+  ALERT_DESTINATION_VERIFICATION_STATE_V1_UNCONFIGURED = 1;
+  ALERT_DESTINATION_VERIFICATION_STATE_V1_MISSING_SECRETS = 2;
+  ALERT_DESTINATION_VERIFICATION_STATE_V1_UNVERIFIED = 3;
+  ALERT_DESTINATION_VERIFICATION_STATE_V1_VERIFYING = 4;
+  ALERT_DESTINATION_VERIFICATION_STATE_V1_VERIFIED = 5;
+  ALERT_DESTINATION_VERIFICATION_STATE_V1_FAILED = 6;
+  ALERT_DESTINATION_VERIFICATION_STATE_V1_STALE = 7;
+  ALERT_DESTINATION_VERIFICATION_STATE_V1_DISABLED = 8;
+}
+
+message AlertDestinationFieldRequirementV1 {
+  string field = 1;
+  bool required = 2;
+  bool secret = 3;
+  string description = 4;
+}
+
+message AlertDestinationSetupRequirementsV1 {
+  AlertDestinationKindV1 kind = 1;
+  repeated AlertDestinationFieldRequirementV1 fields = 2;
+}
+
+message AlertDestinationVerificationV1 {
+  AlertDestinationVerificationStateV1 state = 1;
+  string current_configuration_generation = 2;
+  string verified_configuration_generation = 3;
+  int64 secret_material_generation = 4;
+  string last_attempt_status = 5;
+  int32 provider_status_code = 6;
+  string provider_receipt = 7;
+  google.protobuf.Timestamp attempted_at = 8;
+  google.protobuf.Timestamp succeeded_at = 9;
+  google.protobuf.Timestamp stale_at = 10;
+  bool retryable = 11;
+  string error_class = 12;
+  string error_message = 13;
+}
+
+message AlertDestinationRouteUsageV1 {
+  string policy_id = 1;
+  string policy_key = 2;
+  string route_id = 3;
+  string route_key = 4;
+  bool policy_enabled = 5;
+  bool route_enabled = 6;
+}
+
+message AlertDestinationUsageV1 {
+  repeated AlertDestinationRouteUsageV1 routes = 1;
+  repeated string notify_definition_ids = 2;
+  bool update_requires_reverification = 3;
+  bool disable_blocks_notify = 4;
+}
+
 message AlertDestinationV1 {
   string id = 1;
   string destination_key = 2;
@@ -159,6 +741,59 @@ message AlertDestinationV1 {
   google.protobuf.Timestamp last_tested_at = 8;
   google.protobuf.Timestamp created_at = 9;
   google.protobuf.Timestamp updated_at = 10;
+  AlertDestinationSetupRequirementsV1 setup_requirements = 11;
+  AlertDestinationVerificationV1 verification = 12;
+  AlertDestinationUsageV1 usage = 13;
+}
+
+message AlertMatcherValueV1 {
+  oneof value {
+    string string_value = 1;
+    double number_value = 2;
+    bool bool_value = 3;
+  }
+}
+
+message AlertMatcherClauseV1 {
+  string field = 1;
+  repeated AlertMatcherValueV1 values = 2;
+}
+
+message AlertNotificationRouteTargetV1 {
+  oneof target {
+    string destination_id = 1;
+    string destination_key = 2;
+  }
+}
+
+enum AlertNotificationRouteBehaviorV1 {
+  ALERT_NOTIFICATION_ROUTE_BEHAVIOR_V1_UNSPECIFIED = 0;
+  ALERT_NOTIFICATION_ROUTE_BEHAVIOR_V1_STOP = 1;
+  ALERT_NOTIFICATION_ROUTE_BEHAVIOR_V1_CONTINUE = 2;
+}
+
+message AlertNotificationRouteV1 {
+  string id = 1;
+  string route_key = 2;
+  int32 priority = 3;
+  bool enabled = 4;
+  repeated AlertMatcherClauseV1 matcher = 5;
+  AlertNotificationRouteTargetV1 target = 6;
+  AlertNotificationRouteBehaviorV1 behavior = 7;
+}
+
+message AlertNotificationPolicyConfigV1 {
+  repeated AlertNotificationRouteV1 routes = 1;
+  optional int32 max_pages_per_day = 2;
+  optional int32 max_pages_per_week = 3;
+  bool inhibit_matching_alerts = 4;
+  repeated AlertMatcherClauseV1 inhibition_matcher = 5;
+}
+
+message AlertPolicyDiagnosticV1 {
+  string code = 1;
+  string field = 2;
+  string message = 3;
 }
 
 message AlertNotificationPolicyV1 {
@@ -169,6 +804,10 @@ message AlertNotificationPolicyV1 {
   google.protobuf.Struct config = 5;
   google.protobuf.Timestamp created_at = 6;
   google.protobuf.Timestamp updated_at = 7;
+  int64 revision = 8;
+  AlertNotificationPolicyConfigV1 effective_policy = 9;
+  repeated AlertNotificationRouteV1 routes = 10;
+  repeated AlertPolicyDiagnosticV1 diagnostics = 11;
 }
 
 message AlertMaintenanceWindowV1 {
@@ -178,6 +817,7 @@ message AlertMaintenanceWindowV1 {
   google.protobuf.Struct scope = 4;
   google.protobuf.Timestamp starts_at = 5;
   google.protobuf.Timestamp ends_at = 6;
+  string reason = 7;
 }
 
 message AlertSilenceV1 {
@@ -202,26 +842,32 @@ message AlertRecipeBaseV1 {
   google.protobuf.Struct sample_guard = 10;
   string idempotency_key = 11;
   int64 evaluation_interval_seconds = 12;
+  AlertOwnerRefV1 owner_ref = 13;
+  AlertActionV1 alert_action = 14;
 }
 
 message CreateAgentQualityRegressionAlertRequest {
   AlertRecipeBaseV1 base = 1;
   google.protobuf.Struct recipe_config = 2;
+  AlertDetectorConfigV1 detector_config = 3;
 }
 
 message CreateCostPerSuccessAlertRequest {
   AlertRecipeBaseV1 base = 1;
   google.protobuf.Struct recipe_config = 2;
+  AlertDetectorConfigV1 detector_config = 3;
 }
 
 message CreateSloBurnAlertRequest {
   AlertRecipeBaseV1 base = 1;
   google.protobuf.Struct recipe_config = 2;
+  AlertDetectorConfigV1 detector_config = 3;
 }
 
 message CreateAdvancedSignalAlertRequest {
   AlertRecipeBaseV1 base = 1;
   google.protobuf.Struct condition = 2;
+  AlertDetectorConfigV1 detector_config = 3;
 }
 
 message CreateAlertDefinitionResponse {
@@ -247,11 +893,19 @@ message GetAlertResourceRequest {
 message ListAlertDefinitionsRequest {
   int32 limit = 1;
   int32 offset = 2;
+  string cursor = 3;
+  string class = 4;
+  string mode = 5;
+  string severity = 6;
+  string service = 7;
+  string managed_by = 8;
+  bool include_archived = 9;
 }
 
 message ListAlertDefinitionsResponse {
   repeated AlertDefinitionV1 items = 1;
   int64 total_count = 2;
+  string next_cursor = 3;
 }
 
 message UpdateShadowAlertRequest {
@@ -264,6 +918,54 @@ message UpdateShadowAlertRequest {
   google.protobuf.Struct sample_guard = 7;
   string idempotency_key = 8;
   optional int64 evaluation_interval_seconds = 9;
+  AlertOwnerRefV1 owner_ref = 10;
+  AlertActionV1 alert_action = 11;
+}
+
+message UpsertAlertCandidateRevisionRequest {
+  string definition_id = 1;
+  string expected_current_revision_id = 2;
+  string expected_candidate_revision_id = 3;
+  optional string name = 4;
+  optional string description = 5;
+  AlertSeverityV1 severity = 6;
+  AlertScopeV1 scope = 7;
+  AlertOwnerRefV1 owner = 8;
+  AlertActionV1 action = 9;
+  AlertEvaluationSettingsV1 evaluation_settings = 10;
+  AlertSampleGuardV1 sample_guard = 11;
+  AlertDetectorConfigV1 detector_config = 12;
+  string change_reason = 13;
+  string idempotency_key = 14;
+}
+
+message GetAlertRevisionRequest {
+  string definition_id = 1;
+  string revision_id = 2;
+}
+
+message ListAlertRevisionsRequest {
+  string definition_id = 1;
+  int32 limit = 2;
+}
+
+message ListAlertRevisionsResponse {
+  repeated AlertRevisionV1 items = 1;
+}
+
+message DiffAlertRevisionsRequest {
+  string definition_id = 1;
+  string from_revision_id = 2;
+  string to_revision_id = 3;
+}
+
+message ActivateAlertRevisionRequest {
+  string definition_id = 1;
+  string revision_id = 2;
+  string expected_current_revision_id = 3;
+  string confirmation = 4;
+  string audit_reason = 5;
+  string idempotency_key = 6;
 }
 
 message ActivateNotifyModeRequest {
@@ -307,7 +1009,105 @@ message GetIncidentCandidateRequest {
 }
 
 message GetIncidentCandidateResponse {
-  google.protobuf.Struct incident = 1;
+  AlertIncidentV1 incident = 1;
+}
+
+message AlertIncidentMemberV1 {
+  string id = 1;
+  string definition_id = 2;
+  string revision_id = 3;
+  string instance_id = 4;
+  string detector_kind = 5;
+  string instance_key = 6;
+  string dedupe_key = 7;
+  string role = 8;
+  string precedence = 9;
+  string severity = 10;
+  string condition_state = 11;
+  string lifecycle_state = 12;
+  string routing_state = 13;
+  string hypothesis = 14;
+  google.protobuf.Struct decision = 15;
+  google.protobuf.Timestamp first_observed_at = 16;
+  google.protobuf.Timestamp last_observed_at = 17;
+  google.protobuf.Timestamp resolved_at = 18;
+}
+
+message AlertIncidentV1 {
+  string id = 1;
+  string incident_key = 2;
+  string correlation_key = 3;
+  google.protobuf.Struct correlation_hints = 4;
+  string lifecycle_state = 5;
+  string precedence = 6;
+  string primary_membership_id = 7;
+  google.protobuf.Timestamp window_start = 8;
+  google.protobuf.Timestamp window_end = 9;
+  google.protobuf.Timestamp opened_at = 10;
+  google.protobuf.Timestamp last_observed_at = 11;
+  google.protobuf.Timestamp resolved_at = 12;
+  google.protobuf.Timestamp updated_at = 13;
+  repeated AlertIncidentMemberV1 members = 14;
+}
+
+message ListAlertIncidentsRequest {
+  int32 limit = 1;
+  string cursor = 2;
+  string lifecycle_state = 3;
+  string severity = 4;
+  string service = 5;
+  string definition_id = 6;
+  google.protobuf.Timestamp observed_after = 7;
+  google.protobuf.Timestamp observed_before = 8;
+  google.protobuf.Struct scope = 9;
+}
+
+message ListAlertIncidentsResponse {
+  repeated AlertIncidentV1 items = 1;
+  string next_cursor = 2;
+}
+
+message GetAlertIncidentRequest { string incident_id = 1; }
+message GetAlertIncidentResponse { AlertIncidentV1 incident = 1; }
+
+message AlertIncidentTimelineEventV1 {
+  string id = 1;
+  string event_kind = 2;
+  string event_type = 3;
+  string actor_id = 4;
+  string definition_id = 5;
+  string instance_id = 6;
+  string delivery_id = 7;
+  string summary = 8;
+  google.protobuf.Struct details = 9;
+  google.protobuf.Timestamp occurred_at = 10;
+}
+
+message ListAlertIncidentTimelineRequest {
+  string incident_id = 1;
+  int32 limit = 2;
+}
+message ListAlertIncidentTimelineResponse { repeated AlertIncidentTimelineEventV1 items = 1; }
+
+message AcknowledgeAlertIncidentRequest {
+  string incident_id = 1;
+  string reason = 2;
+  string idempotency_key = 3;
+}
+
+message ListAlertInstancesRequest {
+  int32 limit = 1;
+  string cursor = 2;
+  string definition_id = 3;
+  string lifecycle_state = 4;
+  string severity = 5;
+  google.protobuf.Struct scope = 6;
+  google.protobuf.Timestamp updated_after = 7;
+  google.protobuf.Timestamp updated_before = 8;
+}
+message ListAlertInstancesResponse {
+  repeated AlertInstanceV1 items = 1;
+  string next_cursor = 2;
 }
 
 message ExplainWhyFiredRequest {
@@ -346,6 +1146,10 @@ message AlertMutationResponse {
 message PreviewAlertRequest {
   string definition_id = 1;
   string idempotency_key = 2;
+  string revision_id = 3;
+  google.protobuf.Timestamp range_start = 4;
+  google.protobuf.Timestamp range_end = 5;
+  optional uint32 evidence_limit = 6;
 }
 
 message PreviewAlertResponse {
@@ -388,6 +1192,108 @@ message UpsertNotificationPolicyRequest {
   bool enabled = 4;
   google.protobuf.Struct config = 5;
   string idempotency_key = 6;
+  AlertNotificationPolicyConfigV1 typed_policy = 7;
+  optional int64 expected_revision = 8;
+}
+
+message ValidateNotificationPolicyRequest {
+  string policy_id = 1;
+  AlertNotificationPolicyConfigV1 policy = 2;
+}
+
+message ValidateNotificationPolicyResponse {
+  bool valid = 1;
+  AlertNotificationPolicyConfigV1 normalized_policy = 2;
+  repeated AlertPolicyDiagnosticV1 diagnostics = 3;
+}
+
+message AlertRoutingSubjectV1 {
+  string alert_class = 1;
+  AlertModeV1 mode = 2;
+  AlertSeverityV1 severity = 3;
+  google.protobuf.Struct scope = 4;
+  AlertOwnerRefV1 owner = 5;
+  AlertActionV1 action = 6;
+  string detector_kind = 7;
+}
+
+message PreviewNotificationRouteRequest {
+  string definition_id = 1;
+  string revision_id = 2;
+  AlertRoutingSubjectV1 candidate = 3;
+  repeated AlertMatcherClauseV1 dimensions = 4;
+  repeated AlertMatcherClauseV1 correlation_hints = 5;
+}
+
+message AlertRouteEvaluationV1 {
+  string route_id = 1;
+  string policy_id = 2;
+  string route_key = 3;
+  string destination_id = 4;
+  int32 priority = 5;
+  bool enabled = 6;
+  AlertNotificationRouteBehaviorV1 behavior = 7;
+  bool matched = 8;
+  bool selected = 9;
+  bool stopped = 10;
+  string reason = 11;
+  AlertDestinationVerificationStateV1 destination_verification_state = 12;
+}
+
+message PreviewNotificationRouteResponse {
+  string definition_id = 1;
+  string revision_id = 2;
+  string config_hash = 3;
+  repeated AlertRouteEvaluationV1 routes = 4;
+  repeated string selected_destination_ids = 5;
+  string routing_state = 6;
+  repeated string blockers = 7;
+  repeated string reasons = 8;
+  google.protobuf.Struct noise_budget_status = 9;
+}
+
+message PreviewNotificationPayloadRequest {
+  string definition_id = 1;
+  string revision_id = 2;
+  string destination_id = 3;
+  string lifecycle_event = 4;
+  google.protobuf.Struct representative_evidence = 5;
+}
+
+message PreviewNotificationPayloadResponse {
+  string destination_id = 1;
+  AlertDestinationKindV1 destination_kind = 2;
+  string title = 3;
+  string body = 4;
+  google.protobuf.Struct fields = 5;
+  repeated string omitted_field_warnings = 6;
+  repeated AlertPolicyDiagnosticV1 template_diagnostics = 7;
+  uint64 approximate_payload_bytes = 8;
+}
+
+message GetActivationReadinessRequest {
+  string definition_id = 1;
+  string revision_id = 2;
+  string config_hash = 3;
+}
+
+message AlertActivationBlockerV1 {
+  string code = 1;
+  string message = 2;
+  string resource_kind = 3;
+  string resource_id = 4;
+  string remediation = 5;
+}
+
+message GetActivationReadinessResponse {
+  bool ready = 1;
+  string definition_id = 2;
+  string revision_id = 3;
+  string config_hash = 4;
+  google.protobuf.Timestamp observed_at = 5;
+  repeated AlertActivationBlockerV1 blockers = 6;
+  repeated string selected_destination_ids = 7;
+  repeated string required_fact_families = 8;
 }
 
 message ListNotificationPoliciesResponse {
@@ -417,6 +1323,7 @@ message UpsertMaintenanceWindowRequest {
   google.protobuf.Timestamp starts_at = 5;
   google.protobuf.Timestamp ends_at = 6;
   string idempotency_key = 7;
+  string reason = 8;
 }
 
 message UpsertSilenceRequest {
@@ -494,6 +1401,103 @@ message GetDeliveryHistoryResponse {
   repeated AlertDeliveryHistoryV1 items = 1;
 }
 
+message ListAlertDeliveriesRequest {
+  int32 limit = 1;
+  string cursor = 2;
+  string status = 3;
+  string destination_id = 4;
+  string definition_id = 5;
+  string instance_id = 6;
+  string incident_id = 7;
+  string event_type = 8;
+  google.protobuf.Timestamp updated_after = 9;
+  google.protobuf.Timestamp updated_before = 10;
+}
+
+message ListAlertDeliveriesResponse {
+  repeated AlertDeliveryV1 items = 1;
+  string next_cursor = 2;
+}
+
+message GetAlertDeliveryRequest { string delivery_id = 1; }
+message GetAlertDeliveryResponse { AlertDeliveryV1 delivery = 1; }
+
+message AlertDeliveryV1 {
+  string id = 1;
+  string notification_event_id = 2;
+  string definition_id = 3;
+  string revision_id = 4;
+  string instance_id = 5;
+  string incident_id = 6;
+  string event_type = 7;
+  string destination_id = 8;
+  AlertDestinationKindV1 destination_kind = 9;
+  string destination_key = 10;
+  string status = 11;
+  int32 attempts_count = 12;
+  int32 max_attempts = 13;
+  google.protobuf.Timestamp next_attempt_at = 14;
+  google.protobuf.Timestamp sent_at = 15;
+  google.protobuf.Timestamp failed_at = 16;
+  google.protobuf.Timestamp dead_lettered_at = 17;
+  string last_error = 18;
+  int32 provider_status_code = 19;
+  string provider_message_id = 20;
+  string destination_generation = 21;
+  google.protobuf.Timestamp created_at = 22;
+  google.protobuf.Timestamp updated_at = 23;
+  repeated AlertDeliveryAttemptV1 attempts = 24;
+}
+
+message ListAlertAuditRequest {
+  int32 limit = 1;
+  string cursor = 2;
+  string resource_kind = 3;
+  string resource_id = 4;
+  string action = 5;
+  string actor_id = 6;
+  string managed_by = 7;
+  google.protobuf.Timestamp occurred_after = 8;
+  google.protobuf.Timestamp occurred_before = 9;
+}
+
+message AlertAuditEventV1 {
+  string id = 1;
+  string actor_id = 2;
+  string actor_kind = 3;
+  string actor_source = 4;
+  string actor_client_id = 5;
+  string actor_invocation_id = 6;
+  string action = 7;
+  string resource_kind = 8;
+  string resource_id = 9;
+  string managed_by = 10;
+  string management_ref = 11;
+  google.protobuf.Struct details = 12;
+  google.protobuf.Timestamp occurred_at = 13;
+}
+
+message ListAlertAuditResponse {
+  repeated AlertAuditEventV1 items = 1;
+  string next_cursor = 2;
+}
+message GetAlertAuditRequest { string audit_event_id = 1; }
+message GetAlertAuditResponse { AlertAuditEventV1 event = 1; }
+
+message PreviewAlertSuppressionRequest { google.protobuf.Struct matcher = 1; }
+message PreviewAlertSuppressionResponse {
+  int64 matched_rule_count = 1;
+  int64 matched_notify_rule_count = 2;
+  int64 matched_instance_count = 3;
+  int64 matched_incident_count = 4;
+  int64 affected_route_count = 5;
+  repeated string sample_definition_ids = 6;
+  repeated string sample_instance_ids = 7;
+  bool broad_matcher = 8;
+  bool empty_matcher = 9;
+  repeated string warnings = 10;
+}
+
 message TriggerCanaryRequest {
   string idempotency_key = 1;
 }
@@ -516,7 +1520,203 @@ message EnsureMetaAlertsResponse { repeated AlertDefinitionV1 definitions = 1; }
 message GetAlertMetaHealthRequest {}
 
 message GetAlertMetaHealthResponse {
-  google.protobuf.Struct health = 1;
+  AlertMetaHealthV1 health = 1;
+}
+
+message AlertMetaHealthV1 {
+  double evaluator_lag_seconds = 1;
+  int64 scheduler_overdue_count = 2;
+  int64 source_ready_count = 3;
+  int64 source_unready_count = 4;
+  int64 delivery_backlog_count = 5;
+  int64 dead_letter_count = 6;
+  int64 provider_failed_count = 7;
+  string canary_status = 8;
+  google.protobuf.Timestamp canary_completed_at = 9;
+  repeated string worker_failures = 10;
+  google.protobuf.Timestamp as_of = 11;
+  bool stale = 12;
+}
+
+enum AlertDefinitionLifecycleActionV1 {
+  ALERT_DEFINITION_LIFECYCLE_ACTION_V1_UNSPECIFIED = 0;
+  ALERT_DEFINITION_LIFECYCLE_ACTION_V1_PAUSE = 1;
+  ALERT_DEFINITION_LIFECYCLE_ACTION_V1_RESUME = 2;
+  ALERT_DEFINITION_LIFECYCLE_ACTION_V1_ARCHIVE = 3;
+}
+
+message AlertDefinitionLifecyclePreflightV1 {
+  string definition_id = 1;
+  string current_revision_id = 2;
+  AlertModeV1 mode = 3;
+  google.protobuf.Timestamp archived_at = 4;
+  google.protobuf.Timestamp restore_expires_at = 5;
+  google.protobuf.Timestamp purged_at = 6;
+  int64 active_instance_count = 7;
+  int64 active_incident_count = 8;
+  int64 pending_delivery_count = 9;
+  int64 candidate_revision_count = 10;
+  string managed_by = 11;
+  string management_ref = 12;
+  bool can_archive = 13;
+  bool can_restore = 14;
+  bool can_purge = 15;
+  repeated string blocker_codes = 16;
+}
+
+message GetAlertDefinitionLifecyclePreflightRequest { string definition_id = 1; }
+
+message ArchiveAlertDefinitionV2Request {
+  string definition_id = 1;
+  string expected_revision_id = 2;
+  string reason = 3;
+  string idempotency_key = 4;
+}
+
+message RestoreAlertDefinitionRequest {
+  string definition_id = 1;
+  string expected_revision_id = 2;
+  string reason = 3;
+  string idempotency_key = 4;
+}
+
+message PurgeAlertDefinitionRequest {
+  string definition_id = 1;
+  string expected_revision_id = 2;
+  string confirmation = 3;
+  string reason = 4;
+  string idempotency_key = 5;
+}
+
+message AlertDraftV1 {
+  string id = 1;
+  string draft_key = 2;
+  string name = 3;
+  string draft_kind = 4;
+  google.protobuf.Struct payload = 5;
+  string base_resource_id = 6;
+  string expected_base_revision_id = 7;
+  int64 revision = 8;
+  string managed_by = 9;
+  string management_ref = 10;
+  string actor_id = 11;
+  google.protobuf.Timestamp expires_at = 12;
+  google.protobuf.Timestamp created_at = 13;
+  google.protobuf.Timestamp updated_at = 14;
+}
+
+message PutAlertDraftRequest {
+  string draft_key = 1;
+  string name = 2;
+  string draft_kind = 3;
+  google.protobuf.Struct payload = 4;
+  string base_resource_id = 5;
+  string expected_base_revision_id = 6;
+  optional int64 expected_draft_revision = 7;
+  int64 ttl_seconds = 8;
+  string idempotency_key = 9;
+}
+
+message GetAlertDraftRequest { string draft_id = 1; }
+
+message ListAlertDraftsRequest {
+  string draft_kind = 1;
+  int32 limit = 2;
+}
+
+message ListAlertDraftsResponse { repeated AlertDraftV1 items = 1; }
+
+message DeleteAlertDraftRequest {
+  string draft_id = 1;
+  int64 expected_draft_revision = 2;
+  string idempotency_key = 3;
+}
+
+message AlertBulkDefinitionItemV1 {
+  string definition_id = 1;
+  string expected_revision_id = 2;
+}
+
+message AlertBulkDefinitionResultV1 {
+  string definition_id = 1;
+  bool ok = 2;
+  string code = 3;
+  string message = 4;
+}
+
+message BulkMutateAlertDefinitionsRequest {
+  AlertDefinitionLifecycleActionV1 action = 1;
+  repeated AlertBulkDefinitionItemV1 items = 2;
+  string reason = 3;
+  string idempotency_key = 4;
+}
+
+message BulkMutateAlertDefinitionsResponse {
+  string operation_id = 1;
+  repeated AlertBulkDefinitionResultV1 results = 2;
+  int32 succeeded_count = 3;
+  int32 failed_count = 4;
+}
+
+message PortableAlertDefinitionV1 {
+  string slug = 1;
+  string name = 2;
+  string description = 3;
+  AlertClassV1 class = 4;
+  AlertSeverityV1 severity = 5;
+  google.protobuf.Struct scope = 6;
+  AlertOwnerRefV1 owner = 7;
+  AlertActionV1 action = 8;
+  google.protobuf.Struct evaluation_settings = 9;
+  google.protobuf.Struct sample_guard = 10;
+  string detector_kind = 11;
+  AlertDetectorConfigV1 detector_config = 12;
+  string config_hash = 13;
+}
+
+message AlertDefinitionExportBundleV1 {
+  string schema_version = 1;
+  google.protobuf.Timestamp exported_at = 2;
+  repeated PortableAlertDefinitionV1 definitions = 3;
+  string bundle_hash = 4;
+}
+
+message ExportAlertDefinitionsRequest { repeated string definition_ids = 1; }
+
+message ImportAlertDefinitionsRequest {
+  AlertDefinitionExportBundleV1 bundle = 1;
+  string conflict_policy = 2;
+  bool dry_run = 3;
+  string idempotency_key = 4;
+}
+
+message AlertDefinitionImportResultV1 {
+  string slug = 1;
+  bool valid = 2;
+  bool imported = 3;
+  bool skipped = 4;
+  string definition_id = 5;
+  repeated AlertFieldViolationV1 violations = 6;
+  string message = 7;
+}
+
+message ImportAlertDefinitionsResponse {
+  string import_id = 1;
+  string bundle_hash = 2;
+  repeated AlertDefinitionImportResultV1 results = 3;
+}
+
+message ReplayAlertDeliveryRequest {
+  string delivery_id = 1;
+  string reason = 2;
+  string idempotency_key = 3;
+}
+
+message ReplayAlertDeliveryResponse {
+  string replay_id = 1;
+  string original_delivery_id = 2;
+  string replay_delivery_id = 3;
+  google.protobuf.Timestamp created_at = 4;
 }
 
 service AlertDefinitionService {
@@ -527,12 +1727,35 @@ service AlertDefinitionService {
   rpc GetDefinition(GetAlertDefinitionRequest) returns (AlertDefinitionV1);
   rpc ListDefinitions(ListAlertDefinitionsRequest) returns (ListAlertDefinitionsResponse);
   rpc UpdateShadow(UpdateShadowAlertRequest) returns (AlertDefinitionV1);
+  rpc UpsertCandidateRevision(UpsertAlertCandidateRevisionRequest) returns (AlertRevisionV1);
+  rpc GetRevision(GetAlertRevisionRequest) returns (AlertRevisionV1);
+  rpc ListRevisions(ListAlertRevisionsRequest) returns (ListAlertRevisionsResponse);
+  rpc DiffRevisions(DiffAlertRevisionsRequest) returns (AlertRevisionDiffV1);
   rpc DeleteDefinition(DeleteAlertDefinitionRequest) returns (AlertMutationResponse);
+  rpc GetLifecyclePreflight(GetAlertDefinitionLifecyclePreflightRequest) returns (AlertDefinitionLifecyclePreflightV1);
+  rpc ArchiveDefinitionV2(ArchiveAlertDefinitionV2Request) returns (AlertMutationResponse);
+  rpc RestoreDefinition(RestoreAlertDefinitionRequest) returns (AlertMutationResponse);
+  rpc PurgeDefinition(PurgeAlertDefinitionRequest) returns (AlertMutationResponse);
+  rpc PutDraft(PutAlertDraftRequest) returns (AlertDraftV1);
+  rpc GetDraft(GetAlertDraftRequest) returns (AlertDraftV1);
+  rpc ListDrafts(ListAlertDraftsRequest) returns (ListAlertDraftsResponse);
+  rpc DeleteDraft(DeleteAlertDraftRequest) returns (AlertMutationResponse);
+  rpc BulkMutateDefinitions(BulkMutateAlertDefinitionsRequest) returns (BulkMutateAlertDefinitionsResponse);
+  rpc ExportDefinitions(ExportAlertDefinitionsRequest) returns (AlertDefinitionExportBundleV1);
+  rpc ImportDefinitions(ImportAlertDefinitionsRequest) returns (ImportAlertDefinitionsResponse);
 }
 
 service AlertRuntimeService {
   rpc ListActiveInstances(ListActiveAlertInstancesRequest) returns (ListActiveAlertInstancesResponse);
   rpc GetIncidentCandidate(GetIncidentCandidateRequest) returns (GetIncidentCandidateResponse);
+  rpc ListInstances(ListAlertInstancesRequest) returns (ListAlertInstancesResponse);
+  rpc ListIncidents(ListAlertIncidentsRequest) returns (ListAlertIncidentsResponse);
+  rpc GetIncident(GetAlertIncidentRequest) returns (GetAlertIncidentResponse);
+  rpc ListIncidentTimeline(ListAlertIncidentTimelineRequest) returns (ListAlertIncidentTimelineResponse);
+  rpc AcknowledgeIncident(AcknowledgeAlertIncidentRequest) returns (AlertMutationResponse);
+  rpc ListAudit(ListAlertAuditRequest) returns (ListAlertAuditResponse);
+  rpc GetAudit(GetAlertAuditRequest) returns (GetAlertAuditResponse);
+  rpc PreviewSuppression(PreviewAlertSuppressionRequest) returns (PreviewAlertSuppressionResponse);
   rpc ListEvalHistory(AlertIdRequest) returns (ListAlertEvalHistoryResponse);
   rpc ListStateHistory(AlertInstanceIdRequest) returns (ListAlertStateHistoryResponse);
   rpc ExplainWhyFired(ExplainWhyFiredRequest) returns (ExplainWhyFiredResponse);
@@ -547,11 +1770,15 @@ service AlertNotificationService {
   rpc DeleteDestination(DeleteDestinationRequest) returns (AlertMutationResponse);
   rpc GetDestination(GetAlertResourceRequest) returns (AlertDestinationV1);
   rpc ListDestinations(ListDestinationsRequest) returns (ListDestinationsResponse);
+  rpc GetDestinationPreflight(GetAlertResourceRequest) returns (AlertDestinationV1);
   rpc CreateNotificationPolicy(UpsertNotificationPolicyRequest) returns (AlertNotificationPolicyV1);
   rpc UpdateNotificationPolicy(UpsertNotificationPolicyRequest) returns (AlertNotificationPolicyV1);
   rpc GetNotificationPolicy(GetAlertResourceRequest) returns (AlertNotificationPolicyV1);
   rpc ListNotificationPolicies(ListOperatorResourcesRequest) returns (ListNotificationPoliciesResponse);
   rpc DeleteNotificationPolicy(DeleteOperatorResourceRequest) returns (AlertMutationResponse);
+  rpc ValidateNotificationPolicy(ValidateNotificationPolicyRequest) returns (ValidateNotificationPolicyResponse);
+  rpc PreviewNotificationRoute(PreviewNotificationRouteRequest) returns (PreviewNotificationRouteResponse);
+  rpc PreviewNotificationPayload(PreviewNotificationPayloadRequest) returns (PreviewNotificationPayloadResponse);
   rpc CreateMaintenanceWindow(UpsertMaintenanceWindowRequest) returns (AlertMaintenanceWindowV1);
   rpc UpdateMaintenanceWindow(UpsertMaintenanceWindowRequest) returns (AlertMaintenanceWindowV1);
   rpc GetMaintenanceWindow(GetAlertResourceRequest) returns (AlertMaintenanceWindowV1);
@@ -567,12 +1794,18 @@ service AlertNotificationService {
   rpc RevokeDestinationSecret(RevokeDestinationSecretRequest) returns (RevokeDestinationSecretResponse);
   rpc ListDestinationSecrets(ListDestinationSecretsRequest) returns (ListDestinationSecretsResponse);
   rpc GetDeliveryHistory(GetDeliveryHistoryRequest) returns (GetDeliveryHistoryResponse);
+  rpc ListDeliveries(ListAlertDeliveriesRequest) returns (ListAlertDeliveriesResponse);
+  rpc GetDelivery(GetAlertDeliveryRequest) returns (GetAlertDeliveryResponse);
+  rpc ReplayDelivery(ReplayAlertDeliveryRequest) returns (ReplayAlertDeliveryResponse);
 }
 
 service AlertPreviewService {
   rpc PreviewAlert(PreviewAlertRequest) returns (PreviewAlertResponse);
   rpc ListPreviewHistory(AlertIdRequest) returns (ListPreviewHistoryResponse);
   rpc ActivateNotifyMode(ActivateNotifyModeRequest) returns (AlertDefinitionV1);
+  rpc ActivateCandidateRevision(ActivateAlertRevisionRequest) returns (AlertDefinitionV1);
+  rpc RollbackRevision(ActivateAlertRevisionRequest) returns (AlertDefinitionV1);
+  rpc GetActivationReadiness(GetActivationReadinessRequest) returns (GetActivationReadinessResponse);
 }
 
 service AlertCanaryService {
@@ -580,4 +1813,26 @@ service AlertCanaryService {
   rpc GetCanaryRun(GetCanaryRunRequest) returns (TriggerCanaryResponse);
   rpc EnsureMetaAlerts(EnsureMetaAlertsRequest) returns (EnsureMetaAlertsResponse);
   rpc GetMetaHealth(GetAlertMetaHealthRequest) returns (GetAlertMetaHealthResponse);
+}
+
+service AlertSloService {
+  rpc CreateSli(CreateSliRequest) returns (AlertSliV1);
+  rpc ValidateSli(ValidateSliRequest) returns (ValidateSliResponse);
+  rpc UpdateSli(UpdateSliRequest) returns (AlertSliV1);
+  rpc GetSli(GetSliRequest) returns (AlertSliV1);
+  rpc ListSlis(ListSlisRequest) returns (ListSlisResponse);
+  rpc ArchiveSli(ArchiveSliRequest) returns (AlertMutationResponse);
+  rpc ListSliRevisions(ListSliRevisionsRequest) returns (ListSliRevisionsResponse);
+  rpc PreviewSli(PreviewSliRequest) returns (SliPreviewV1);
+
+  rpc CreateSlo(CreateSloRequest) returns (AlertSloV1);
+  rpc UpdateSlo(UpdateSloRequest) returns (AlertSloV1);
+  rpc GetSlo(GetSloRequest) returns (AlertSloV1);
+  rpc ListSlos(ListSlosRequest) returns (ListSlosResponse);
+  rpc ArchiveSlo(ArchiveSloRequest) returns (AlertMutationResponse);
+  rpc ListSloRevisions(ListSloRevisionsRequest) returns (ListSloRevisionsResponse);
+  rpc GetSloStatus(GetSloStatusRequest) returns (SloStatusV1);
+  rpc GetSloBurndown(GetSloBurndownRequest) returns (GetSloBurndownResponse);
+  rpc ListSloHistory(ListSloHistoryRequest) returns (ListSloHistoryResponse);
+  rpc CreateRecommendedSloBurnAlert(CreateRecommendedSloBurnAlertRequest) returns (CreateRecommendedSloBurnAlertResponse);
 }

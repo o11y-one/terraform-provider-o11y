@@ -278,18 +278,22 @@ func (r *alertResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 	}
 	rpcCtx, cancel := r.client.Context(ctx)
 	defer cancel()
-	message := &alertsv1.DeleteAlertDefinitionRequest{Id: data.ID.ValueString()}
-	message.IdempotencyKey = idempotency.Key(r.client.TenantID(), r.client.OrgID(), r.typeName, "delete", data.ID.ValueString(), message)
-	result, err := r.client.Definitions.DeleteDefinition(rpcCtx, message)
+	message := &alertsv1.ArchiveAlertDefinitionV2Request{
+		DefinitionId:       data.ID.ValueString(),
+		ExpectedRevisionId: data.RevisionID.ValueString(),
+		Reason:             "Terraform resource removed from configuration",
+	}
+	message.IdempotencyKey = idempotency.Key(r.client.TenantID(), r.client.OrgID(), r.typeName, "archive", data.ID.ValueString(), data.RevisionID.ValueString())
+	result, err := r.client.Definitions.ArchiveDefinitionV2(rpcCtx, message)
 	if err != nil {
 		if status.Code(err) == codes.NotFound {
 			return
 		}
-		addRPCError(&resp.Diagnostics, "delete alert definition", err)
+		addRPCError(&resp.Diagnostics, "archive alert definition", err)
 		return
 	}
 	if !result.Ok {
-		resp.Diagnostics.AddError("Alert deletion rejected", result.Message)
+		resp.Diagnostics.AddError("Alert archive rejected", result.Message)
 	}
 }
 func (r *alertResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
