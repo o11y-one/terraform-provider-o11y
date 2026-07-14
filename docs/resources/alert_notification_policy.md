@@ -3,12 +3,12 @@
 page_title: "o11y_alert_notification_policy Resource - O11y.one"
 subcategory: ""
 description: |-
-  An O11y.one alert notification routing policy.
+  An O11y.one alert notification policy with bounded route trees, grouping, repeats, escalation, and notification budgets.
 ---
 
 # o11y_alert_notification_policy (Resource)
 
-An O11y.one alert notification routing policy.
+An O11y.one alert notification policy with bounded route trees, grouping, repeats, escalation, and notification budgets.
 
 ## Example Usage
 
@@ -18,12 +18,46 @@ resource "o11y_alert_notification_policy" "default" {
   name       = "Default routing"
   enabled    = true
   config_json = jsonencode({
-    routes = [{
-      route_key      = "primary"
-      destination_id = o11y_alert_destination.primary.id
-      matcher        = { severity = ["warning", "critical"] }
-      priority       = 10
-    }]
+    tree = {
+      nodes = [
+        {
+          node_key           = "customer-impact"
+          node_kind          = "branch"
+          matcher            = { class = ["outcome", "budget"] }
+          priority           = 10
+          continue_evaluation = false
+        },
+        {
+          node_key            = "primary"
+          parent_node_key     = "customer-impact"
+          node_kind           = "route"
+          destination_id      = o11y_alert_destination.primary.id
+          priority            = 10
+          continue_evaluation = true
+        }
+      ]
+    }
+    grouping = {
+      group_by              = ["service.name", "environment"]
+      group_wait_seconds    = 30
+      group_interval_seconds = 300
+    }
+    notifications = {
+      repeat_interval_seconds = 900
+      repeat_limit             = 2
+      notify_resolved          = true
+    }
+    escalation = {
+      schedule_key = "critical"
+      steps = [{
+        delay_seconds = 600
+        destination_id = o11y_alert_destination.primary.id
+      }]
+    }
+    noise_budget = {
+      max_pages_per_day  = 5
+      max_pages_per_week = 20
+    }
   })
 }
 ```
@@ -33,7 +67,7 @@ resource "o11y_alert_notification_policy" "default" {
 
 ### Required
 
-- `config_json` (String) Policy routes and matching configuration as a JSON object.
+- `config_json` (String) Canonical policy JSON. Supports either routes or tree, plus grouping, notifications, escalation, noise_budget, and typed inhibition matchers.
 - `enabled` (Boolean)
 - `name` (String)
 - `policy_key` (String)
@@ -41,3 +75,4 @@ resource "o11y_alert_notification_policy" "default" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `revision` (Number) Monotonic server revision used to fence concurrent updates.

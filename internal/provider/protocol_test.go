@@ -36,6 +36,7 @@ func TestProviderProtocolAlertingLifecycle(t *testing.T) {
 					terraformresource.TestCheckResourceAttrSet("o11y_alert_destination.primary", "id"),
 					terraformresource.TestCheckResourceAttr("o11y_alert_notification_policy.default", "name", "Default"),
 					terraformresource.TestCheckResourceAttrSet("o11y_alert_notification_policy.default", "id"),
+					terraformresource.TestCheckResourceAttr("o11y_alert_notification_policy.default", "revision", "1"),
 					terraformresource.TestCheckResourceAttr("o11y_alert_maintenance_window.deploy", "name", "Deploy freeze"),
 					terraformresource.TestCheckResourceAttrSet("o11y_alert_maintenance_window.deploy", "id"),
 					terraformresource.TestCheckResourceAttr("o11y_alert_silence.provider", "reason", "Provider maintenance"),
@@ -119,13 +120,38 @@ resource "o11y_alert_notification_policy" "default" {
   name = "Default"
   enabled = true
   config_json = jsonencode({
-    routes = [{
-      route_key = "primary"
-      destination_id = o11y_alert_destination.primary.id
-      matcher = {}
-      priority = 10
-      enabled = true
-    }]
+    tree = { nodes = [
+      {
+        node_key = "critical"
+        node_kind = "branch"
+        matcher = { severity = ["critical"] }
+        priority = 10
+        continue_evaluation = false
+      },
+      {
+        node_key = "primary"
+        parent_node_key = "critical"
+        node_kind = "route"
+        destination_id = o11y_alert_destination.primary.id
+        priority = 10
+        continue_evaluation = true
+      }
+    ] }
+    grouping = {
+      group_by = ["service.name", "environment"]
+      group_wait_seconds = 30
+      group_interval_seconds = 300
+    }
+    notifications = {
+      repeat_interval_seconds = 900
+      repeat_limit = 2
+      notify_resolved = true
+    }
+    escalation = {
+      schedule_key = "critical"
+      steps = [{ delay_seconds = 600, destination_id = o11y_alert_destination.primary.id }]
+    }
+    noise_budget = { max_pages_per_day = 5, max_pages_per_week = 20 }
   })
 }
 
