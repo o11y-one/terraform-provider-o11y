@@ -71,7 +71,11 @@ func FromConn(conn *grpc.ClientConn, config Config) *Client {
 }
 
 func (c *Client) Context(ctx context.Context) (context.Context, context.CancelFunc) {
-	values := []string{"x-o11y-key", c.token, "x-o11y-tenant-id", c.tenantID}
+	values := []string{
+		"x-o11y-key", c.token,
+		"x-o11y-tenant-id", c.tenantID,
+		"x-o11y-managed-by", "terraform",
+	}
 	if c.orgID != "" {
 		values = append(values, "x-o11y-org-id", c.orgID)
 	}
