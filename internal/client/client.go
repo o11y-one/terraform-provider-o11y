@@ -31,6 +31,7 @@ type Client struct {
 	Runtime        alertsv1.AlertRuntimeServiceClient
 	Notifications  alertsv1.AlertNotificationServiceClient
 	Previews       alertsv1.AlertPreviewServiceClient
+	Runbooks       alertsv1.AlertRunbookServiceClient
 	token          string
 	tenantID       string
 	orgID          string
@@ -65,7 +66,7 @@ func FromConn(conn *grpc.ClientConn, config Config) *Client {
 	return &Client{
 		Conn: conn, Definitions: alertsv1.NewAlertDefinitionServiceClient(conn),
 		Runtime: alertsv1.NewAlertRuntimeServiceClient(conn), Notifications: alertsv1.NewAlertNotificationServiceClient(conn),
-		Previews: alertsv1.NewAlertPreviewServiceClient(conn), token: config.Token, tenantID: config.TenantID,
+		Previews: alertsv1.NewAlertPreviewServiceClient(conn), Runbooks: alertsv1.NewAlertRunbookServiceClient(conn), token: config.Token, tenantID: config.TenantID,
 		orgID: config.OrgID, requestTimeout: config.RequestTimeout,
 	}
 }
