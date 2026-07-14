@@ -130,7 +130,7 @@ func (s *alertTestServer) CreateNotificationPolicy(ctx context.Context, req *ale
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	id := s.id("policy", req.IdempotencyKey)
-	item := &alertsv1.AlertNotificationPolicyV1{Id: id, PolicyKey: req.PolicyKey, Name: req.Name, Enabled: req.Enabled, Config: req.Config}
+	item := &alertsv1.AlertNotificationPolicyV1{Id: id, PolicyKey: req.PolicyKey, Name: req.Name, Enabled: req.Enabled, Config: req.Config, Revision: 1}
 	s.policies[id] = item
 	return item, nil
 }
@@ -140,10 +140,14 @@ func (s *alertTestServer) UpdateNotificationPolicy(ctx context.Context, req *ale
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	if s.policies[req.Id] == nil {
+	existing := s.policies[req.Id]
+	if existing == nil {
 		return nil, status.Error(codes.NotFound, "policy")
 	}
-	item := &alertsv1.AlertNotificationPolicyV1{Id: req.Id, PolicyKey: req.PolicyKey, Name: req.Name, Enabled: req.Enabled, Config: req.Config}
+	if req.ExpectedRevision == nil || req.GetExpectedRevision() != existing.Revision {
+		return nil, status.Error(codes.Aborted, "stale policy revision")
+	}
+	item := &alertsv1.AlertNotificationPolicyV1{Id: req.Id, PolicyKey: req.PolicyKey, Name: req.Name, Enabled: req.Enabled, Config: req.Config, Revision: existing.Revision + 1}
 	s.policies[req.Id] = item
 	return item, nil
 }
@@ -461,7 +465,8 @@ func TestControlledGRPCLifecycle(t *testing.T) {
 		t.Fatal(err)
 	}
 	policy.Name = "Updated"
-	if _, err = c.Notifications.UpdateNotificationPolicy(ctx, &alertsv1.UpsertNotificationPolicyRequest{Id: policy.Id, PolicyKey: policy.PolicyKey, Name: policy.Name, Enabled: true, Config: routes, IdempotencyKey: "policy-update"}); err != nil {
+	expectedPolicyRevision := policy.Revision
+	if _, err = c.Notifications.UpdateNotificationPolicy(ctx, &alertsv1.UpsertNotificationPolicyRequest{Id: policy.Id, PolicyKey: policy.PolicyKey, Name: policy.Name, Enabled: true, Config: routes, IdempotencyKey: "policy-update", ExpectedRevision: &expectedPolicyRevision}); err != nil {
 		t.Fatal(err)
 	}
 	readPolicy, err := c.Notifications.GetNotificationPolicy(ctx, &alertsv1.GetAlertResourceRequest{Id: policy.Id, OrgId: testOrgID})
