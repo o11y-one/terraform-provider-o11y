@@ -1,6 +1,6 @@
 # O11y.one Terraform Provider
 
-Terraform Plugin Framework provider for O11y.one alert destinations, notification policies, shadow alert definitions, and alert previews.
+Terraform Plugin Framework provider for O11y.one service-level objectives, alert destinations, notification policies, shadow alert definitions, and alert previews.
 
 ## Provider configuration
 
@@ -32,6 +32,7 @@ Keep the token in the environment or a secret-backed Terraform variable. Althoug
 
 ## Resources and data sources
 
+- `o11y_slo`: revisioned SLO CRUD, archive, import, and exact rolling or IANA-timezone calendar error-budget windows.
 - `o11y_alert_runbook`: versioned managed runbook CRUD, archive/restore, import, sanitized Markdown, and exact revision state.
 - `o11y_alert_destination`: destination CRUD, import, and direct-read drift detection. `secret_refs_json` accepts only opaque values beginning with `secret:`; inline secret-like keys are rejected from `config_json`.
 - `o11y_alert_notification_policy`: policy CRUD, import, drift detection, and arbitrary route configuration through `config_json`.
@@ -51,13 +52,14 @@ All mutation idempotency keys are deterministic over tenant, organization, resou
 
 ## Import
 
-Runbooks, destinations, policies, and shadow alerts import by backend ID:
+SLOs, runbooks, destinations, policies, and shadow alerts import by backend ID:
 
 ```shell
 terraform import o11y_alert_destination.primary 019abc...
 terraform import o11y_alert_notification_policy.default 019def...
 terraform import o11y_agent_quality_alert.quality 019fed...
 terraform import o11y_alert_runbook.checkout 019cab...
+terraform import o11y_slo.checkout 019f7aa2-6c7f-7000-8000-000000000003
 ```
 
 Destination, policy, and alert imports use exact `Get*` RPCs. Alert readback includes detector kind, recipe configuration, and evaluation interval so imported state is reconstructable.

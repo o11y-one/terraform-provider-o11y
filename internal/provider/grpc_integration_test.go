@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"sync"
 	"testing"
@@ -18,6 +19,7 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type alertTestServer struct {
@@ -25,12 +27,14 @@ type alertTestServer struct {
 	alertsv1.UnimplementedAlertRuntimeServiceServer
 	alertsv1.UnimplementedAlertNotificationServiceServer
 	alertsv1.UnimplementedAlertPreviewServiceServer
+	alertsv1.UnimplementedAlertSloServiceServer
 	mu           sync.Mutex
 	destinations map[string]*alertsv1.AlertDestinationV1
 	policies     map[string]*alertsv1.AlertNotificationPolicyV1
 	definitions  map[string]*alertsv1.AlertDefinitionV1
 	windows      map[string]*alertsv1.AlertMaintenanceWindowV1
 	silences     map[string]*alertsv1.AlertSilenceV1
+	slos         map[string]*alertsv1.AlertSloV1
 	idempotent   map[string]string
 	next         int
 }
@@ -39,7 +43,7 @@ const testTenantID = "019f430f-90d4-74c3-95b7-9120db366252"
 const testOrgID = "019f430f-90d4-74c3-95b7-9120db366253"
 
 func newAlertTestServer() *alertTestServer {
-	return &alertTestServer{destinations: map[string]*alertsv1.AlertDestinationV1{}, policies: map[string]*alertsv1.AlertNotificationPolicyV1{}, definitions: map[string]*alertsv1.AlertDefinitionV1{}, windows: map[string]*alertsv1.AlertMaintenanceWindowV1{}, silences: map[string]*alertsv1.AlertSilenceV1{}, idempotent: map[string]string{}}
+	return &alertTestServer{destinations: map[string]*alertsv1.AlertDestinationV1{}, policies: map[string]*alertsv1.AlertNotificationPolicyV1{}, definitions: map[string]*alertsv1.AlertDefinitionV1{}, windows: map[string]*alertsv1.AlertMaintenanceWindowV1{}, silences: map[string]*alertsv1.AlertSilenceV1{}, slos: map[string]*alertsv1.AlertSloV1{}, idempotent: map[string]string{}}
 }
 func (s *alertTestServer) authorize(ctx context.Context) error {
 	md, _ := metadata.FromIncomingContext(ctx)
@@ -62,6 +66,92 @@ func (s *alertTestServer) id(prefix, key string) string {
 	id := prefix + "-" + string(rune('0'+s.next))
 	s.idempotent[key] = id
 	return id
+}
+
+func (s *alertTestServer) CreateSlo(ctx context.Context, req *alertsv1.CreateSloRequest) (*alertsv1.AlertSloV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	id := s.id("slo", req.IdempotencyKey)
+	if existing := s.slos[id]; existing != nil {
+		return proto.Clone(existing).(*alertsv1.AlertSloV1), nil
+	}
+	item := testSLO(id, req.SloKey, req.Name, req.Description, req.Revision, 1)
+	s.slos[id] = item
+	return proto.Clone(item).(*alertsv1.AlertSloV1), nil
+}
+
+func (s *alertTestServer) UpdateSlo(ctx context.Context, req *alertsv1.UpdateSloRequest) (*alertsv1.AlertSloV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	existing := s.slos[req.SloId]
+	if existing == nil {
+		return nil, status.Error(codes.NotFound, "slo")
+	}
+	if req.ExpectedRevisionId != existing.CurrentRevisionId {
+		return nil, status.Error(codes.Aborted, "stale SLO revision")
+	}
+	if id := s.idempotent[req.IdempotencyKey]; id != "" {
+		return proto.Clone(s.slos[id]).(*alertsv1.AlertSloV1), nil
+	}
+	s.idempotent[req.IdempotencyKey] = req.SloId
+	item := testSLO(req.SloId, existing.SloKey, req.Name, req.Description, req.Revision, existing.CurrentRevision.RevisionNumber+1)
+	s.slos[req.SloId] = item
+	return proto.Clone(item).(*alertsv1.AlertSloV1), nil
+}
+
+func (s *alertTestServer) GetSlo(ctx context.Context, req *alertsv1.GetSloRequest) (*alertsv1.AlertSloV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	item := s.slos[req.SloId]
+	if item == nil {
+		return nil, status.Error(codes.NotFound, "slo")
+	}
+	return proto.Clone(item).(*alertsv1.AlertSloV1), nil
+}
+
+func (s *alertTestServer) ArchiveSlo(ctx context.Context, req *alertsv1.ArchiveSloRequest) (*alertsv1.AlertMutationResponse, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.slos[req.SloId] == nil {
+		return nil, status.Error(codes.NotFound, "slo")
+	}
+	delete(s.slos, req.SloId)
+	return &alertsv1.AlertMutationResponse{Ok: true, ResourceId: req.SloId}, nil
+}
+
+func testSLO(id, key, name, description string, input *alertsv1.SloRevisionInputV1, revisionNumber int32) *alertsv1.AlertSloV1 {
+	now := timestamppb.New(time.Date(2030, 1, 1, 0, int(revisionNumber), 0, 0, time.UTC))
+	maximumWindow := input.RollingWindowSeconds
+	if input.WindowMode == alertsv1.SloWindowModeV1_SLO_WINDOW_MODE_V1_CALENDAR {
+		maximumWindow = maximumSLOWindowSeconds
+	}
+	revisionID := fmt.Sprintf("%s-revision-%d", id, revisionNumber)
+	revision := &alertsv1.AlertSloRevisionV1{
+		Id: revisionID, SloId: id, RevisionNumber: revisionNumber, SliId: input.SliId,
+		SliRevisionId: input.SliRevisionId, TargetRatio: input.TargetRatio,
+		RollingWindowSeconds: input.RollingWindowSeconds, Owner: input.Owner, Labels: input.Labels,
+		ConfigHash: fmt.Sprintf("config-%d", revisionNumber), CreatedAt: now,
+		WindowMode: input.WindowMode, CalendarPeriod: input.CalendarPeriod,
+		CalendarTimezone: input.CalendarTimezone, EffectiveFrom: now,
+		MaximumWindowSeconds: maximumWindow,
+	}
+	return &alertsv1.AlertSloV1{
+		Id: id, SloKey: key, Name: name, Description: description,
+		CurrentRevisionId: revisionID, Provenance: "terraform", CreatedAt: now,
+		UpdatedAt: now, CurrentRevision: revision,
+	}
 }
 
 func (s *alertTestServer) CreateDestination(ctx context.Context, req *alertsv1.UpsertDestinationRequest) (*alertsv1.AlertDestinationV1, error) {
@@ -410,6 +500,7 @@ func testClient(t *testing.T, token string) (*client.Client, func()) {
 	alertsv1.RegisterAlertRuntimeServiceServer(grpcServer, service)
 	alertsv1.RegisterAlertNotificationServiceServer(grpcServer, service)
 	alertsv1.RegisterAlertPreviewServiceServer(grpcServer, service)
+	alertsv1.RegisterAlertSloServiceServer(grpcServer, service)
 	go func() { _ = grpcServer.Serve(listener) }()
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()

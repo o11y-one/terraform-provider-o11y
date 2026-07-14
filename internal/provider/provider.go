@@ -48,7 +48,7 @@ func (p *o11yProvider) Metadata(_ context.Context, _ provider.MetadataRequest, r
 
 func (p *o11yProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = providerschema.Schema{
-		Description: "Manage O11y.one alert runbooks, contacts, notification groups, destinations, policies, maintenance windows, silences, shadow alert definitions, and previews through the authenticated gRPC API.",
+		Description: "Manage O11y.one SLOs, alert runbooks, contacts, notification groups, destinations, policies, maintenance windows, silences, shadow alert definitions, and previews through the authenticated gRPC API.",
 		Attributes: map[string]providerschema.Attribute{
 			"endpoint":                providerschema.StringAttribute{Optional: true, Description: "O11y.one gRPC API origin, https://grpc.o11y.one. Defaults to O11Y_ENDPOINT."},
 			"token":                   providerschema.StringAttribute{Optional: true, Sensitive: true, Description: "O11y.one bearer token. Defaults to O11Y_TOKEN."},
@@ -129,7 +129,7 @@ func (p *o11yProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 }
 
 func (p *o11yProvider) Resources(_ context.Context) []func() resource.Resource {
-	return []func() resource.Resource{NewRunbookResource, NewContactResource, NewNotificationGroupResource, NewDestinationResource, NewNotificationPolicyResource, NewMaintenanceWindowResource, NewSilenceResource, NewAgentQualityAlertResource, NewCostAlertResource, NewSLOAlertResource, NewSymptomAlertResource}
+	return []func() resource.Resource{NewSLOResource, NewRunbookResource, NewContactResource, NewNotificationGroupResource, NewDestinationResource, NewNotificationPolicyResource, NewMaintenanceWindowResource, NewSilenceResource, NewAgentQualityAlertResource, NewCostAlertResource, NewSLOAlertResource, NewSymptomAlertResource}
 }
 func (p *o11yProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{NewAlertPreviewDataSource, NewRunbookDataSource, NewRunbookRevisionsDataSource, NewRunbookPreviewDataSource, NewRunbookUsageDataSource}
