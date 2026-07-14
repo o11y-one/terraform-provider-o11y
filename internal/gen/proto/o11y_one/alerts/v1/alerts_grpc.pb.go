@@ -1630,38 +1630,53 @@ var AlertRuntimeService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	AlertNotificationService_CreateDestination_FullMethodName          = "/o11y_one.alerts.v1.AlertNotificationService/CreateDestination"
-	AlertNotificationService_UpdateDestination_FullMethodName          = "/o11y_one.alerts.v1.AlertNotificationService/UpdateDestination"
-	AlertNotificationService_DeleteDestination_FullMethodName          = "/o11y_one.alerts.v1.AlertNotificationService/DeleteDestination"
-	AlertNotificationService_GetDestination_FullMethodName             = "/o11y_one.alerts.v1.AlertNotificationService/GetDestination"
-	AlertNotificationService_ListDestinations_FullMethodName           = "/o11y_one.alerts.v1.AlertNotificationService/ListDestinations"
-	AlertNotificationService_GetDestinationPreflight_FullMethodName    = "/o11y_one.alerts.v1.AlertNotificationService/GetDestinationPreflight"
-	AlertNotificationService_CreateNotificationPolicy_FullMethodName   = "/o11y_one.alerts.v1.AlertNotificationService/CreateNotificationPolicy"
-	AlertNotificationService_UpdateNotificationPolicy_FullMethodName   = "/o11y_one.alerts.v1.AlertNotificationService/UpdateNotificationPolicy"
-	AlertNotificationService_GetNotificationPolicy_FullMethodName      = "/o11y_one.alerts.v1.AlertNotificationService/GetNotificationPolicy"
-	AlertNotificationService_ListNotificationPolicies_FullMethodName   = "/o11y_one.alerts.v1.AlertNotificationService/ListNotificationPolicies"
-	AlertNotificationService_DeleteNotificationPolicy_FullMethodName   = "/o11y_one.alerts.v1.AlertNotificationService/DeleteNotificationPolicy"
-	AlertNotificationService_ValidateNotificationPolicy_FullMethodName = "/o11y_one.alerts.v1.AlertNotificationService/ValidateNotificationPolicy"
-	AlertNotificationService_PreviewNotificationRoute_FullMethodName   = "/o11y_one.alerts.v1.AlertNotificationService/PreviewNotificationRoute"
-	AlertNotificationService_PreviewNotificationPayload_FullMethodName = "/o11y_one.alerts.v1.AlertNotificationService/PreviewNotificationPayload"
-	AlertNotificationService_CreateMaintenanceWindow_FullMethodName    = "/o11y_one.alerts.v1.AlertNotificationService/CreateMaintenanceWindow"
-	AlertNotificationService_UpdateMaintenanceWindow_FullMethodName    = "/o11y_one.alerts.v1.AlertNotificationService/UpdateMaintenanceWindow"
-	AlertNotificationService_GetMaintenanceWindow_FullMethodName       = "/o11y_one.alerts.v1.AlertNotificationService/GetMaintenanceWindow"
-	AlertNotificationService_ListMaintenanceWindows_FullMethodName     = "/o11y_one.alerts.v1.AlertNotificationService/ListMaintenanceWindows"
-	AlertNotificationService_DeleteMaintenanceWindow_FullMethodName    = "/o11y_one.alerts.v1.AlertNotificationService/DeleteMaintenanceWindow"
-	AlertNotificationService_CreateSilence_FullMethodName              = "/o11y_one.alerts.v1.AlertNotificationService/CreateSilence"
-	AlertNotificationService_UpdateSilence_FullMethodName              = "/o11y_one.alerts.v1.AlertNotificationService/UpdateSilence"
-	AlertNotificationService_GetSilence_FullMethodName                 = "/o11y_one.alerts.v1.AlertNotificationService/GetSilence"
-	AlertNotificationService_ListSilences_FullMethodName               = "/o11y_one.alerts.v1.AlertNotificationService/ListSilences"
-	AlertNotificationService_DeleteSilence_FullMethodName              = "/o11y_one.alerts.v1.AlertNotificationService/DeleteSilence"
-	AlertNotificationService_TestDestination_FullMethodName            = "/o11y_one.alerts.v1.AlertNotificationService/TestDestination"
-	AlertNotificationService_PutDestinationSecret_FullMethodName       = "/o11y_one.alerts.v1.AlertNotificationService/PutDestinationSecret"
-	AlertNotificationService_RevokeDestinationSecret_FullMethodName    = "/o11y_one.alerts.v1.AlertNotificationService/RevokeDestinationSecret"
-	AlertNotificationService_ListDestinationSecrets_FullMethodName     = "/o11y_one.alerts.v1.AlertNotificationService/ListDestinationSecrets"
-	AlertNotificationService_GetDeliveryHistory_FullMethodName         = "/o11y_one.alerts.v1.AlertNotificationService/GetDeliveryHistory"
-	AlertNotificationService_ListDeliveries_FullMethodName             = "/o11y_one.alerts.v1.AlertNotificationService/ListDeliveries"
-	AlertNotificationService_GetDelivery_FullMethodName                = "/o11y_one.alerts.v1.AlertNotificationService/GetDelivery"
-	AlertNotificationService_ReplayDelivery_FullMethodName             = "/o11y_one.alerts.v1.AlertNotificationService/ReplayDelivery"
+	AlertNotificationService_CreateDestination_FullMethodName                 = "/o11y_one.alerts.v1.AlertNotificationService/CreateDestination"
+	AlertNotificationService_UpdateDestination_FullMethodName                 = "/o11y_one.alerts.v1.AlertNotificationService/UpdateDestination"
+	AlertNotificationService_DeleteDestination_FullMethodName                 = "/o11y_one.alerts.v1.AlertNotificationService/DeleteDestination"
+	AlertNotificationService_GetDestination_FullMethodName                    = "/o11y_one.alerts.v1.AlertNotificationService/GetDestination"
+	AlertNotificationService_ListDestinations_FullMethodName                  = "/o11y_one.alerts.v1.AlertNotificationService/ListDestinations"
+	AlertNotificationService_GetDestinationPreflight_FullMethodName           = "/o11y_one.alerts.v1.AlertNotificationService/GetDestinationPreflight"
+	AlertNotificationService_CreateContact_FullMethodName                     = "/o11y_one.alerts.v1.AlertNotificationService/CreateContact"
+	AlertNotificationService_UpdateContact_FullMethodName                     = "/o11y_one.alerts.v1.AlertNotificationService/UpdateContact"
+	AlertNotificationService_GetContact_FullMethodName                        = "/o11y_one.alerts.v1.AlertNotificationService/GetContact"
+	AlertNotificationService_ListContacts_FullMethodName                      = "/o11y_one.alerts.v1.AlertNotificationService/ListContacts"
+	AlertNotificationService_SetContactArchived_FullMethodName                = "/o11y_one.alerts.v1.AlertNotificationService/SetContactArchived"
+	AlertNotificationService_BeginContactVerification_FullMethodName          = "/o11y_one.alerts.v1.AlertNotificationService/BeginContactVerification"
+	AlertNotificationService_ConfirmContactVerification_FullMethodName        = "/o11y_one.alerts.v1.AlertNotificationService/ConfirmContactVerification"
+	AlertNotificationService_CreateNotificationGroup_FullMethodName           = "/o11y_one.alerts.v1.AlertNotificationService/CreateNotificationGroup"
+	AlertNotificationService_UpdateNotificationGroup_FullMethodName           = "/o11y_one.alerts.v1.AlertNotificationService/UpdateNotificationGroup"
+	AlertNotificationService_GetNotificationGroup_FullMethodName              = "/o11y_one.alerts.v1.AlertNotificationService/GetNotificationGroup"
+	AlertNotificationService_ListNotificationGroups_FullMethodName            = "/o11y_one.alerts.v1.AlertNotificationService/ListNotificationGroups"
+	AlertNotificationService_SetNotificationGroupArchived_FullMethodName      = "/o11y_one.alerts.v1.AlertNotificationService/SetNotificationGroupArchived"
+	AlertNotificationService_PurgeNotificationGroup_FullMethodName            = "/o11y_one.alerts.v1.AlertNotificationService/PurgeNotificationGroup"
+	AlertNotificationService_GetNotificationGroupUsage_FullMethodName         = "/o11y_one.alerts.v1.AlertNotificationService/GetNotificationGroupUsage"
+	AlertNotificationService_PreviewNotificationGroupExpansion_FullMethodName = "/o11y_one.alerts.v1.AlertNotificationService/PreviewNotificationGroupExpansion"
+	AlertNotificationService_CreateNotificationPolicy_FullMethodName          = "/o11y_one.alerts.v1.AlertNotificationService/CreateNotificationPolicy"
+	AlertNotificationService_UpdateNotificationPolicy_FullMethodName          = "/o11y_one.alerts.v1.AlertNotificationService/UpdateNotificationPolicy"
+	AlertNotificationService_GetNotificationPolicy_FullMethodName             = "/o11y_one.alerts.v1.AlertNotificationService/GetNotificationPolicy"
+	AlertNotificationService_ListNotificationPolicies_FullMethodName          = "/o11y_one.alerts.v1.AlertNotificationService/ListNotificationPolicies"
+	AlertNotificationService_DeleteNotificationPolicy_FullMethodName          = "/o11y_one.alerts.v1.AlertNotificationService/DeleteNotificationPolicy"
+	AlertNotificationService_ValidateNotificationPolicy_FullMethodName        = "/o11y_one.alerts.v1.AlertNotificationService/ValidateNotificationPolicy"
+	AlertNotificationService_PreviewNotificationRoute_FullMethodName          = "/o11y_one.alerts.v1.AlertNotificationService/PreviewNotificationRoute"
+	AlertNotificationService_PreviewNotificationPayload_FullMethodName        = "/o11y_one.alerts.v1.AlertNotificationService/PreviewNotificationPayload"
+	AlertNotificationService_CreateMaintenanceWindow_FullMethodName           = "/o11y_one.alerts.v1.AlertNotificationService/CreateMaintenanceWindow"
+	AlertNotificationService_UpdateMaintenanceWindow_FullMethodName           = "/o11y_one.alerts.v1.AlertNotificationService/UpdateMaintenanceWindow"
+	AlertNotificationService_GetMaintenanceWindow_FullMethodName              = "/o11y_one.alerts.v1.AlertNotificationService/GetMaintenanceWindow"
+	AlertNotificationService_ListMaintenanceWindows_FullMethodName            = "/o11y_one.alerts.v1.AlertNotificationService/ListMaintenanceWindows"
+	AlertNotificationService_DeleteMaintenanceWindow_FullMethodName           = "/o11y_one.alerts.v1.AlertNotificationService/DeleteMaintenanceWindow"
+	AlertNotificationService_CreateSilence_FullMethodName                     = "/o11y_one.alerts.v1.AlertNotificationService/CreateSilence"
+	AlertNotificationService_UpdateSilence_FullMethodName                     = "/o11y_one.alerts.v1.AlertNotificationService/UpdateSilence"
+	AlertNotificationService_GetSilence_FullMethodName                        = "/o11y_one.alerts.v1.AlertNotificationService/GetSilence"
+	AlertNotificationService_ListSilences_FullMethodName                      = "/o11y_one.alerts.v1.AlertNotificationService/ListSilences"
+	AlertNotificationService_DeleteSilence_FullMethodName                     = "/o11y_one.alerts.v1.AlertNotificationService/DeleteSilence"
+	AlertNotificationService_TestDestination_FullMethodName                   = "/o11y_one.alerts.v1.AlertNotificationService/TestDestination"
+	AlertNotificationService_PutDestinationSecret_FullMethodName              = "/o11y_one.alerts.v1.AlertNotificationService/PutDestinationSecret"
+	AlertNotificationService_RevokeDestinationSecret_FullMethodName           = "/o11y_one.alerts.v1.AlertNotificationService/RevokeDestinationSecret"
+	AlertNotificationService_ListDestinationSecrets_FullMethodName            = "/o11y_one.alerts.v1.AlertNotificationService/ListDestinationSecrets"
+	AlertNotificationService_GetDeliveryHistory_FullMethodName                = "/o11y_one.alerts.v1.AlertNotificationService/GetDeliveryHistory"
+	AlertNotificationService_ListDeliveries_FullMethodName                    = "/o11y_one.alerts.v1.AlertNotificationService/ListDeliveries"
+	AlertNotificationService_GetDelivery_FullMethodName                       = "/o11y_one.alerts.v1.AlertNotificationService/GetDelivery"
+	AlertNotificationService_ReplayDelivery_FullMethodName                    = "/o11y_one.alerts.v1.AlertNotificationService/ReplayDelivery"
 )
 
 // AlertNotificationServiceClient is the client API for AlertNotificationService service.
@@ -1674,6 +1689,21 @@ type AlertNotificationServiceClient interface {
 	GetDestination(ctx context.Context, in *GetAlertResourceRequest, opts ...grpc.CallOption) (*AlertDestinationV1, error)
 	ListDestinations(ctx context.Context, in *ListDestinationsRequest, opts ...grpc.CallOption) (*ListDestinationsResponse, error)
 	GetDestinationPreflight(ctx context.Context, in *GetAlertResourceRequest, opts ...grpc.CallOption) (*AlertDestinationV1, error)
+	CreateContact(ctx context.Context, in *UpsertAlertContactRequest, opts ...grpc.CallOption) (*AlertContactV1, error)
+	UpdateContact(ctx context.Context, in *UpsertAlertContactRequest, opts ...grpc.CallOption) (*AlertContactV1, error)
+	GetContact(ctx context.Context, in *GetAlertResourceRequest, opts ...grpc.CallOption) (*AlertContactV1, error)
+	ListContacts(ctx context.Context, in *ListAlertContactsRequest, opts ...grpc.CallOption) (*ListAlertContactsResponse, error)
+	SetContactArchived(ctx context.Context, in *SetAlertContactArchivedRequest, opts ...grpc.CallOption) (*AlertContactV1, error)
+	BeginContactVerification(ctx context.Context, in *BeginAlertContactVerificationRequest, opts ...grpc.CallOption) (*BeginAlertContactVerificationResponse, error)
+	ConfirmContactVerification(ctx context.Context, in *ConfirmAlertContactVerificationRequest, opts ...grpc.CallOption) (*AlertContactV1, error)
+	CreateNotificationGroup(ctx context.Context, in *UpsertAlertNotificationGroupRequest, opts ...grpc.CallOption) (*AlertNotificationGroupV1, error)
+	UpdateNotificationGroup(ctx context.Context, in *UpsertAlertNotificationGroupRequest, opts ...grpc.CallOption) (*AlertNotificationGroupV1, error)
+	GetNotificationGroup(ctx context.Context, in *GetAlertResourceRequest, opts ...grpc.CallOption) (*AlertNotificationGroupV1, error)
+	ListNotificationGroups(ctx context.Context, in *ListAlertNotificationGroupsRequest, opts ...grpc.CallOption) (*ListAlertNotificationGroupsResponse, error)
+	SetNotificationGroupArchived(ctx context.Context, in *SetAlertNotificationGroupArchivedRequest, opts ...grpc.CallOption) (*AlertNotificationGroupV1, error)
+	PurgeNotificationGroup(ctx context.Context, in *PurgeAlertNotificationGroupRequest, opts ...grpc.CallOption) (*AlertMutationResponse, error)
+	GetNotificationGroupUsage(ctx context.Context, in *GetAlertNotificationGroupUsageRequest, opts ...grpc.CallOption) (*AlertNotificationGroupUsageV1, error)
+	PreviewNotificationGroupExpansion(ctx context.Context, in *PreviewAlertNotificationGroupExpansionRequest, opts ...grpc.CallOption) (*PreviewAlertNotificationGroupExpansionResponse, error)
 	CreateNotificationPolicy(ctx context.Context, in *UpsertNotificationPolicyRequest, opts ...grpc.CallOption) (*AlertNotificationPolicyV1, error)
 	UpdateNotificationPolicy(ctx context.Context, in *UpsertNotificationPolicyRequest, opts ...grpc.CallOption) (*AlertNotificationPolicyV1, error)
 	GetNotificationPolicy(ctx context.Context, in *GetAlertResourceRequest, opts ...grpc.CallOption) (*AlertNotificationPolicyV1, error)
@@ -1764,6 +1794,156 @@ func (c *alertNotificationServiceClient) GetDestinationPreflight(ctx context.Con
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AlertDestinationV1)
 	err := c.cc.Invoke(ctx, AlertNotificationService_GetDestinationPreflight_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) CreateContact(ctx context.Context, in *UpsertAlertContactRequest, opts ...grpc.CallOption) (*AlertContactV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertContactV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_CreateContact_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) UpdateContact(ctx context.Context, in *UpsertAlertContactRequest, opts ...grpc.CallOption) (*AlertContactV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertContactV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_UpdateContact_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) GetContact(ctx context.Context, in *GetAlertResourceRequest, opts ...grpc.CallOption) (*AlertContactV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertContactV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_GetContact_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) ListContacts(ctx context.Context, in *ListAlertContactsRequest, opts ...grpc.CallOption) (*ListAlertContactsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAlertContactsResponse)
+	err := c.cc.Invoke(ctx, AlertNotificationService_ListContacts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) SetContactArchived(ctx context.Context, in *SetAlertContactArchivedRequest, opts ...grpc.CallOption) (*AlertContactV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertContactV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_SetContactArchived_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) BeginContactVerification(ctx context.Context, in *BeginAlertContactVerificationRequest, opts ...grpc.CallOption) (*BeginAlertContactVerificationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BeginAlertContactVerificationResponse)
+	err := c.cc.Invoke(ctx, AlertNotificationService_BeginContactVerification_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) ConfirmContactVerification(ctx context.Context, in *ConfirmAlertContactVerificationRequest, opts ...grpc.CallOption) (*AlertContactV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertContactV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_ConfirmContactVerification_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) CreateNotificationGroup(ctx context.Context, in *UpsertAlertNotificationGroupRequest, opts ...grpc.CallOption) (*AlertNotificationGroupV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertNotificationGroupV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_CreateNotificationGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) UpdateNotificationGroup(ctx context.Context, in *UpsertAlertNotificationGroupRequest, opts ...grpc.CallOption) (*AlertNotificationGroupV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertNotificationGroupV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_UpdateNotificationGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) GetNotificationGroup(ctx context.Context, in *GetAlertResourceRequest, opts ...grpc.CallOption) (*AlertNotificationGroupV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertNotificationGroupV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_GetNotificationGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) ListNotificationGroups(ctx context.Context, in *ListAlertNotificationGroupsRequest, opts ...grpc.CallOption) (*ListAlertNotificationGroupsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAlertNotificationGroupsResponse)
+	err := c.cc.Invoke(ctx, AlertNotificationService_ListNotificationGroups_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) SetNotificationGroupArchived(ctx context.Context, in *SetAlertNotificationGroupArchivedRequest, opts ...grpc.CallOption) (*AlertNotificationGroupV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertNotificationGroupV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_SetNotificationGroupArchived_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) PurgeNotificationGroup(ctx context.Context, in *PurgeAlertNotificationGroupRequest, opts ...grpc.CallOption) (*AlertMutationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertMutationResponse)
+	err := c.cc.Invoke(ctx, AlertNotificationService_PurgeNotificationGroup_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) GetNotificationGroupUsage(ctx context.Context, in *GetAlertNotificationGroupUsageRequest, opts ...grpc.CallOption) (*AlertNotificationGroupUsageV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertNotificationGroupUsageV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_GetNotificationGroupUsage_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) PreviewNotificationGroupExpansion(ctx context.Context, in *PreviewAlertNotificationGroupExpansionRequest, opts ...grpc.CallOption) (*PreviewAlertNotificationGroupExpansionResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PreviewAlertNotificationGroupExpansionResponse)
+	err := c.cc.Invoke(ctx, AlertNotificationService_PreviewNotificationGroupExpansion_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -2040,6 +2220,21 @@ type AlertNotificationServiceServer interface {
 	GetDestination(context.Context, *GetAlertResourceRequest) (*AlertDestinationV1, error)
 	ListDestinations(context.Context, *ListDestinationsRequest) (*ListDestinationsResponse, error)
 	GetDestinationPreflight(context.Context, *GetAlertResourceRequest) (*AlertDestinationV1, error)
+	CreateContact(context.Context, *UpsertAlertContactRequest) (*AlertContactV1, error)
+	UpdateContact(context.Context, *UpsertAlertContactRequest) (*AlertContactV1, error)
+	GetContact(context.Context, *GetAlertResourceRequest) (*AlertContactV1, error)
+	ListContacts(context.Context, *ListAlertContactsRequest) (*ListAlertContactsResponse, error)
+	SetContactArchived(context.Context, *SetAlertContactArchivedRequest) (*AlertContactV1, error)
+	BeginContactVerification(context.Context, *BeginAlertContactVerificationRequest) (*BeginAlertContactVerificationResponse, error)
+	ConfirmContactVerification(context.Context, *ConfirmAlertContactVerificationRequest) (*AlertContactV1, error)
+	CreateNotificationGroup(context.Context, *UpsertAlertNotificationGroupRequest) (*AlertNotificationGroupV1, error)
+	UpdateNotificationGroup(context.Context, *UpsertAlertNotificationGroupRequest) (*AlertNotificationGroupV1, error)
+	GetNotificationGroup(context.Context, *GetAlertResourceRequest) (*AlertNotificationGroupV1, error)
+	ListNotificationGroups(context.Context, *ListAlertNotificationGroupsRequest) (*ListAlertNotificationGroupsResponse, error)
+	SetNotificationGroupArchived(context.Context, *SetAlertNotificationGroupArchivedRequest) (*AlertNotificationGroupV1, error)
+	PurgeNotificationGroup(context.Context, *PurgeAlertNotificationGroupRequest) (*AlertMutationResponse, error)
+	GetNotificationGroupUsage(context.Context, *GetAlertNotificationGroupUsageRequest) (*AlertNotificationGroupUsageV1, error)
+	PreviewNotificationGroupExpansion(context.Context, *PreviewAlertNotificationGroupExpansionRequest) (*PreviewAlertNotificationGroupExpansionResponse, error)
 	CreateNotificationPolicy(context.Context, *UpsertNotificationPolicyRequest) (*AlertNotificationPolicyV1, error)
 	UpdateNotificationPolicy(context.Context, *UpsertNotificationPolicyRequest) (*AlertNotificationPolicyV1, error)
 	GetNotificationPolicy(context.Context, *GetAlertResourceRequest) (*AlertNotificationPolicyV1, error)
@@ -2093,6 +2288,51 @@ func (UnimplementedAlertNotificationServiceServer) ListDestinations(context.Cont
 }
 func (UnimplementedAlertNotificationServiceServer) GetDestinationPreflight(context.Context, *GetAlertResourceRequest) (*AlertDestinationV1, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetDestinationPreflight not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) CreateContact(context.Context, *UpsertAlertContactRequest) (*AlertContactV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateContact not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) UpdateContact(context.Context, *UpsertAlertContactRequest) (*AlertContactV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateContact not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) GetContact(context.Context, *GetAlertResourceRequest) (*AlertContactV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetContact not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) ListContacts(context.Context, *ListAlertContactsRequest) (*ListAlertContactsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListContacts not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) SetContactArchived(context.Context, *SetAlertContactArchivedRequest) (*AlertContactV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetContactArchived not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) BeginContactVerification(context.Context, *BeginAlertContactVerificationRequest) (*BeginAlertContactVerificationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method BeginContactVerification not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) ConfirmContactVerification(context.Context, *ConfirmAlertContactVerificationRequest) (*AlertContactV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method ConfirmContactVerification not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) CreateNotificationGroup(context.Context, *UpsertAlertNotificationGroupRequest) (*AlertNotificationGroupV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateNotificationGroup not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) UpdateNotificationGroup(context.Context, *UpsertAlertNotificationGroupRequest) (*AlertNotificationGroupV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateNotificationGroup not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) GetNotificationGroup(context.Context, *GetAlertResourceRequest) (*AlertNotificationGroupV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetNotificationGroup not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) ListNotificationGroups(context.Context, *ListAlertNotificationGroupsRequest) (*ListAlertNotificationGroupsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListNotificationGroups not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) SetNotificationGroupArchived(context.Context, *SetAlertNotificationGroupArchivedRequest) (*AlertNotificationGroupV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetNotificationGroupArchived not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) PurgeNotificationGroup(context.Context, *PurgeAlertNotificationGroupRequest) (*AlertMutationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PurgeNotificationGroup not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) GetNotificationGroupUsage(context.Context, *GetAlertNotificationGroupUsageRequest) (*AlertNotificationGroupUsageV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetNotificationGroupUsage not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) PreviewNotificationGroupExpansion(context.Context, *PreviewAlertNotificationGroupExpansionRequest) (*PreviewAlertNotificationGroupExpansionResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PreviewNotificationGroupExpansion not implemented")
 }
 func (UnimplementedAlertNotificationServiceServer) CreateNotificationPolicy(context.Context, *UpsertNotificationPolicyRequest) (*AlertNotificationPolicyV1, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateNotificationPolicy not implemented")
@@ -2298,6 +2538,276 @@ func _AlertNotificationService_GetDestinationPreflight_Handler(srv interface{}, 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AlertNotificationServiceServer).GetDestinationPreflight(ctx, req.(*GetAlertResourceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_CreateContact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertAlertContactRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).CreateContact(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_CreateContact_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).CreateContact(ctx, req.(*UpsertAlertContactRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_UpdateContact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertAlertContactRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).UpdateContact(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_UpdateContact_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).UpdateContact(ctx, req.(*UpsertAlertContactRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_GetContact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAlertResourceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).GetContact(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_GetContact_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).GetContact(ctx, req.(*GetAlertResourceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_ListContacts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAlertContactsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).ListContacts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_ListContacts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).ListContacts(ctx, req.(*ListAlertContactsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_SetContactArchived_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetAlertContactArchivedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).SetContactArchived(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_SetContactArchived_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).SetContactArchived(ctx, req.(*SetAlertContactArchivedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_BeginContactVerification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BeginAlertContactVerificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).BeginContactVerification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_BeginContactVerification_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).BeginContactVerification(ctx, req.(*BeginAlertContactVerificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_ConfirmContactVerification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConfirmAlertContactVerificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).ConfirmContactVerification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_ConfirmContactVerification_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).ConfirmContactVerification(ctx, req.(*ConfirmAlertContactVerificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_CreateNotificationGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertAlertNotificationGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).CreateNotificationGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_CreateNotificationGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).CreateNotificationGroup(ctx, req.(*UpsertAlertNotificationGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_UpdateNotificationGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertAlertNotificationGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).UpdateNotificationGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_UpdateNotificationGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).UpdateNotificationGroup(ctx, req.(*UpsertAlertNotificationGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_GetNotificationGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAlertResourceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).GetNotificationGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_GetNotificationGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).GetNotificationGroup(ctx, req.(*GetAlertResourceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_ListNotificationGroups_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAlertNotificationGroupsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).ListNotificationGroups(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_ListNotificationGroups_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).ListNotificationGroups(ctx, req.(*ListAlertNotificationGroupsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_SetNotificationGroupArchived_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetAlertNotificationGroupArchivedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).SetNotificationGroupArchived(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_SetNotificationGroupArchived_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).SetNotificationGroupArchived(ctx, req.(*SetAlertNotificationGroupArchivedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_PurgeNotificationGroup_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PurgeAlertNotificationGroupRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).PurgeNotificationGroup(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_PurgeNotificationGroup_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).PurgeNotificationGroup(ctx, req.(*PurgeAlertNotificationGroupRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_GetNotificationGroupUsage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAlertNotificationGroupUsageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).GetNotificationGroupUsage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_GetNotificationGroupUsage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).GetNotificationGroupUsage(ctx, req.(*GetAlertNotificationGroupUsageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_PreviewNotificationGroupExpansion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PreviewAlertNotificationGroupExpansionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).PreviewNotificationGroupExpansion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_PreviewNotificationGroupExpansion_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).PreviewNotificationGroupExpansion(ctx, req.(*PreviewAlertNotificationGroupExpansionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -2800,6 +3310,66 @@ var AlertNotificationService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDestinationPreflight",
 			Handler:    _AlertNotificationService_GetDestinationPreflight_Handler,
+		},
+		{
+			MethodName: "CreateContact",
+			Handler:    _AlertNotificationService_CreateContact_Handler,
+		},
+		{
+			MethodName: "UpdateContact",
+			Handler:    _AlertNotificationService_UpdateContact_Handler,
+		},
+		{
+			MethodName: "GetContact",
+			Handler:    _AlertNotificationService_GetContact_Handler,
+		},
+		{
+			MethodName: "ListContacts",
+			Handler:    _AlertNotificationService_ListContacts_Handler,
+		},
+		{
+			MethodName: "SetContactArchived",
+			Handler:    _AlertNotificationService_SetContactArchived_Handler,
+		},
+		{
+			MethodName: "BeginContactVerification",
+			Handler:    _AlertNotificationService_BeginContactVerification_Handler,
+		},
+		{
+			MethodName: "ConfirmContactVerification",
+			Handler:    _AlertNotificationService_ConfirmContactVerification_Handler,
+		},
+		{
+			MethodName: "CreateNotificationGroup",
+			Handler:    _AlertNotificationService_CreateNotificationGroup_Handler,
+		},
+		{
+			MethodName: "UpdateNotificationGroup",
+			Handler:    _AlertNotificationService_UpdateNotificationGroup_Handler,
+		},
+		{
+			MethodName: "GetNotificationGroup",
+			Handler:    _AlertNotificationService_GetNotificationGroup_Handler,
+		},
+		{
+			MethodName: "ListNotificationGroups",
+			Handler:    _AlertNotificationService_ListNotificationGroups_Handler,
+		},
+		{
+			MethodName: "SetNotificationGroupArchived",
+			Handler:    _AlertNotificationService_SetNotificationGroupArchived_Handler,
+		},
+		{
+			MethodName: "PurgeNotificationGroup",
+			Handler:    _AlertNotificationService_PurgeNotificationGroup_Handler,
+		},
+		{
+			MethodName: "GetNotificationGroupUsage",
+			Handler:    _AlertNotificationService_GetNotificationGroupUsage_Handler,
+		},
+		{
+			MethodName: "PreviewNotificationGroupExpansion",
+			Handler:    _AlertNotificationService_PreviewNotificationGroupExpansion_Handler,
 		},
 		{
 			MethodName: "CreateNotificationPolicy",
