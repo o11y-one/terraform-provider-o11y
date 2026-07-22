@@ -3,12 +3,12 @@
 page_title: "o11y_alert_preview Data Source - O11y.one"
 subcategory: ""
 description: |-
-  Runs and returns a deterministic preview for an existing shadow alert.
+  Runs and returns a deterministic bounded preview for an existing Observe alert revision.
 ---
 
 # o11y_alert_preview (Data Source)
 
-Runs and returns a deterministic preview for an existing shadow alert.
+Runs and returns a deterministic bounded preview for an existing Observe alert revision.
 
 ## Example Usage
 
@@ -24,6 +24,13 @@ data "o11y_alert_preview" "quality" {
 ### Required
 
 - `definition_id` (String)
+
+### Optional
+
+- `evidence_limit` (Number) Optional bounded evidence sample limit.
+- `range_end` (String) Optional RFC3339 preview range end; configure together with range_start.
+- `range_start` (String) Optional RFC3339 preview range start; configure together with range_end.
+- `revision_id` (String) Exact immutable alert revision. Omit to preview the current revision.
 
 ### Read-Only
 

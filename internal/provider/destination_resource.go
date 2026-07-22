@@ -86,10 +86,19 @@ func (r *destinationResource) ValidateConfig(ctx context.Context, req resource.V
 		if err := validationutil.RejectSecretLikeConfig(data.Config.ValueString()); err != nil {
 			resp.Diagnostics.AddAttributeError(path.Root("config_json"), "Inline secret material is forbidden", err.Error())
 		}
+		if kind, ok := destinationKind(data.Kind.ValueString()); ok {
+			if _, err := destinationConfigFromJSON(kind, data.Config); err != nil {
+				resp.Diagnostics.AddAttributeError(path.Root("config_json"), "Invalid typed destination config", err.Error())
+			}
+		}
 	}
 	if !data.SecretRefs.IsUnknown() && !data.SecretRefs.IsNull() {
 		if err := validationutil.OpaqueSecretRefsJSON(data.SecretRefs.ValueString()); err != nil {
 			resp.Diagnostics.AddAttributeError(path.Root("secret_refs_json"), "Invalid secret references", err.Error())
+		}
+		refs := &alertsv1.AlertDestinationSecretRefsV1{}
+		if err := protoFromJSON(data.SecretRefs, refs); err != nil {
+			resp.Diagnostics.AddAttributeError(path.Root("secret_refs_json"), "Invalid typed secret references", err.Error())
 		}
 	}
 }
@@ -198,15 +207,15 @@ func (r *destinationResource) ImportState(ctx context.Context, req resource.Impo
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 func (r *destinationResource) request(data *destinationModel, operation, identity string) (*alertsv1.UpsertDestinationRequest, error) {
-	config, err := structFromJSON(data.Config)
-	if err != nil {
-		return nil, err
-	}
-	refs, err := structFromJSON(data.SecretRefs)
-	if err != nil {
-		return nil, err
-	}
 	kind, _ := destinationKind(data.Kind.ValueString())
+	config, err := destinationConfigFromJSON(kind, data.Config)
+	if err != nil {
+		return nil, err
+	}
+	refs := &alertsv1.AlertDestinationSecretRefsV1{}
+	if err := protoFromJSON(data.SecretRefs, refs); err != nil {
+		return nil, err
+	}
 	message := &alertsv1.UpsertDestinationRequest{Id: data.ID.ValueString(), DestinationKey: data.DestinationKey.ValueString(), Name: data.Name.ValueString(), Kind: kind, Enabled: data.Enabled.ValueBool(), Config: config, SecretRefs: refs}
 	payload, err := protojson.Marshal(message)
 	if err != nil {
@@ -221,12 +230,67 @@ func setDestination(data *destinationModel, item *alertsv1.AlertDestinationV1) {
 	data.Name = types.StringValue(item.Name)
 	data.Kind = types.StringValue(strings.ToLower(strings.TrimPrefix(item.Kind.String(), "ALERT_DESTINATION_KIND_V1_")))
 	data.Enabled = types.BoolValue(item.Enabled)
-	data.Config = jsonFromStruct(item.Config)
-	data.SecretRefs = jsonFromStruct(item.SecretRefs)
+	data.Config = destinationConfigJSONPreserving(data.Config, item.Config)
+	data.SecretRefs = jsonFromProtoPreserving(data.SecretRefs, item.SecretRefs)
 	if item.LastTestedAt == nil {
 		data.LastTestedAt = types.StringNull()
 	} else {
 		data.LastTestedAt = types.StringValue(item.LastTestedAt.AsTime().UTC().Format("2006-01-02T15:04:05.999999999Z"))
+	}
+}
+
+func destinationConfigFromJSON(kind alertsv1.AlertDestinationKindV1, value types.String) (*alertsv1.AlertDestinationConfigV1, error) {
+	config := &alertsv1.AlertDestinationConfigV1{}
+	switch kind {
+	case alertsv1.AlertDestinationKindV1_ALERT_DESTINATION_KIND_V1_EMAIL:
+		message := &alertsv1.AlertEmailDestinationConfigV1{}
+		if err := protoFromJSON(value, message); err != nil {
+			return nil, err
+		}
+		config.Config = &alertsv1.AlertDestinationConfigV1_Email{Email: message}
+	case alertsv1.AlertDestinationKindV1_ALERT_DESTINATION_KIND_V1_WEBHOOK:
+		message := &alertsv1.AlertWebhookDestinationConfigV1{}
+		if err := protoFromJSON(value, message); err != nil {
+			return nil, err
+		}
+		config.Config = &alertsv1.AlertDestinationConfigV1_Webhook{Webhook: message}
+	case alertsv1.AlertDestinationKindV1_ALERT_DESTINATION_KIND_V1_SLACK:
+		message := &alertsv1.AlertSlackDestinationConfigV1{}
+		if err := protoFromJSON(value, message); err != nil {
+			return nil, err
+		}
+		config.Config = &alertsv1.AlertDestinationConfigV1_Slack{Slack: message}
+	case alertsv1.AlertDestinationKindV1_ALERT_DESTINATION_KIND_V1_PAGERDUTY:
+		message := &alertsv1.AlertPagerDutyDestinationConfigV1{}
+		if err := protoFromJSON(value, message); err != nil {
+			return nil, err
+		}
+		config.Config = &alertsv1.AlertDestinationConfigV1_Pagerduty{Pagerduty: message}
+	default:
+		return nil, fmt.Errorf("unsupported destination kind %q", kind.String())
+	}
+	return config, nil
+}
+
+func destinationConfigJSON(config *alertsv1.AlertDestinationConfigV1) types.String {
+	return destinationConfigJSONPreserving(types.StringNull(), config)
+}
+
+func destinationConfigJSONPreserving(configured types.String, config *alertsv1.AlertDestinationConfigV1) types.String {
+	if config == nil {
+		return types.StringValue("{}")
+	}
+	switch value := config.Config.(type) {
+	case *alertsv1.AlertDestinationConfigV1_Email:
+		return jsonFromProtoPreserving(configured, value.Email)
+	case *alertsv1.AlertDestinationConfigV1_Webhook:
+		return jsonFromProtoPreserving(configured, value.Webhook)
+	case *alertsv1.AlertDestinationConfigV1_Slack:
+		return jsonFromProtoPreserving(configured, value.Slack)
+	case *alertsv1.AlertDestinationConfigV1_Pagerduty:
+		return jsonFromProtoPreserving(configured, value.Pagerduty)
+	default:
+		return types.StringValue("{}")
 	}
 }
 func destinationKind(value string) (alertsv1.AlertDestinationKindV1, bool) {

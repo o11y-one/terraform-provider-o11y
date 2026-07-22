@@ -25,6 +25,7 @@ const (
 	AlertDefinitionService_CreateAdvancedSignalAlert_FullMethodName         = "/o11y_one.alerts.v1.AlertDefinitionService/CreateAdvancedSignalAlert"
 	AlertDefinitionService_GetDefinition_FullMethodName                     = "/o11y_one.alerts.v1.AlertDefinitionService/GetDefinition"
 	AlertDefinitionService_ListDefinitions_FullMethodName                   = "/o11y_one.alerts.v1.AlertDefinitionService/ListDefinitions"
+	AlertDefinitionService_UpdateObserve_FullMethodName                     = "/o11y_one.alerts.v1.AlertDefinitionService/UpdateObserve"
 	AlertDefinitionService_UpdateShadow_FullMethodName                      = "/o11y_one.alerts.v1.AlertDefinitionService/UpdateShadow"
 	AlertDefinitionService_UpsertCandidateRevision_FullMethodName           = "/o11y_one.alerts.v1.AlertDefinitionService/UpsertCandidateRevision"
 	AlertDefinitionService_GetRevision_FullMethodName                       = "/o11y_one.alerts.v1.AlertDefinitionService/GetRevision"
@@ -54,6 +55,8 @@ type AlertDefinitionServiceClient interface {
 	CreateAdvancedSignalAlert(ctx context.Context, in *CreateAdvancedSignalAlertRequest, opts ...grpc.CallOption) (*CreateAlertDefinitionResponse, error)
 	GetDefinition(ctx context.Context, in *GetAlertDefinitionRequest, opts ...grpc.CallOption) (*AlertDefinitionV1, error)
 	ListDefinitions(ctx context.Context, in *ListAlertDefinitionsRequest, opts ...grpc.CallOption) (*ListAlertDefinitionsResponse, error)
+	UpdateObserve(ctx context.Context, in *UpdateObserveAlertRequest, opts ...grpc.CallOption) (*AlertDefinitionV1, error)
+	// Deprecated: Do not use.
 	UpdateShadow(ctx context.Context, in *UpdateShadowAlertRequest, opts ...grpc.CallOption) (*AlertDefinitionV1, error)
 	UpsertCandidateRevision(ctx context.Context, in *UpsertAlertCandidateRevisionRequest, opts ...grpc.CallOption) (*AlertRevisionV1, error)
 	GetRevision(ctx context.Context, in *GetAlertRevisionRequest, opts ...grpc.CallOption) (*AlertRevisionV1, error)
@@ -141,6 +144,17 @@ func (c *alertDefinitionServiceClient) ListDefinitions(ctx context.Context, in *
 	return out, nil
 }
 
+func (c *alertDefinitionServiceClient) UpdateObserve(ctx context.Context, in *UpdateObserveAlertRequest, opts ...grpc.CallOption) (*AlertDefinitionV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertDefinitionV1)
+	err := c.cc.Invoke(ctx, AlertDefinitionService_UpdateObserve_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Deprecated: Do not use.
 func (c *alertDefinitionServiceClient) UpdateShadow(ctx context.Context, in *UpdateShadowAlertRequest, opts ...grpc.CallOption) (*AlertDefinitionV1, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AlertDefinitionV1)
@@ -321,6 +335,8 @@ type AlertDefinitionServiceServer interface {
 	CreateAdvancedSignalAlert(context.Context, *CreateAdvancedSignalAlertRequest) (*CreateAlertDefinitionResponse, error)
 	GetDefinition(context.Context, *GetAlertDefinitionRequest) (*AlertDefinitionV1, error)
 	ListDefinitions(context.Context, *ListAlertDefinitionsRequest) (*ListAlertDefinitionsResponse, error)
+	UpdateObserve(context.Context, *UpdateObserveAlertRequest) (*AlertDefinitionV1, error)
+	// Deprecated: Do not use.
 	UpdateShadow(context.Context, *UpdateShadowAlertRequest) (*AlertDefinitionV1, error)
 	UpsertCandidateRevision(context.Context, *UpsertAlertCandidateRevisionRequest) (*AlertRevisionV1, error)
 	GetRevision(context.Context, *GetAlertRevisionRequest) (*AlertRevisionV1, error)
@@ -365,6 +381,9 @@ func (UnimplementedAlertDefinitionServiceServer) GetDefinition(context.Context, 
 }
 func (UnimplementedAlertDefinitionServiceServer) ListDefinitions(context.Context, *ListAlertDefinitionsRequest) (*ListAlertDefinitionsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListDefinitions not implemented")
+}
+func (UnimplementedAlertDefinitionServiceServer) UpdateObserve(context.Context, *UpdateObserveAlertRequest) (*AlertDefinitionV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateObserve not implemented")
 }
 func (UnimplementedAlertDefinitionServiceServer) UpdateShadow(context.Context, *UpdateShadowAlertRequest) (*AlertDefinitionV1, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateShadow not implemented")
@@ -543,6 +562,24 @@ func _AlertDefinitionService_ListDefinitions_Handler(srv interface{}, ctx contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AlertDefinitionServiceServer).ListDefinitions(ctx, req.(*ListAlertDefinitionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertDefinitionService_UpdateObserve_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateObserveAlertRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertDefinitionServiceServer).UpdateObserve(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertDefinitionService_UpdateObserve_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertDefinitionServiceServer).UpdateObserve(ctx, req.(*UpdateObserveAlertRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -883,6 +920,10 @@ var AlertDefinitionService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListDefinitions",
 			Handler:    _AlertDefinitionService_ListDefinitions_Handler,
+		},
+		{
+			MethodName: "UpdateObserve",
+			Handler:    _AlertDefinitionService_UpdateObserve_Handler,
 		},
 		{
 			MethodName: "UpdateShadow",
@@ -1900,6 +1941,16 @@ var AlertRuntimeService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
+	AlertNotificationService_CreateNotificationTemplate_FullMethodName        = "/o11y_one.alerts.v1.AlertNotificationService/CreateNotificationTemplate"
+	AlertNotificationService_UpdateNotificationTemplate_FullMethodName        = "/o11y_one.alerts.v1.AlertNotificationService/UpdateNotificationTemplate"
+	AlertNotificationService_PublishNotificationTemplate_FullMethodName       = "/o11y_one.alerts.v1.AlertNotificationService/PublishNotificationTemplate"
+	AlertNotificationService_SetNotificationTemplateArchived_FullMethodName   = "/o11y_one.alerts.v1.AlertNotificationService/SetNotificationTemplateArchived"
+	AlertNotificationService_GetNotificationTemplate_FullMethodName           = "/o11y_one.alerts.v1.AlertNotificationService/GetNotificationTemplate"
+	AlertNotificationService_ListNotificationTemplates_FullMethodName         = "/o11y_one.alerts.v1.AlertNotificationService/ListNotificationTemplates"
+	AlertNotificationService_GetNotificationTemplateRevision_FullMethodName   = "/o11y_one.alerts.v1.AlertNotificationService/GetNotificationTemplateRevision"
+	AlertNotificationService_ListNotificationTemplateRevisions_FullMethodName = "/o11y_one.alerts.v1.AlertNotificationService/ListNotificationTemplateRevisions"
+	AlertNotificationService_PreviewNotificationTemplate_FullMethodName       = "/o11y_one.alerts.v1.AlertNotificationService/PreviewNotificationTemplate"
+	AlertNotificationService_ListNotificationTemplateVariables_FullMethodName = "/o11y_one.alerts.v1.AlertNotificationService/ListNotificationTemplateVariables"
 	AlertNotificationService_CreateDestination_FullMethodName                 = "/o11y_one.alerts.v1.AlertNotificationService/CreateDestination"
 	AlertNotificationService_UpdateDestination_FullMethodName                 = "/o11y_one.alerts.v1.AlertNotificationService/UpdateDestination"
 	AlertNotificationService_DeleteDestination_FullMethodName                 = "/o11y_one.alerts.v1.AlertNotificationService/DeleteDestination"
@@ -1953,6 +2004,16 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AlertNotificationServiceClient interface {
+	CreateNotificationTemplate(ctx context.Context, in *UpsertAlertNotificationTemplateRequest, opts ...grpc.CallOption) (*AlertNotificationTemplateV1, error)
+	UpdateNotificationTemplate(ctx context.Context, in *UpsertAlertNotificationTemplateRequest, opts ...grpc.CallOption) (*AlertNotificationTemplateV1, error)
+	PublishNotificationTemplate(ctx context.Context, in *PublishAlertNotificationTemplateRequest, opts ...grpc.CallOption) (*AlertNotificationTemplateV1, error)
+	SetNotificationTemplateArchived(ctx context.Context, in *SetAlertNotificationTemplateArchivedRequest, opts ...grpc.CallOption) (*AlertNotificationTemplateV1, error)
+	GetNotificationTemplate(ctx context.Context, in *GetAlertNotificationTemplateRequest, opts ...grpc.CallOption) (*AlertNotificationTemplateV1, error)
+	ListNotificationTemplates(ctx context.Context, in *ListAlertNotificationTemplatesRequest, opts ...grpc.CallOption) (*ListAlertNotificationTemplatesResponse, error)
+	GetNotificationTemplateRevision(ctx context.Context, in *GetAlertNotificationTemplateRevisionRequest, opts ...grpc.CallOption) (*AlertNotificationTemplateRevisionV1, error)
+	ListNotificationTemplateRevisions(ctx context.Context, in *ListAlertNotificationTemplateRevisionsRequest, opts ...grpc.CallOption) (*ListAlertNotificationTemplateRevisionsResponse, error)
+	PreviewNotificationTemplate(ctx context.Context, in *PreviewAlertNotificationTemplateRequest, opts ...grpc.CallOption) (*PreviewAlertNotificationTemplateResponse, error)
+	ListNotificationTemplateVariables(ctx context.Context, in *ListNotificationTemplateVariablesRequest, opts ...grpc.CallOption) (*ListNotificationTemplateVariablesResponse, error)
 	CreateDestination(ctx context.Context, in *UpsertDestinationRequest, opts ...grpc.CallOption) (*AlertDestinationV1, error)
 	UpdateDestination(ctx context.Context, in *UpsertDestinationRequest, opts ...grpc.CallOption) (*AlertDestinationV1, error)
 	DeleteDestination(ctx context.Context, in *DeleteDestinationRequest, opts ...grpc.CallOption) (*AlertMutationResponse, error)
@@ -2008,6 +2069,106 @@ type alertNotificationServiceClient struct {
 
 func NewAlertNotificationServiceClient(cc grpc.ClientConnInterface) AlertNotificationServiceClient {
 	return &alertNotificationServiceClient{cc}
+}
+
+func (c *alertNotificationServiceClient) CreateNotificationTemplate(ctx context.Context, in *UpsertAlertNotificationTemplateRequest, opts ...grpc.CallOption) (*AlertNotificationTemplateV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertNotificationTemplateV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_CreateNotificationTemplate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) UpdateNotificationTemplate(ctx context.Context, in *UpsertAlertNotificationTemplateRequest, opts ...grpc.CallOption) (*AlertNotificationTemplateV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertNotificationTemplateV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_UpdateNotificationTemplate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) PublishNotificationTemplate(ctx context.Context, in *PublishAlertNotificationTemplateRequest, opts ...grpc.CallOption) (*AlertNotificationTemplateV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertNotificationTemplateV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_PublishNotificationTemplate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) SetNotificationTemplateArchived(ctx context.Context, in *SetAlertNotificationTemplateArchivedRequest, opts ...grpc.CallOption) (*AlertNotificationTemplateV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertNotificationTemplateV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_SetNotificationTemplateArchived_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) GetNotificationTemplate(ctx context.Context, in *GetAlertNotificationTemplateRequest, opts ...grpc.CallOption) (*AlertNotificationTemplateV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertNotificationTemplateV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_GetNotificationTemplate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) ListNotificationTemplates(ctx context.Context, in *ListAlertNotificationTemplatesRequest, opts ...grpc.CallOption) (*ListAlertNotificationTemplatesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAlertNotificationTemplatesResponse)
+	err := c.cc.Invoke(ctx, AlertNotificationService_ListNotificationTemplates_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) GetNotificationTemplateRevision(ctx context.Context, in *GetAlertNotificationTemplateRevisionRequest, opts ...grpc.CallOption) (*AlertNotificationTemplateRevisionV1, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AlertNotificationTemplateRevisionV1)
+	err := c.cc.Invoke(ctx, AlertNotificationService_GetNotificationTemplateRevision_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) ListNotificationTemplateRevisions(ctx context.Context, in *ListAlertNotificationTemplateRevisionsRequest, opts ...grpc.CallOption) (*ListAlertNotificationTemplateRevisionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListAlertNotificationTemplateRevisionsResponse)
+	err := c.cc.Invoke(ctx, AlertNotificationService_ListNotificationTemplateRevisions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) PreviewNotificationTemplate(ctx context.Context, in *PreviewAlertNotificationTemplateRequest, opts ...grpc.CallOption) (*PreviewAlertNotificationTemplateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PreviewAlertNotificationTemplateResponse)
+	err := c.cc.Invoke(ctx, AlertNotificationService_PreviewNotificationTemplate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *alertNotificationServiceClient) ListNotificationTemplateVariables(ctx context.Context, in *ListNotificationTemplateVariablesRequest, opts ...grpc.CallOption) (*ListNotificationTemplateVariablesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListNotificationTemplateVariablesResponse)
+	err := c.cc.Invoke(ctx, AlertNotificationService_ListNotificationTemplateVariables_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *alertNotificationServiceClient) CreateDestination(ctx context.Context, in *UpsertDestinationRequest, opts ...grpc.CallOption) (*AlertDestinationV1, error) {
@@ -2484,6 +2645,16 @@ func (c *alertNotificationServiceClient) ReplayDelivery(ctx context.Context, in 
 // All implementations must embed UnimplementedAlertNotificationServiceServer
 // for forward compatibility.
 type AlertNotificationServiceServer interface {
+	CreateNotificationTemplate(context.Context, *UpsertAlertNotificationTemplateRequest) (*AlertNotificationTemplateV1, error)
+	UpdateNotificationTemplate(context.Context, *UpsertAlertNotificationTemplateRequest) (*AlertNotificationTemplateV1, error)
+	PublishNotificationTemplate(context.Context, *PublishAlertNotificationTemplateRequest) (*AlertNotificationTemplateV1, error)
+	SetNotificationTemplateArchived(context.Context, *SetAlertNotificationTemplateArchivedRequest) (*AlertNotificationTemplateV1, error)
+	GetNotificationTemplate(context.Context, *GetAlertNotificationTemplateRequest) (*AlertNotificationTemplateV1, error)
+	ListNotificationTemplates(context.Context, *ListAlertNotificationTemplatesRequest) (*ListAlertNotificationTemplatesResponse, error)
+	GetNotificationTemplateRevision(context.Context, *GetAlertNotificationTemplateRevisionRequest) (*AlertNotificationTemplateRevisionV1, error)
+	ListNotificationTemplateRevisions(context.Context, *ListAlertNotificationTemplateRevisionsRequest) (*ListAlertNotificationTemplateRevisionsResponse, error)
+	PreviewNotificationTemplate(context.Context, *PreviewAlertNotificationTemplateRequest) (*PreviewAlertNotificationTemplateResponse, error)
+	ListNotificationTemplateVariables(context.Context, *ListNotificationTemplateVariablesRequest) (*ListNotificationTemplateVariablesResponse, error)
 	CreateDestination(context.Context, *UpsertDestinationRequest) (*AlertDestinationV1, error)
 	UpdateDestination(context.Context, *UpsertDestinationRequest) (*AlertDestinationV1, error)
 	DeleteDestination(context.Context, *DeleteDestinationRequest) (*AlertMutationResponse, error)
@@ -2541,6 +2712,36 @@ type AlertNotificationServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedAlertNotificationServiceServer struct{}
 
+func (UnimplementedAlertNotificationServiceServer) CreateNotificationTemplate(context.Context, *UpsertAlertNotificationTemplateRequest) (*AlertNotificationTemplateV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateNotificationTemplate not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) UpdateNotificationTemplate(context.Context, *UpsertAlertNotificationTemplateRequest) (*AlertNotificationTemplateV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateNotificationTemplate not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) PublishNotificationTemplate(context.Context, *PublishAlertNotificationTemplateRequest) (*AlertNotificationTemplateV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method PublishNotificationTemplate not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) SetNotificationTemplateArchived(context.Context, *SetAlertNotificationTemplateArchivedRequest) (*AlertNotificationTemplateV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetNotificationTemplateArchived not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) GetNotificationTemplate(context.Context, *GetAlertNotificationTemplateRequest) (*AlertNotificationTemplateV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetNotificationTemplate not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) ListNotificationTemplates(context.Context, *ListAlertNotificationTemplatesRequest) (*ListAlertNotificationTemplatesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListNotificationTemplates not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) GetNotificationTemplateRevision(context.Context, *GetAlertNotificationTemplateRevisionRequest) (*AlertNotificationTemplateRevisionV1, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetNotificationTemplateRevision not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) ListNotificationTemplateRevisions(context.Context, *ListAlertNotificationTemplateRevisionsRequest) (*ListAlertNotificationTemplateRevisionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListNotificationTemplateRevisions not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) PreviewNotificationTemplate(context.Context, *PreviewAlertNotificationTemplateRequest) (*PreviewAlertNotificationTemplateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PreviewNotificationTemplate not implemented")
+}
+func (UnimplementedAlertNotificationServiceServer) ListNotificationTemplateVariables(context.Context, *ListNotificationTemplateVariablesRequest) (*ListNotificationTemplateVariablesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListNotificationTemplateVariables not implemented")
+}
 func (UnimplementedAlertNotificationServiceServer) CreateDestination(context.Context, *UpsertDestinationRequest) (*AlertDestinationV1, error) {
 	return nil, status.Error(codes.Unimplemented, "method CreateDestination not implemented")
 }
@@ -2702,6 +2903,186 @@ func RegisterAlertNotificationServiceServer(s grpc.ServiceRegistrar, srv AlertNo
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&AlertNotificationService_ServiceDesc, srv)
+}
+
+func _AlertNotificationService_CreateNotificationTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertAlertNotificationTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).CreateNotificationTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_CreateNotificationTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).CreateNotificationTemplate(ctx, req.(*UpsertAlertNotificationTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_UpdateNotificationTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpsertAlertNotificationTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).UpdateNotificationTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_UpdateNotificationTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).UpdateNotificationTemplate(ctx, req.(*UpsertAlertNotificationTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_PublishNotificationTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PublishAlertNotificationTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).PublishNotificationTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_PublishNotificationTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).PublishNotificationTemplate(ctx, req.(*PublishAlertNotificationTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_SetNotificationTemplateArchived_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetAlertNotificationTemplateArchivedRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).SetNotificationTemplateArchived(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_SetNotificationTemplateArchived_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).SetNotificationTemplateArchived(ctx, req.(*SetAlertNotificationTemplateArchivedRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_GetNotificationTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAlertNotificationTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).GetNotificationTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_GetNotificationTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).GetNotificationTemplate(ctx, req.(*GetAlertNotificationTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_ListNotificationTemplates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAlertNotificationTemplatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).ListNotificationTemplates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_ListNotificationTemplates_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).ListNotificationTemplates(ctx, req.(*ListAlertNotificationTemplatesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_GetNotificationTemplateRevision_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAlertNotificationTemplateRevisionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).GetNotificationTemplateRevision(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_GetNotificationTemplateRevision_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).GetNotificationTemplateRevision(ctx, req.(*GetAlertNotificationTemplateRevisionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_ListNotificationTemplateRevisions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListAlertNotificationTemplateRevisionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).ListNotificationTemplateRevisions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_ListNotificationTemplateRevisions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).ListNotificationTemplateRevisions(ctx, req.(*ListAlertNotificationTemplateRevisionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_PreviewNotificationTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PreviewAlertNotificationTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).PreviewNotificationTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_PreviewNotificationTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).PreviewNotificationTemplate(ctx, req.(*PreviewAlertNotificationTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AlertNotificationService_ListNotificationTemplateVariables_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListNotificationTemplateVariablesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AlertNotificationServiceServer).ListNotificationTemplateVariables(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AlertNotificationService_ListNotificationTemplateVariables_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AlertNotificationServiceServer).ListNotificationTemplateVariables(ctx, req.(*ListNotificationTemplateVariablesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _AlertNotificationService_CreateDestination_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -3557,6 +3938,46 @@ var AlertNotificationService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "o11y_one.alerts.v1.AlertNotificationService",
 	HandlerType: (*AlertNotificationServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateNotificationTemplate",
+			Handler:    _AlertNotificationService_CreateNotificationTemplate_Handler,
+		},
+		{
+			MethodName: "UpdateNotificationTemplate",
+			Handler:    _AlertNotificationService_UpdateNotificationTemplate_Handler,
+		},
+		{
+			MethodName: "PublishNotificationTemplate",
+			Handler:    _AlertNotificationService_PublishNotificationTemplate_Handler,
+		},
+		{
+			MethodName: "SetNotificationTemplateArchived",
+			Handler:    _AlertNotificationService_SetNotificationTemplateArchived_Handler,
+		},
+		{
+			MethodName: "GetNotificationTemplate",
+			Handler:    _AlertNotificationService_GetNotificationTemplate_Handler,
+		},
+		{
+			MethodName: "ListNotificationTemplates",
+			Handler:    _AlertNotificationService_ListNotificationTemplates_Handler,
+		},
+		{
+			MethodName: "GetNotificationTemplateRevision",
+			Handler:    _AlertNotificationService_GetNotificationTemplateRevision_Handler,
+		},
+		{
+			MethodName: "ListNotificationTemplateRevisions",
+			Handler:    _AlertNotificationService_ListNotificationTemplateRevisions_Handler,
+		},
+		{
+			MethodName: "PreviewNotificationTemplate",
+			Handler:    _AlertNotificationService_PreviewNotificationTemplate_Handler,
+		},
+		{
+			MethodName: "ListNotificationTemplateVariables",
+			Handler:    _AlertNotificationService_ListNotificationTemplateVariables_Handler,
+		},
 		{
 			MethodName: "CreateDestination",
 			Handler:    _AlertNotificationService_CreateDestination_Handler,

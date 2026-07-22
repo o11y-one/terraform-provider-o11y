@@ -39,7 +39,7 @@ func (r *notificationPolicyResource) Metadata(_ context.Context, req resource.Me
 	resp.TypeName = req.ProviderTypeName + "_alert_notification_policy"
 }
 func (r *notificationPolicyResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{Description: "An O11y.one alert notification policy with bounded route trees, grouping, repeats, escalation, and notification budgets.", Attributes: map[string]schema.Attribute{"id": schema.StringAttribute{Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()}}, "policy_key": schema.StringAttribute{Required: true}, "name": schema.StringAttribute{Required: true}, "enabled": schema.BoolAttribute{Required: true}, "config_json": schema.StringAttribute{Required: true, PlanModifiers: []planmodifier.String{canonicalJSONPlanModifier{}}, Description: "Canonical policy JSON. Supports either routes or tree, plus grouping, notifications, escalation, noise_budget, and typed inhibition matchers."}, "revision": schema.Int64Attribute{Computed: true, Description: "Monotonic server revision used to fence concurrent updates."}}}
+	resp.Schema = schema.Schema{Description: "An O11y.one alert notification policy with bounded route trees, grouping, repeats, escalation, revision-pinned templates, and notification budgets.", Attributes: map[string]schema.Attribute{"id": schema.StringAttribute{Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()}}, "policy_key": schema.StringAttribute{Required: true}, "name": schema.StringAttribute{Required: true}, "enabled": schema.BoolAttribute{Required: true}, "config_json": schema.StringAttribute{Required: true, PlanModifiers: []planmodifier.String{canonicalJSONPlanModifier{}}, Description: "Exact AlertNotificationPolicyConfigV1 protobuf JSON. Route targets, matcher values, behavior, template revision bindings, grouping, timing, escalation, inhibition, and page budgets are typed."}, "revision": schema.Int64Attribute{Computed: true, Description: "Monotonic server revision used to fence concurrent updates."}}}
 }
 func (r *notificationPolicyResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
 	if req.Plan.Raw.IsNull() {
@@ -82,6 +82,10 @@ func (r *notificationPolicyResource) ValidateConfig(ctx context.Context, req res
 	if !data.Config.IsUnknown() && !data.Config.IsNull() {
 		if err := validationutil.JSONDocument(data.Config.ValueString()); err != nil {
 			resp.Diagnostics.AddAttributeError(path.Root("config_json"), "Invalid policy config", err.Error())
+		}
+		config := &alertsv1.AlertNotificationPolicyConfigV1{}
+		if err := protoFromJSON(data.Config, config); err != nil {
+			resp.Diagnostics.AddAttributeError(path.Root("config_json"), "Invalid typed policy config", err.Error())
 		}
 	}
 }
@@ -170,8 +174,8 @@ func (r *notificationPolicyResource) ImportState(ctx context.Context, req resour
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 func (r *notificationPolicyResource) request(data *notificationPolicyModel, operation, identity string) (*alertsv1.UpsertNotificationPolicyRequest, error) {
-	config, err := structFromJSON(data.Config)
-	if err != nil {
+	config := &alertsv1.AlertNotificationPolicyConfigV1{}
+	if err := protoFromJSON(data.Config, config); err != nil {
 		return nil, err
 	}
 	message := &alertsv1.UpsertNotificationPolicyRequest{Id: data.ID.ValueString(), PolicyKey: data.PolicyKey.ValueString(), Name: data.Name.ValueString(), Enabled: data.Enabled.ValueBool(), Config: config}
@@ -191,6 +195,6 @@ func setNotificationPolicy(data *notificationPolicyModel, item *alertsv1.AlertNo
 	data.PolicyKey = types.StringValue(item.PolicyKey)
 	data.Name = types.StringValue(item.Name)
 	data.Enabled = types.BoolValue(item.Enabled)
-	data.Config = jsonFromStruct(item.Config)
+	data.Config = jsonFromProtoPreserving(data.Config, item.Config)
 	data.Revision = types.Int64Value(item.Revision)
 }

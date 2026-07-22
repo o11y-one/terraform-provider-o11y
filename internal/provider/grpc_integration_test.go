@@ -18,7 +18,6 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/test/bufconn"
 	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/types/known/structpb"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -34,7 +33,9 @@ type alertTestServer struct {
 	definitions  map[string]*alertsv1.AlertDefinitionV1
 	windows      map[string]*alertsv1.AlertMaintenanceWindowV1
 	silences     map[string]*alertsv1.AlertSilenceV1
+	slis         map[string]*alertsv1.AlertSliV1
 	slos         map[string]*alertsv1.AlertSloV1
+	templates    map[string]*alertsv1.AlertNotificationTemplateV1
 	idempotent   map[string]string
 	next         int
 }
@@ -43,7 +44,7 @@ const testTenantID = "019f430f-90d4-74c3-95b7-9120db366252"
 const testOrgID = "019f430f-90d4-74c3-95b7-9120db366253"
 
 func newAlertTestServer() *alertTestServer {
-	return &alertTestServer{destinations: map[string]*alertsv1.AlertDestinationV1{}, policies: map[string]*alertsv1.AlertNotificationPolicyV1{}, definitions: map[string]*alertsv1.AlertDefinitionV1{}, windows: map[string]*alertsv1.AlertMaintenanceWindowV1{}, silences: map[string]*alertsv1.AlertSilenceV1{}, slos: map[string]*alertsv1.AlertSloV1{}, idempotent: map[string]string{}}
+	return &alertTestServer{destinations: map[string]*alertsv1.AlertDestinationV1{}, policies: map[string]*alertsv1.AlertNotificationPolicyV1{}, definitions: map[string]*alertsv1.AlertDefinitionV1{}, windows: map[string]*alertsv1.AlertMaintenanceWindowV1{}, silences: map[string]*alertsv1.AlertSilenceV1{}, slis: map[string]*alertsv1.AlertSliV1{}, slos: map[string]*alertsv1.AlertSloV1{}, templates: map[string]*alertsv1.AlertNotificationTemplateV1{}, idempotent: map[string]string{}}
 }
 func (s *alertTestServer) authorize(ctx context.Context) error {
 	md, _ := metadata.FromIncomingContext(ctx)
@@ -81,6 +82,72 @@ func (s *alertTestServer) CreateSlo(ctx context.Context, req *alertsv1.CreateSlo
 	item := testSLO(id, req.SloKey, req.Name, req.Description, req.Revision, 1)
 	s.slos[id] = item
 	return proto.Clone(item).(*alertsv1.AlertSloV1), nil
+}
+
+func (s *alertTestServer) CreateSli(ctx context.Context, req *alertsv1.CreateSliRequest) (*alertsv1.AlertSliV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	id := s.id("sli", req.IdempotencyKey)
+	if existing := s.slis[id]; existing != nil {
+		return proto.Clone(existing).(*alertsv1.AlertSliV1), nil
+	}
+	item := testSLI(id, req.SliKey, req.Name, req.Description, req.Revision, 1)
+	s.slis[id] = item
+	return proto.Clone(item).(*alertsv1.AlertSliV1), nil
+}
+
+func (s *alertTestServer) UpdateSli(ctx context.Context, req *alertsv1.UpdateSliRequest) (*alertsv1.AlertSliV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	existing := s.slis[req.SliId]
+	if existing == nil {
+		return nil, status.Error(codes.NotFound, "sli")
+	}
+	if existing.CurrentRevisionId != req.ExpectedRevisionId {
+		return nil, status.Error(codes.Aborted, "stale SLI revision")
+	}
+	item := testSLI(existing.Id, existing.SliKey, req.Name, req.Description, req.Revision, existing.CurrentRevision.RevisionNumber+1)
+	s.slis[req.SliId] = item
+	return proto.Clone(item).(*alertsv1.AlertSliV1), nil
+}
+
+func (s *alertTestServer) GetSli(ctx context.Context, req *alertsv1.GetSliRequest) (*alertsv1.AlertSliV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	item := s.slis[req.SliId]
+	if item == nil {
+		return nil, status.Error(codes.NotFound, "sli")
+	}
+	return proto.Clone(item).(*alertsv1.AlertSliV1), nil
+}
+
+func (s *alertTestServer) ArchiveSli(ctx context.Context, req *alertsv1.ArchiveSliRequest) (*alertsv1.AlertMutationResponse, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.slis[req.SliId] == nil {
+		return nil, status.Error(codes.NotFound, "sli")
+	}
+	delete(s.slis, req.SliId)
+	return &alertsv1.AlertMutationResponse{Ok: true, ResourceId: req.SliId}, nil
+}
+
+func testSLI(id, key, name, description string, input *alertsv1.SliRevisionInputV1, revisionNumber int32) *alertsv1.AlertSliV1 {
+	now := timestamppb.New(time.Date(2030, 1, 1, 0, int(revisionNumber), 0, 0, time.UTC))
+	revisionID := fmt.Sprintf("%s-revision-%d", id, revisionNumber)
+	revision := &alertsv1.AlertSliRevisionV1{Id: revisionID, SliId: id, RevisionNumber: revisionNumber, IndicatorKind: input.IndicatorKind, Scope: input.Scope, Owner: input.Owner, EligibleEvents: input.EligibleEvents, GoodEvents: input.GoodEvents, ExcludedEvents: input.ExcludedEvents, Aggregation: input.Aggregation, MissingDataBehavior: input.MissingDataBehavior, ConfigHash: fmt.Sprintf("config-%d", revisionNumber), CreatedAt: now, LatencyThreshold: input.LatencyThreshold}
+	return &alertsv1.AlertSliV1{Id: id, SliKey: key, Name: name, Description: description, CurrentRevisionId: revisionID, Provenance: "terraform", CreatedAt: now, UpdatedAt: now, CurrentRevision: revision}
 }
 
 func (s *alertTestServer) UpdateSlo(ctx context.Context, req *alertsv1.UpdateSloRequest) (*alertsv1.AlertSloV1, error) {
@@ -292,6 +359,102 @@ func (s *alertTestServer) DeleteNotificationPolicy(ctx context.Context, req *ale
 	return &alertsv1.AlertMutationResponse{Ok: true, ResourceId: req.Id}, nil
 }
 
+func (s *alertTestServer) CreateNotificationTemplate(ctx context.Context, req *alertsv1.UpsertAlertNotificationTemplateRequest) (*alertsv1.AlertNotificationTemplateV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	id := s.id("template", req.IdempotencyKey)
+	if existing := s.templates[id]; existing != nil {
+		return proto.Clone(existing).(*alertsv1.AlertNotificationTemplateV1), nil
+	}
+	item := testNotificationTemplate(id, req, 1, "")
+	s.templates[id] = item
+	return proto.Clone(item).(*alertsv1.AlertNotificationTemplateV1), nil
+}
+
+func (s *alertTestServer) UpdateNotificationTemplate(ctx context.Context, req *alertsv1.UpsertAlertNotificationTemplateRequest) (*alertsv1.AlertNotificationTemplateV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	existing := s.templates[req.Id]
+	if existing == nil {
+		return nil, status.Error(codes.NotFound, "notification template")
+	}
+	if req.ExpectedRevision == nil || req.GetExpectedRevision() != existing.Revision {
+		return nil, status.Error(codes.Aborted, "stale notification template revision")
+	}
+	item := testNotificationTemplate(req.Id, req, existing.Revision+1, existing.PublishedRevisionId)
+	item.ArchivedAt = existing.ArchivedAt
+	s.templates[req.Id] = item
+	return proto.Clone(item).(*alertsv1.AlertNotificationTemplateV1), nil
+}
+
+func (s *alertTestServer) PublishNotificationTemplate(ctx context.Context, req *alertsv1.PublishAlertNotificationTemplateRequest) (*alertsv1.AlertNotificationTemplateV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	item := s.templates[req.NotificationTemplateId]
+	if item == nil {
+		return nil, status.Error(codes.NotFound, "notification template")
+	}
+	if item.Revision != req.ExpectedRevision {
+		return nil, status.Error(codes.Aborted, "stale notification template revision")
+	}
+	item.PublishedRevisionId = item.CurrentRevisionId
+	item.Revision++
+	item.CurrentRevision.HasBeenPublished = true
+	item.CurrentRevision.FirstPublishedAt = timestamppb.Now()
+	return proto.Clone(item).(*alertsv1.AlertNotificationTemplateV1), nil
+}
+
+func (s *alertTestServer) SetNotificationTemplateArchived(ctx context.Context, req *alertsv1.SetAlertNotificationTemplateArchivedRequest) (*alertsv1.AlertNotificationTemplateV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	item := s.templates[req.NotificationTemplateId]
+	if item == nil {
+		return nil, status.Error(codes.NotFound, "notification template")
+	}
+	if item.Revision != req.ExpectedRevision {
+		return nil, status.Error(codes.Aborted, "stale notification template revision")
+	}
+	if req.Archived {
+		item.ArchivedAt = timestamppb.Now()
+	} else {
+		item.ArchivedAt = nil
+	}
+	item.Revision++
+	return proto.Clone(item).(*alertsv1.AlertNotificationTemplateV1), nil
+}
+
+func (s *alertTestServer) GetNotificationTemplate(ctx context.Context, req *alertsv1.GetAlertNotificationTemplateRequest) (*alertsv1.AlertNotificationTemplateV1, error) {
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	item := s.templates[req.NotificationTemplateId]
+	if item == nil {
+		return nil, status.Error(codes.NotFound, "notification template")
+	}
+	return proto.Clone(item).(*alertsv1.AlertNotificationTemplateV1), nil
+}
+
+func testNotificationTemplate(id string, req *alertsv1.UpsertAlertNotificationTemplateRequest, revision int64, publishedRevisionID string) *alertsv1.AlertNotificationTemplateV1 {
+	now := timestamppb.New(time.Date(2030, 1, 1, 0, int(revision), 0, 0, time.UTC))
+	revisionID := fmt.Sprintf("%s-revision-%d", id, revision)
+	current := &alertsv1.AlertNotificationTemplateRevisionV1{Id: revisionID, NotificationTemplateId: id, RevisionNumber: revision, Document: req.Document, VariableSchemaVersion: 1, ContentHash: fmt.Sprintf("content-%d", revision), ChangeReason: req.ChangeReason, CreatedAt: now}
+	return &alertsv1.AlertNotificationTemplateV1{Id: id, TemplateKey: req.TemplateKey, Name: req.Name, Description: req.Description, CurrentRevisionId: revisionID, PublishedRevisionId: publishedRevisionID, Revision: revision, Provenance: "terraform", ProvenanceRef: req.ProvenanceRef, CreatedAt: now, UpdatedAt: now, CurrentRevision: current, Kind: alertsv1.AlertNotificationTemplateKindV1_ALERT_NOTIFICATION_TEMPLATE_KIND_V1_USER}
+}
+
 func (s *alertTestServer) CreateMaintenanceWindow(ctx context.Context, req *alertsv1.UpsertMaintenanceWindowRequest) (*alertsv1.AlertMaintenanceWindowV1, error) {
 	if err := s.authorize(ctx); err != nil {
 		return nil, err
@@ -383,28 +546,28 @@ func (s *alertTestServer) DeleteSilence(ctx context.Context, req *alertsv1.Delet
 	return &alertsv1.AlertMutationResponse{Ok: true, ResourceId: req.Id}, nil
 }
 
-func (s *alertTestServer) createAlert(ctx context.Context, base *alertsv1.AlertRecipeBaseV1, detectorKind string, recipeConfig *structpb.Struct) (*alertsv1.CreateAlertDefinitionResponse, error) {
+func (s *alertTestServer) createAlert(ctx context.Context, base *alertsv1.AlertRecipeBaseV1, detectorKind string, detectorConfig *alertsv1.AlertDetectorConfigV1) (*alertsv1.CreateAlertDefinitionResponse, error) {
 	if err := s.authorize(ctx); err != nil {
 		return nil, err
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	id := s.id("alert", base.IdempotencyKey)
-	item := &alertsv1.AlertDefinitionV1{Id: id, TenantId: testTenantID, OrgId: base.OrgId, Slug: base.Slug, Name: base.Name, Description: base.Description, Severity: base.Severity, Mode: alertsv1.AlertModeV1_ALERT_MODE_V1_SHADOW, Scope: base.Scope, Owner: base.Owner, Action: base.Action, EvaluationSettings: base.EvaluationSettings, SampleGuard: base.SampleGuard, CurrentRevisionId: "revision-1", DetectorKind: detectorKind, RecipeConfig: recipeConfig, EvaluationIntervalSeconds: base.EvaluationIntervalSeconds}
+	item := &alertsv1.AlertDefinitionV1{Id: id, TenantId: testTenantID, OrgId: base.OrgId, Slug: base.Slug, Name: base.Name, Description: base.Description, Severity: base.Severity, Mode: alertsv1.AlertModeV1_ALERT_MODE_V1_OBSERVE, Scope: base.Scope, Owner: base.Owner, Action: base.Action, EvaluationSettings: base.EvaluationSettings, SampleGuard: base.SampleGuard, CurrentRevisionId: "revision-1", DetectorKind: detectorKind, DetectorConfig: detectorConfig, EvaluationIntervalSeconds: base.EvaluationIntervalSeconds}
 	s.definitions[id] = item
 	return &alertsv1.CreateAlertDefinitionResponse{Definition: item, RevisionId: "revision-1"}, nil
 }
 func (s *alertTestServer) CreateAgentQualityRegressionAlert(ctx context.Context, req *alertsv1.CreateAgentQualityRegressionAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
-	return s.createAlert(ctx, req.Base, "agent_quality_regression", req.RecipeConfig)
+	return s.createAlert(ctx, req.Base, "agent_quality_regression", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_AgentQualityRegression{AgentQualityRegression: req.RecipeConfig}})
 }
 func (s *alertTestServer) CreateCostPerSuccessAlert(ctx context.Context, req *alertsv1.CreateCostPerSuccessAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
-	return s.createAlert(ctx, req.Base, "cost_per_success_regression", req.RecipeConfig)
+	return s.createAlert(ctx, req.Base, "cost_per_success_regression", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_CostPerSuccess{CostPerSuccess: req.RecipeConfig}})
 }
 func (s *alertTestServer) CreateSloBurnAlert(ctx context.Context, req *alertsv1.CreateSloBurnAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
-	return s.createAlert(ctx, req.Base, "slo_burn", req.RecipeConfig)
+	return s.createAlert(ctx, req.Base, "slo_burn", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_SloBurn{SloBurn: req.RecipeConfig}})
 }
 func (s *alertTestServer) CreateAdvancedSignalAlert(ctx context.Context, req *alertsv1.CreateAdvancedSignalAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
-	return s.createAlert(ctx, req.Base, "advanced_signal", req.Condition)
+	return s.createAlert(ctx, req.Base, "advanced_signal", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_AdvancedSignal{AdvancedSignal: req.Condition}})
 }
 func (s *alertTestServer) DeleteDefinition(ctx context.Context, req *alertsv1.DeleteAlertDefinitionRequest) (*alertsv1.AlertMutationResponse, error) {
 	if err := s.authorize(ctx); err != nil {
@@ -442,7 +605,7 @@ func (s *alertTestServer) GetDefinition(ctx context.Context, req *alertsv1.GetAl
 	}
 	return s.definitions[req.Id], nil
 }
-func (s *alertTestServer) UpdateShadow(ctx context.Context, req *alertsv1.UpdateShadowAlertRequest) (*alertsv1.AlertDefinitionV1, error) {
+func (s *alertTestServer) UpdateObserve(ctx context.Context, req *alertsv1.UpdateObserveAlertRequest) (*alertsv1.AlertDefinitionV1, error) {
 	if err := s.authorize(ctx); err != nil {
 		return nil, err
 	}
@@ -462,9 +625,7 @@ func (s *alertTestServer) UpdateShadow(ctx context.Context, req *alertsv1.Update
 	}
 	item.SampleGuard = req.SampleGuard
 	item.CurrentRevisionId = "revision-updated"
-	response := proto.Clone(item).(*alertsv1.AlertDefinitionV1)
-	response.RecipeConfig = nil
-	return response, nil
+	return proto.Clone(item).(*alertsv1.AlertDefinitionV1), nil
 }
 func (s *alertTestServer) Pause(ctx context.Context, req *alertsv1.PauseAlertRequest) (*alertsv1.AlertMutationResponse, error) {
 	if err := s.authorize(ctx); err != nil {
@@ -481,14 +642,14 @@ func (s *alertTestServer) Resume(ctx context.Context, req *alertsv1.ResumeAlertR
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.definitions[req.DefinitionId].Mode = alertsv1.AlertModeV1_ALERT_MODE_V1_SHADOW
+	s.definitions[req.DefinitionId].Mode = alertsv1.AlertModeV1_ALERT_MODE_V1_OBSERVE
 	return &alertsv1.AlertMutationResponse{Ok: true}, nil
 }
 func (s *alertTestServer) PreviewAlert(ctx context.Context, req *alertsv1.PreviewAlertRequest) (*alertsv1.PreviewAlertResponse, error) {
 	if err := s.authorize(ctx); err != nil {
 		return nil, err
 	}
-	return &alertsv1.PreviewAlertResponse{Preview: &alertsv1.AlertPreviewRunV1{Id: "preview-1", DefinitionId: req.DefinitionId, PredictedFiringCount: 2, PredictedNotificationCount: 0, Result: &structpb.Struct{}}}, nil
+	return &alertsv1.PreviewAlertResponse{Preview: &alertsv1.AlertPreviewRunV1{Id: "preview-1", DefinitionId: req.DefinitionId, PredictedFiringCount: 2, PredictedNotificationCount: 0, Result: &alertsv1.AlertPreviewResultV1{Status: "complete"}}}, nil
 }
 
 func testClient(t *testing.T, token string) (*client.Client, func()) {
@@ -517,8 +678,8 @@ func TestControlledGRPCLifecycle(t *testing.T) {
 	defer cleanup()
 	ctx, cancel := c.Context(context.Background())
 	defer cancel()
-	config, _ := structpb.NewStruct(map[string]any{"url": "https://hooks.example.test"})
-	refs, _ := structpb.NewStruct(map[string]any{"authorization": "secret:webhook"})
+	config := &alertsv1.AlertDestinationConfigV1{Config: &alertsv1.AlertDestinationConfigV1_Webhook{Webhook: &alertsv1.AlertWebhookDestinationConfigV1{Url: "https://hooks.example.test", Method: alertsv1.AlertWebhookMethodV1_ALERT_WEBHOOK_METHOD_V1_POST}}}
+	refs := &alertsv1.AlertDestinationSecretRefsV1{Authorization: "secret:webhook"}
 	key := idempotency.Key(c.TenantID(), c.OrgID(), "destination", "create", "primary")
 	request := &alertsv1.UpsertDestinationRequest{DestinationKey: "primary", Name: "Primary", Kind: alertsv1.AlertDestinationKindV1_ALERT_DESTINATION_KIND_V1_WEBHOOK, Enabled: true, Config: config, SecretRefs: refs, IdempotencyKey: key}
 	firstDestination, err := c.Notifications.CreateDestination(ctx, request)
@@ -550,7 +711,7 @@ func TestControlledGRPCLifecycle(t *testing.T) {
 	if _, err = c.Notifications.GetDestination(ctx, &alertsv1.GetAlertResourceRequest{Id: firstDestination.Id, OrgId: testOrgID}); status.Code(err) != codes.NotFound {
 		t.Fatal("deleted destination remained in drift lookup")
 	}
-	routes, _ := structpb.NewStruct(map[string]any{"routes": []any{map[string]any{"destination_key": "primary"}}})
+	routes := &alertsv1.AlertNotificationPolicyConfigV1{Routes: []*alertsv1.AlertNotificationRouteV1{{RouteKey: "primary", Enabled: true, Target: &alertsv1.AlertNotificationRouteTargetV1{Target: &alertsv1.AlertNotificationRouteTargetV1_DestinationKey{DestinationKey: "primary"}}, Behavior: alertsv1.AlertNotificationRouteBehaviorV1_ALERT_NOTIFICATION_ROUTE_BEHAVIOR_V1_STOP}}}
 	policy, err := c.Notifications.CreateNotificationPolicy(ctx, &alertsv1.UpsertNotificationPolicyRequest{PolicyKey: "default", Name: "Default", Enabled: true, Config: routes, IdempotencyKey: "policy-create"})
 	if err != nil {
 		t.Fatal(err)
@@ -567,24 +728,24 @@ func TestControlledGRPCLifecycle(t *testing.T) {
 	if _, err = c.Notifications.DeleteNotificationPolicy(ctx, &alertsv1.DeleteOperatorResourceRequest{OrgId: testOrgID, Id: policy.Id, IdempotencyKey: "policy-delete"}); err != nil {
 		t.Fatal(err)
 	}
-	base := &alertsv1.AlertRecipeBaseV1{OrgId: testOrgID, Slug: "quality", Name: "Quality", Severity: alertsv1.AlertSeverityV1_ALERT_SEVERITY_V1_WARNING, Scope: &structpb.Struct{}, Owner: &structpb.Struct{}, Action: &structpb.Struct{}, EvaluationSettings: &structpb.Struct{}, SampleGuard: &structpb.Struct{}, IdempotencyKey: "alert-quality"}
-	quality, err := c.Definitions.CreateAgentQualityRegressionAlert(ctx, &alertsv1.CreateAgentQualityRegressionAlertRequest{Base: base, RecipeConfig: &structpb.Struct{}})
+	base := &alertsv1.AlertRecipeBaseV1{OrgId: testOrgID, Slug: "quality", Name: "Quality", Severity: alertsv1.AlertSeverityV1_ALERT_SEVERITY_V1_WARNING, Scope: &alertsv1.AlertScopeV1{}, Owner: &alertsv1.AlertOwnerRefV1{}, Action: &alertsv1.AlertActionV1{}, EvaluationSettings: &alertsv1.AlertEvaluationSettingsV1{}, SampleGuard: &alertsv1.AlertSampleGuardV1{}, IdempotencyKey: "alert-quality"}
+	quality, err := c.Definitions.CreateAgentQualityRegressionAlert(ctx, &alertsv1.CreateAgentQualityRegressionAlertRequest{Base: base, RecipeConfig: &alertsv1.AgentQualityRegressionConfigV1{}})
 	if err != nil {
 		t.Fatal(err)
 	}
 	base.IdempotencyKey = "alert-cost"
-	if _, err = c.Definitions.CreateCostPerSuccessAlert(ctx, &alertsv1.CreateCostPerSuccessAlertRequest{Base: base, RecipeConfig: &structpb.Struct{}}); err != nil {
+	if _, err = c.Definitions.CreateCostPerSuccessAlert(ctx, &alertsv1.CreateCostPerSuccessAlertRequest{Base: base, RecipeConfig: &alertsv1.CostPerSuccessConfigV1{}}); err != nil {
 		t.Fatal(err)
 	}
 	base.IdempotencyKey = "alert-slo"
-	if _, err = c.Definitions.CreateSloBurnAlert(ctx, &alertsv1.CreateSloBurnAlertRequest{Base: base, RecipeConfig: &structpb.Struct{}}); err != nil {
+	if _, err = c.Definitions.CreateSloBurnAlert(ctx, &alertsv1.CreateSloBurnAlertRequest{Base: base, RecipeConfig: &alertsv1.SloBurnConfigV1{}}); err != nil {
 		t.Fatal(err)
 	}
 	base.IdempotencyKey = "alert-symptom"
-	if _, err = c.Definitions.CreateAdvancedSignalAlert(ctx, &alertsv1.CreateAdvancedSignalAlertRequest{Base: base, Condition: &structpb.Struct{}}); err != nil {
+	if _, err = c.Definitions.CreateAdvancedSignalAlert(ctx, &alertsv1.CreateAdvancedSignalAlertRequest{Base: base, Condition: &alertsv1.AdvancedSignalConfigV1{}}); err != nil {
 		t.Fatal(err)
 	}
-	if _, err = c.Definitions.UpdateShadow(ctx, &alertsv1.UpdateShadowAlertRequest{DefinitionId: quality.Definition.Id, Name: "Updated quality", Owner: &structpb.Struct{}, Action: &structpb.Struct{}, EvaluationSettings: &structpb.Struct{}, SampleGuard: &structpb.Struct{}, IdempotencyKey: "alert-update"}); err != nil {
+	if _, err = c.Definitions.UpdateObserve(ctx, &alertsv1.UpdateObserveAlertRequest{DefinitionId: quality.Definition.Id, Name: "Updated quality", Owner: &alertsv1.AlertOwnerRefV1{}, Action: &alertsv1.AlertActionV1{}, EvaluationSettings: &alertsv1.AlertEvaluationSettingsV1{}, SampleGuard: &alertsv1.AlertSampleGuardV1{}, IdempotencyKey: "alert-update"}); err != nil {
 		t.Fatal(err)
 	}
 	if _, err = c.Runtime.Pause(ctx, &alertsv1.PauseAlertRequest{DefinitionId: quality.Definition.Id, IdempotencyKey: "pause"}); err != nil {
@@ -598,7 +759,7 @@ func TestControlledGRPCLifecycle(t *testing.T) {
 		t.Fatal(err)
 	}
 	if preview.Preview.PredictedNotificationCount != 0 {
-		t.Fatal("shadow preview predicted notifications")
+		t.Fatal("Observe preview predicted notifications")
 	}
 	if _, err = c.Definitions.DeleteDefinition(ctx, &alertsv1.DeleteAlertDefinitionRequest{Id: quality.Definition.Id, IdempotencyKey: "alert-delete"}); err != nil {
 		t.Fatal(err)

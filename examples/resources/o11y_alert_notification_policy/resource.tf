@@ -6,42 +6,48 @@ resource "o11y_alert_notification_policy" "default" {
     tree = {
       nodes = [
         {
-          node_key           = "customer-impact"
-          node_kind          = "branch"
-          matcher            = { class = ["outcome", "budget"] }
-          priority           = 10
-          continue_evaluation = false
+          node_key  = "customer-impact"
+          node_kind = "ALERT_POLICY_TREE_NODE_KIND_V1_BRANCH"
+          matcher = [{
+            field = "class"
+            values = [
+              { string_value = "outcome" },
+              { string_value = "budget" }
+            ]
+          }]
+          priority = 10
+          behavior = "ALERT_NOTIFICATION_ROUTE_BEHAVIOR_V1_STOP"
         },
         {
-          node_key            = "primary"
-          parent_node_key     = "customer-impact"
-          node_kind           = "route"
-          destination_id      = o11y_alert_destination.primary.id
-          priority            = 10
-          continue_evaluation = true
+          node_key                                    = "primary"
+          parent_node_key                             = "customer-impact"
+          node_kind                                   = "ALERT_POLICY_TREE_NODE_KIND_V1_ROUTE"
+          target                                      = { destination_id = o11y_alert_destination.primary.id }
+          priority                                    = 10
+          behavior                                    = "ALERT_NOTIFICATION_ROUTE_BEHAVIOR_V1_CONTINUE"
+          notification_template_id                    = o11y_alert_notification_template.customer_impact.id
+          requested_notification_template_revision_id = o11y_alert_notification_template.customer_impact.published_revision_id
         }
       ]
     }
     grouping = {
-      group_by              = ["service.name", "environment"]
-      group_wait_seconds    = 30
+      group_by               = ["service.name", "environment"]
+      group_wait_seconds     = 30
       group_interval_seconds = 300
     }
     notifications = {
       repeat_interval_seconds = 900
-      repeat_limit             = 2
-      notify_resolved          = true
+      repeat_limit            = 2
+      notify_resolved         = true
     }
     escalation = {
       schedule_key = "critical"
       steps = [{
         delay_seconds = 600
-        destination_id = o11y_alert_destination.primary.id
+        target        = { destination_id = o11y_alert_destination.primary.id }
       }]
     }
-    noise_budget = {
-      max_pages_per_day  = 5
-      max_pages_per_week = 20
-    }
+    max_pages_per_day  = 5
+    max_pages_per_week = 20
   })
 }

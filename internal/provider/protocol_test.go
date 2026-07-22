@@ -45,7 +45,7 @@ func TestProviderProtocolAlertingLifecycle(t *testing.T) {
 					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "name", "Quality"),
 					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "evaluation_settings_json", `{}`),
 					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "evaluation_interval_seconds", "60"),
-					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "recipe_config_json", `{"maximum_failure_rate":0.1}`),
+					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "recipe_config_json", `{"max_bad_outcome_rate":0.1}`),
 					terraformresource.TestCheckResourceAttr("data.o11y_alert_preview.quality", "predicted_firing_count", "2"),
 					terraformresource.TestCheckResourceAttr("data.o11y_alert_preview.quality", "predicted_notification_count", "0"),
 				),
@@ -104,6 +104,67 @@ func TestProviderProtocolSLOCalendarLifecycle(t *testing.T) {
 				),
 			},
 			{ResourceName: "o11y_slo.checkout", ImportState: true, ImportStateVerify: true},
+		},
+	})
+}
+
+func TestProviderProtocolSLILifecycle(t *testing.T) {
+	endpoint, service, cleanup := startProtocolTestServer(t)
+	defer cleanup()
+
+	terraformresource.UnitTest(t, terraformresource.TestCase{
+		ProtoV6ProviderFactories: protocolProviderFactories(),
+		CheckDestroy: func(_ *terraform.State) error {
+			service.mu.Lock()
+			defer service.mu.Unlock()
+			if len(service.slis) != 0 {
+				return fmt.Errorf("remote SLI remains after Terraform destroy")
+			}
+			return nil
+		},
+		Steps: []terraformresource.TestStep{
+			{Config: protocolSLIConfig(endpoint, "Checkout availability"), Check: terraformresource.ComposeAggregateTestCheckFunc(
+				terraformresource.TestCheckResourceAttrSet("o11y_sli.checkout", "id"),
+				terraformresource.TestCheckResourceAttrSet("o11y_sli.checkout", "current_revision_id"),
+				terraformresource.TestCheckResourceAttr("o11y_sli.checkout", "revision_number", "1"),
+				terraformresource.TestCheckResourceAttr("o11y_sli.checkout", "indicator_kind", "availability"),
+			)},
+			{Config: protocolSLIConfig(endpoint, "Checkout availability updated"), Check: terraformresource.ComposeAggregateTestCheckFunc(
+				terraformresource.TestCheckResourceAttr("o11y_sli.checkout", "name", "Checkout availability updated"),
+				terraformresource.TestCheckResourceAttr("o11y_sli.checkout", "revision_number", "2"),
+			)},
+			{ResourceName: "o11y_sli.checkout", ImportState: true, ImportStateVerify: true},
+		},
+	})
+}
+
+func TestProviderProtocolNotificationTemplateLifecycle(t *testing.T) {
+	endpoint, service, cleanup := startProtocolTestServer(t)
+	defer cleanup()
+
+	terraformresource.UnitTest(t, terraformresource.TestCase{
+		ProtoV6ProviderFactories: protocolProviderFactories(),
+		CheckDestroy: func(_ *terraform.State) error {
+			service.mu.Lock()
+			defer service.mu.Unlock()
+			for _, item := range service.templates {
+				if item.ArchivedAt == nil {
+					return fmt.Errorf("notification template was not archived on destroy")
+				}
+			}
+			return nil
+		},
+		Steps: []terraformresource.TestStep{
+			{Config: protocolNotificationTemplateConfig(endpoint, "Customer impact", "Investigate {{ hypothesis }}"), Check: terraformresource.ComposeAggregateTestCheckFunc(
+				terraformresource.TestCheckResourceAttrSet("o11y_alert_notification_template.customer_impact", "id"),
+				terraformresource.TestCheckResourceAttrSet("o11y_alert_notification_template.customer_impact", "published_revision_id"),
+				terraformresource.TestCheckResourceAttr("o11y_alert_notification_template.customer_impact", "published", "true"),
+			)},
+			{Config: protocolNotificationTemplateConfig(endpoint, "Customer impact updated", "Act on {{ hypothesis }}"), Check: terraformresource.ComposeAggregateTestCheckFunc(
+				terraformresource.TestCheckResourceAttr("o11y_alert_notification_template.customer_impact", "name", "Customer impact updated"),
+				terraformresource.TestCheckResourceAttr("o11y_alert_notification_template.customer_impact", "published", "true"),
+			)},
+			{ResourceName: "o11y_alert_notification_template.customer_impact", ImportState: true, ImportStateVerify: true},
 		},
 	})
 }
@@ -186,6 +247,50 @@ resource "o11y_slo" "checkout" {
 `, window)
 }
 
+func protocolSLIConfig(endpoint, name string) string {
+	return protocolProviderConfig(endpoint) + fmt.Sprintf(`
+resource "o11y_sli" "checkout" {
+  sli_key = "checkout-availability"
+  name = %q
+  description = "Successful checkout server spans"
+  indicator_kind = "availability"
+  scope_json = jsonencode({
+    service_names = ["checkout"]
+    span_kinds = ["SLI_SPAN_KIND_V1_SERVER"]
+  })
+  eligible_events = "matching server spans"
+  good_events = "matching spans without error"
+  excluded_events = ""
+  aggregation = "event_ratio"
+  missing_data_behavior = "unknown"
+}
+`, name)
+}
+
+func protocolNotificationTemplateConfig(endpoint, name, summary string) string {
+	return protocolProviderConfig(endpoint) + fmt.Sprintf(`
+resource "o11y_alert_notification_template" "customer_impact" {
+  template_key = "customer-impact"
+  name = %q
+  description = "Rich customer-impact notification"
+  change_reason = "Terraform protocol test"
+  published = true
+  document_json = jsonencode({
+    schema_version = 1
+    subject_template = "[{{ incident.severity }}] {{ incident.title }}"
+    firing = {
+      title_template = "{{ incident.title }}"
+      summary_template = %q
+    }
+    resolved = {
+      title_template = "Resolved: {{ incident.title }}"
+      summary_template = "Customer impact has recovered"
+    }
+  })
+}
+`, name, summary)
+}
+
 func protocolAlertingConfig(endpoint, destinationName, alertName string) string {
 	return protocolProviderConfig(endpoint) + fmt.Sprintf(`
 resource "o11y_alert_destination" "primary" {
@@ -205,18 +310,18 @@ resource "o11y_alert_notification_policy" "default" {
     tree = { nodes = [
       {
         node_key = "critical"
-        node_kind = "branch"
-        matcher = { severity = ["critical"] }
+        node_kind = "ALERT_POLICY_TREE_NODE_KIND_V1_BRANCH"
+        matcher = [{ field = "severity", values = [{ string_value = "critical" }] }]
         priority = 10
-        continue_evaluation = false
+        behavior = "ALERT_NOTIFICATION_ROUTE_BEHAVIOR_V1_STOP"
       },
       {
         node_key = "primary"
         parent_node_key = "critical"
-        node_kind = "route"
-        destination_id = o11y_alert_destination.primary.id
+        node_kind = "ALERT_POLICY_TREE_NODE_KIND_V1_ROUTE"
+        target = { destination_id = o11y_alert_destination.primary.id }
         priority = 10
-        continue_evaluation = true
+        behavior = "ALERT_NOTIFICATION_ROUTE_BEHAVIOR_V1_CONTINUE"
       }
     ] }
     grouping = {
@@ -231,23 +336,24 @@ resource "o11y_alert_notification_policy" "default" {
     }
     escalation = {
       schedule_key = "critical"
-      steps = [{ delay_seconds = 600, destination_id = o11y_alert_destination.primary.id }]
+      steps = [{ delay_seconds = 600, target = { destination_id = o11y_alert_destination.primary.id } }]
     }
-    noise_budget = { max_pages_per_day = 5, max_pages_per_week = 20 }
+    max_pages_per_day = 5
+    max_pages_per_week = 20
   })
 }
 
 resource "o11y_alert_maintenance_window" "deploy" {
   window_key = "deploy-freeze"
   name = "Deploy freeze"
-  scope_json = jsonencode({ service = "checkout" })
+  scope_json = jsonencode({ service_names = ["checkout"] })
   starts_at = "2030-01-01T00:00:00Z"
   ends_at = "2030-01-01T01:00:00Z"
 }
 
 resource "o11y_alert_silence" "provider" {
   silence_key = "provider-maintenance"
-  matcher_json = jsonencode({ provider = "openai" })
+  matcher_json = jsonencode({ clauses = [{ field = "provider", values = [{ string_value = "openai" }] }] })
   reason = "Provider maintenance"
   starts_at = "2030-01-01T00:00:00Z"
   ends_at = "2030-01-01T01:00:00Z"
@@ -258,12 +364,12 @@ resource "o11y_agent_quality_alert" "quality" {
   name = %q
   description = "Terraform protocol acceptance"
   severity = "warning"
-  scope_json = jsonencode({ service = "checkout" })
-  owner_json = jsonencode({ team = "platform" })
-  action_json = jsonencode({ runbook = "https://runbooks.example.test/quality" })
+  scope_json = jsonencode({ service_names = ["checkout"] })
+  owner_json = jsonencode({ team_id = "platform" })
+  action_json = jsonencode({ external_runbook_url = "https://runbooks.example.test/quality" })
   evaluation_settings_json = jsonencode({})
-  sample_guard_json = jsonencode({ minimum_runs = 20 })
-  recipe_config_json = jsonencode({ maximum_failure_rate = 0.1 })
+  sample_guard_json = jsonencode({ minimum_events = "20" })
+  recipe_config_json = jsonencode({ max_bad_outcome_rate = 0.1 })
   paused = false
   notify = false
 }

@@ -20,7 +20,6 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/types/known/structpb"
 )
 
 type alertRecipe int
@@ -80,12 +79,12 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 	replace := []planmodifier.String{stringplanmodifier.RequiresReplace()}
 	canonical := []planmodifier.String{canonicalJSONPlanModifier{}}
 	canonicalReplace := []planmodifier.String{canonicalJSONPlanModifier{}, stringplanmodifier.RequiresReplace()}
-	resp.Schema = schema.Schema{Description: "A shadow-only O11y.one alert definition. Notify activation is intentionally unsupported and fails closed.", Attributes: map[string]schema.Attribute{
+	resp.Schema = schema.Schema{Description: "An Observe-mode O11y.one alert definition. Notify activation is intentionally unsupported and fails closed.", Attributes: map[string]schema.Attribute{
 		"id": schema.StringAttribute{Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()}}, "slug": schema.StringAttribute{Required: true, PlanModifiers: replace}, "name": schema.StringAttribute{Required: true}, "description": schema.StringAttribute{Required: true},
-		"severity": schema.StringAttribute{Required: true, PlanModifiers: replace}, "scope_json": schema.StringAttribute{Required: true, PlanModifiers: canonicalReplace},
-		"owner_json": schema.StringAttribute{Required: true, PlanModifiers: canonical}, "action_json": schema.StringAttribute{Required: true, PlanModifiers: canonical}, "evaluation_settings_json": schema.StringAttribute{Required: true, PlanModifiers: canonical, Description: "Detector evaluation settings as JSON."},
+		"severity": schema.StringAttribute{Required: true, PlanModifiers: replace}, "scope_json": schema.StringAttribute{Required: true, PlanModifiers: canonicalReplace, Description: "Exact AlertScopeV1 protobuf JSON."},
+		"owner_json": schema.StringAttribute{Required: true, PlanModifiers: canonical, Description: "Exact AlertOwnerRefV1 protobuf JSON."}, "action_json": schema.StringAttribute{Required: true, PlanModifiers: canonical, Description: "Exact AlertActionV1 protobuf JSON."}, "evaluation_settings_json": schema.StringAttribute{Required: true, PlanModifiers: canonical, Description: "Exact AlertEvaluationSettingsV1 protobuf JSON."},
 		"evaluation_interval_seconds": schema.Int64Attribute{Optional: true, Computed: true, Default: int64default.StaticInt64(60), Description: "Evaluation schedule interval in seconds."},
-		"sample_guard_json":           schema.StringAttribute{Required: true, PlanModifiers: canonical}, "recipe_config_json": schema.StringAttribute{Optional: true, PlanModifiers: canonicalReplace},
+		"sample_guard_json":           schema.StringAttribute{Required: true, PlanModifiers: canonical, Description: "Exact AlertSampleGuardV1 protobuf JSON."}, "recipe_config_json": schema.StringAttribute{Optional: true, PlanModifiers: canonicalReplace, Description: "Exact recipe-specific detector protobuf JSON."},
 		"paused": schema.BoolAttribute{Required: true}, "notify": schema.BoolAttribute{Required: true, Description: "Must be false. Notify activation requires an out-of-band, audited API workflow."},
 		"mode": schema.StringAttribute{Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()}}, "revision_id": schema.StringAttribute{Computed: true},
 	}}
@@ -155,6 +154,41 @@ func (r *alertResource) ValidateConfig(ctx context.Context, req resource.Validat
 			}
 		}
 	}
+	typedFields := map[string]struct {
+		value  types.String
+		target proto.Message
+	}{
+		"scope_json":               {data.Scope, &alertsv1.AlertScopeV1{}},
+		"owner_json":               {data.Owner, &alertsv1.AlertOwnerRefV1{}},
+		"action_json":              {data.Action, &alertsv1.AlertActionV1{}},
+		"evaluation_settings_json": {data.EvaluationSettings, &alertsv1.AlertEvaluationSettingsV1{}},
+		"sample_guard_json":        {data.SampleGuard, &alertsv1.AlertSampleGuardV1{}},
+	}
+	for name, field := range typedFields {
+		if knownNonEmpty(field.value) {
+			if err := protoFromJSON(field.value, field.target); err != nil {
+				resp.Diagnostics.AddAttributeError(path.Root(name), "Invalid typed alert configuration", err.Error())
+			}
+		}
+	}
+	if knownNonEmpty(data.RecipeConfig) {
+		var target proto.Message
+		switch r.recipe {
+		case recipeAgentQuality:
+			target = &alertsv1.AgentQualityRegressionConfigV1{}
+		case recipeCost:
+			target = &alertsv1.CostPerSuccessConfigV1{}
+		case recipeSLO:
+			target = &alertsv1.SloBurnConfigV1{}
+		case recipeSymptom:
+			target = &alertsv1.AdvancedSignalConfigV1{}
+		}
+		if target != nil {
+			if err := protoFromJSON(data.RecipeConfig, target); err != nil {
+				resp.Diagnostics.AddAttributeError(path.Root("recipe_config_json"), "Invalid typed detector configuration", err.Error())
+			}
+		}
+	}
 }
 func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
 	var data alertModel
@@ -162,7 +196,7 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	base, recipeConfig, err := r.createPayload(&data)
+	base, err := r.createBase(&data)
 	if err != nil {
 		addRPCError(&resp.Diagnostics, "build alert request", err)
 		return
@@ -172,16 +206,36 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 	var result *alertsv1.CreateAlertDefinitionResponse
 	switch r.recipe {
 	case recipeAgentQuality:
-		result, err = r.client.Definitions.CreateAgentQualityRegressionAlert(rpcCtx, &alertsv1.CreateAgentQualityRegressionAlertRequest{Base: base, RecipeConfig: recipeConfig})
+		config := &alertsv1.AgentQualityRegressionConfigV1{}
+		if err = protoFromJSON(data.RecipeConfig, config); err == nil {
+			request := &alertsv1.CreateAgentQualityRegressionAlertRequest{Base: base, RecipeConfig: config}
+			r.setCreateIdempotency(base, request, data.Slug.ValueString())
+			result, err = r.client.Definitions.CreateAgentQualityRegressionAlert(rpcCtx, request)
+		}
 	case recipeCost:
-		result, err = r.client.Definitions.CreateCostPerSuccessAlert(rpcCtx, &alertsv1.CreateCostPerSuccessAlertRequest{Base: base, RecipeConfig: recipeConfig})
+		config := &alertsv1.CostPerSuccessConfigV1{}
+		if err = protoFromJSON(data.RecipeConfig, config); err == nil {
+			request := &alertsv1.CreateCostPerSuccessAlertRequest{Base: base, RecipeConfig: config}
+			r.setCreateIdempotency(base, request, data.Slug.ValueString())
+			result, err = r.client.Definitions.CreateCostPerSuccessAlert(rpcCtx, request)
+		}
 	case recipeSLO:
-		result, err = r.client.Definitions.CreateSloBurnAlert(rpcCtx, &alertsv1.CreateSloBurnAlertRequest{Base: base, RecipeConfig: recipeConfig})
+		config := &alertsv1.SloBurnConfigV1{}
+		if err = protoFromJSON(data.RecipeConfig, config); err == nil {
+			request := &alertsv1.CreateSloBurnAlertRequest{Base: base, RecipeConfig: config}
+			r.setCreateIdempotency(base, request, data.Slug.ValueString())
+			result, err = r.client.Definitions.CreateSloBurnAlert(rpcCtx, request)
+		}
 	case recipeSymptom:
-		result, err = r.client.Definitions.CreateAdvancedSignalAlert(rpcCtx, &alertsv1.CreateAdvancedSignalAlertRequest{Base: base, Condition: recipeConfig})
+		config := &alertsv1.AdvancedSignalConfigV1{}
+		if err = protoFromJSON(data.RecipeConfig, config); err == nil {
+			request := &alertsv1.CreateAdvancedSignalAlertRequest{Base: base, Condition: config}
+			r.setCreateIdempotency(base, request, data.Slug.ValueString())
+			result, err = r.client.Definitions.CreateAdvancedSignalAlert(rpcCtx, request)
+		}
 	}
 	if err != nil {
-		addRPCError(&resp.Diagnostics, "create shadow alert", err)
+		addRPCError(&resp.Diagnostics, "create Observe alert", err)
 		return
 	}
 	desiredPaused := data.Paused.ValueBool()
@@ -225,32 +279,52 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 	}
 	plan.ID = state.ID
 	plan.RevisionID = state.RevisionID
-	owner, err := structFromJSON(plan.Owner)
+	owner := &alertsv1.AlertOwnerRefV1{}
+	err := protoFromJSON(plan.Owner, owner)
 	if err != nil {
 		addRPCError(&resp.Diagnostics, "build owner", err)
 		return
 	}
-	action, _ := structFromJSON(plan.Action)
-	evaluation, _ := structFromJSON(plan.EvaluationSettings)
-	guard, _ := structFromJSON(plan.SampleGuard)
+	action := &alertsv1.AlertActionV1{}
+	evaluation := &alertsv1.AlertEvaluationSettingsV1{}
+	guard := &alertsv1.AlertSampleGuardV1{}
+	for field, target := range map[string]proto.Message{
+		"action":              action,
+		"evaluation_settings": evaluation,
+		"sample_guard":        guard,
+	} {
+		var value types.String
+		switch field {
+		case "action":
+			value = plan.Action
+		case "evaluation_settings":
+			value = plan.EvaluationSettings
+		default:
+			value = plan.SampleGuard
+		}
+		if err = protoFromJSON(value, target); err != nil {
+			addRPCError(&resp.Diagnostics, "build "+field, err)
+			return
+		}
+	}
 	rpcCtx, cancel := r.client.Context(ctx)
-	message := &alertsv1.UpdateShadowAlertRequest{DefinitionId: state.ID.ValueString(), Name: plan.Name.ValueString(), Description: plan.Description.ValueString(), Owner: owner, Action: action, EvaluationSettings: evaluation, SampleGuard: guard, EvaluationIntervalSeconds: proto.Int64(plan.EvaluationInterval.ValueInt64())}
+	message := &alertsv1.UpdateObserveAlertRequest{DefinitionId: state.ID.ValueString(), Name: plan.Name.ValueString(), Description: plan.Description.ValueString(), Owner: owner, Action: action, EvaluationSettings: evaluation, SampleGuard: guard, EvaluationIntervalSeconds: proto.Int64(plan.EvaluationInterval.ValueInt64())}
 	payload, marshalErr := protojson.Marshal(message)
 	if marshalErr != nil {
 		addRPCError(&resp.Diagnostics, "marshal update payload", marshalErr)
 		return
 	}
 	message.IdempotencyKey = idempotency.Key(r.client.TenantID(), r.client.OrgID(), r.typeName, "update", state.ID.ValueString(), string(payload))
-	_, err = r.client.Definitions.UpdateShadow(rpcCtx, message)
+	_, err = r.client.Definitions.UpdateObserve(rpcCtx, message)
 	if err != nil {
 		cancel()
-		addRPCError(&resp.Diagnostics, "update shadow alert", err)
+		addRPCError(&resp.Diagnostics, "update Observe alert", err)
 		return
 	}
 	item, err := r.client.Definitions.GetDefinition(rpcCtx, &alertsv1.GetAlertDefinitionRequest{Id: state.ID.ValueString()})
 	cancel()
 	if err != nil {
-		addRPCError(&resp.Diagnostics, "read updated shadow alert", err)
+		addRPCError(&resp.Diagnostics, "read updated Observe alert", err)
 		return
 	}
 	desiredPaused := plan.Paused.ValueBool()
@@ -261,7 +335,7 @@ func (r *alertResource) Update(ctx context.Context, req resource.UpdateRequest, 
 			plan.Mode = types.StringValue("disabled")
 		} else {
 			err = r.resume(ctx, plan.ID.ValueString(), plan.RevisionID.ValueString())
-			plan.Mode = types.StringValue("shadow")
+			plan.Mode = types.StringValue("observe")
 		}
 		if err != nil {
 			addRPCError(&resp.Diagnostics, "change alert pause state", err)
@@ -299,39 +373,36 @@ func (r *alertResource) Delete(ctx context.Context, req resource.DeleteRequest, 
 func (r *alertResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
-func (r *alertResource) createPayload(data *alertModel) (*alertsv1.AlertRecipeBaseV1, *structpb.Struct, error) {
-	scope, err := structFromJSON(data.Scope)
-	if err != nil {
-		return nil, nil, err
+func (r *alertResource) createBase(data *alertModel) (*alertsv1.AlertRecipeBaseV1, error) {
+	scope := &alertsv1.AlertScopeV1{}
+	owner := &alertsv1.AlertOwnerRefV1{}
+	action := &alertsv1.AlertActionV1{}
+	evaluation := &alertsv1.AlertEvaluationSettingsV1{}
+	guard := &alertsv1.AlertSampleGuardV1{}
+	fields := []struct {
+		name   string
+		value  types.String
+		target proto.Message
+	}{
+		{"scope", data.Scope, scope},
+		{"owner", data.Owner, owner},
+		{"action", data.Action, action},
+		{"evaluation_settings", data.EvaluationSettings, evaluation},
+		{"sample_guard", data.SampleGuard, guard},
 	}
-	owner, err := structFromJSON(data.Owner)
-	if err != nil {
-		return nil, nil, err
-	}
-	action, err := structFromJSON(data.Action)
-	if err != nil {
-		return nil, nil, err
-	}
-	evaluation, err := structFromJSON(data.EvaluationSettings)
-	if err != nil {
-		return nil, nil, err
-	}
-	guard, err := structFromJSON(data.SampleGuard)
-	if err != nil {
-		return nil, nil, err
-	}
-	config, err := structFromJSON(data.RecipeConfig)
-	if err != nil {
-		return nil, nil, err
+	for _, field := range fields {
+		if err := protoFromJSON(field.value, field.target); err != nil {
+			return nil, fmt.Errorf("decode %s: %w", field.name, err)
+		}
 	}
 	severity, _ := alertSeverity(data.Severity.ValueString())
 	base := &alertsv1.AlertRecipeBaseV1{OrgId: r.client.OrgID(), Slug: data.Slug.ValueString(), Name: data.Name.ValueString(), Description: data.Description.ValueString(), Severity: severity, Scope: scope, Owner: owner, Action: action, EvaluationSettings: evaluation, SampleGuard: guard, EvaluationIntervalSeconds: data.EvaluationInterval.ValueInt64()}
-	payload, err := protojson.Marshal(&alertsv1.CreateAgentQualityRegressionAlertRequest{Base: base, RecipeConfig: config})
-	if err != nil {
-		return nil, nil, err
-	}
-	base.IdempotencyKey = idempotency.Key(r.client.TenantID(), r.client.OrgID(), r.typeName, "create", data.Slug.ValueString(), string(payload))
-	return base, config, nil
+	return base, nil
+}
+
+func (r *alertResource) setCreateIdempotency(base *alertsv1.AlertRecipeBaseV1, request proto.Message, slug string) {
+	payload, _ := protojson.Marshal(request)
+	base.IdempotencyKey = idempotency.Key(r.client.TenantID(), r.client.OrgID(), r.typeName, "create", slug, string(payload))
 }
 func (r *alertResource) pause(ctx context.Context, id string) error {
 	rpcCtx, cancel := r.client.Context(ctx)
@@ -357,17 +428,35 @@ func setAlert(data *alertModel, item *alertsv1.AlertDefinitionV1) {
 	data.Name = types.StringValue(item.Name)
 	data.Description = types.StringValue(item.Description)
 	data.Severity = types.StringValue(strings.ToLower(strings.TrimPrefix(item.Severity.String(), "ALERT_SEVERITY_V1_")))
-	data.Scope = jsonFromStruct(item.Scope)
-	data.Owner = jsonFromStruct(item.Owner)
-	data.Action = jsonFromStruct(item.Action)
-	data.EvaluationSettings = jsonFromStruct(item.EvaluationSettings)
+	data.Scope = jsonFromProtoPreserving(data.Scope, item.Scope)
+	data.Owner = jsonFromProtoPreserving(data.Owner, item.Owner)
+	data.Action = jsonFromProtoPreserving(data.Action, item.Action)
+	data.EvaluationSettings = jsonFromProtoPreserving(data.EvaluationSettings, item.EvaluationSettings)
 	data.EvaluationInterval = types.Int64Value(item.EvaluationIntervalSeconds)
-	data.SampleGuard = jsonFromStruct(item.SampleGuard)
-	data.RecipeConfig = jsonFromStruct(item.RecipeConfig)
+	data.SampleGuard = jsonFromProtoPreserving(data.SampleGuard, item.SampleGuard)
+	data.RecipeConfig = jsonFromProtoPreserving(data.RecipeConfig, detectorRecipeConfig(item.DetectorConfig))
 	data.Mode = types.StringValue(strings.ToLower(strings.TrimPrefix(item.Mode.String(), "ALERT_MODE_V1_")))
 	data.Paused = types.BoolValue(item.Mode == alertsv1.AlertModeV1_ALERT_MODE_V1_DISABLED)
 	data.Notify = types.BoolValue(item.Mode == alertsv1.AlertModeV1_ALERT_MODE_V1_NOTIFY)
 	data.RevisionID = types.StringValue(item.CurrentRevisionId)
+}
+
+func detectorRecipeConfig(config *alertsv1.AlertDetectorConfigV1) proto.Message {
+	if config == nil {
+		return nil
+	}
+	switch value := config.Config.(type) {
+	case *alertsv1.AlertDetectorConfigV1_AgentQualityRegression:
+		return value.AgentQualityRegression
+	case *alertsv1.AlertDetectorConfigV1_CostPerSuccess:
+		return value.CostPerSuccess
+	case *alertsv1.AlertDetectorConfigV1_SloBurn:
+		return value.SloBurn
+	case *alertsv1.AlertDetectorConfigV1_AdvancedSignal:
+		return value.AdvancedSignal
+	default:
+		return nil
+	}
 }
 func alertSeverity(value string) (alertsv1.AlertSeverityV1, bool) {
 	values := map[string]alertsv1.AlertSeverityV1{"info": alertsv1.AlertSeverityV1_ALERT_SEVERITY_V1_INFO, "warning": alertsv1.AlertSeverityV1_ALERT_SEVERITY_V1_WARNING, "critical": alertsv1.AlertSeverityV1_ALERT_SEVERITY_V1_CRITICAL}
