@@ -29,6 +29,7 @@ const (
 	recipeCost
 	recipeSLO
 	recipeSymptom
+	recipeQueryThreshold
 )
 
 type alertResource struct {
@@ -41,6 +42,7 @@ type alertModel struct {
 	Slug               types.String `tfsdk:"slug"`
 	Name               types.String `tfsdk:"name"`
 	Description        types.String `tfsdk:"description"`
+	AlertClass         types.String `tfsdk:"alert_class"`
 	Severity           types.String `tfsdk:"severity"`
 	Scope              types.String `tfsdk:"scope_json"`
 	Owner              types.String `tfsdk:"owner_json"`
@@ -72,6 +74,9 @@ func NewSLOAlertResource() resource.Resource {
 func NewSymptomAlertResource() resource.Resource {
 	return &alertResource{recipe: recipeSymptom, typeName: "advanced_signal_alert"}
 }
+func NewQueryThresholdAlertResource() resource.Resource {
+	return &alertResource{recipe: recipeQueryThreshold, typeName: "query_threshold_alert"}
+}
 func (r *alertResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_" + r.typeName
 }
@@ -79,9 +84,14 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 	replace := []planmodifier.String{stringplanmodifier.RequiresReplace()}
 	canonical := []planmodifier.String{canonicalJSONPlanModifier{}}
 	canonicalReplace := []planmodifier.String{canonicalJSONPlanModifier{}, stringplanmodifier.RequiresReplace()}
+	alertClass := schema.StringAttribute{Computed: true, Description: "Backend-owned outcome, budget, or symptom classification."}
+	if r.recipe == recipeQueryThreshold {
+		alertClass = schema.StringAttribute{Required: true, Description: "Query-threshold classification: outcome, budget, or symptom."}
+	}
 	resp.Schema = schema.Schema{Description: "An Observe-mode O11y.one alert definition. Notify activation is intentionally unsupported and fails closed.", Attributes: map[string]schema.Attribute{
 		"id": schema.StringAttribute{Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()}}, "slug": schema.StringAttribute{Required: true, PlanModifiers: replace}, "name": schema.StringAttribute{Required: true}, "description": schema.StringAttribute{Required: true},
-		"severity": schema.StringAttribute{Required: true, PlanModifiers: replace}, "scope_json": schema.StringAttribute{Required: true, PlanModifiers: canonicalReplace, Description: "Exact AlertScopeV1 protobuf JSON."},
+		"alert_class": alertClass,
+		"severity":    schema.StringAttribute{Required: true, PlanModifiers: replace}, "scope_json": schema.StringAttribute{Required: true, PlanModifiers: canonicalReplace, Description: "Exact AlertScopeV1 protobuf JSON."},
 		"owner_json": schema.StringAttribute{Required: true, PlanModifiers: canonical, Description: "Exact AlertOwnerRefV1 protobuf JSON."}, "action_json": schema.StringAttribute{Required: true, PlanModifiers: canonical, Description: "Exact AlertActionV1 protobuf JSON."}, "evaluation_settings_json": schema.StringAttribute{Required: true, PlanModifiers: canonical, Description: "Exact AlertEvaluationSettingsV1 protobuf JSON."},
 		"evaluation_interval_seconds": schema.Int64Attribute{Optional: true, Computed: true, Default: int64default.StaticInt64(60), Description: "Evaluation schedule interval in seconds."},
 		"sample_guard_json":           schema.StringAttribute{Required: true, PlanModifiers: canonical, Description: "Exact AlertSampleGuardV1 protobuf JSON."}, "recipe_config_json": schema.StringAttribute{Optional: true, PlanModifiers: canonicalReplace, Description: "Exact recipe-specific detector protobuf JSON."},
@@ -147,6 +157,11 @@ func (r *alertResource) ValidateConfig(ctx context.Context, req resource.Validat
 			resp.Diagnostics.AddAttributeError(path.Root("severity"), "Invalid severity", "severity must be info, warning, or critical")
 		}
 	}
+	if r.recipe == recipeQueryThreshold {
+		if !data.AlertClass.IsUnknown() && (data.AlertClass.IsNull() || !validQueryAlertClass(data.AlertClass.ValueString())) {
+			resp.Diagnostics.AddAttributeError(path.Root("alert_class"), "Invalid alert class", "query-threshold alerts require alert_class to be outcome, budget, or symptom")
+		}
+	}
 	for name, value := range map[string]types.String{"scope_json": data.Scope, "owner_json": data.Owner, "action_json": data.Action, "evaluation_settings_json": data.EvaluationSettings, "sample_guard_json": data.SampleGuard, "recipe_config_json": data.RecipeConfig} {
 		if !value.IsNull() && !value.IsUnknown() && value.ValueString() != "" {
 			if err := validationutil.JSONDocument(value.ValueString()); err != nil {
@@ -182,6 +197,8 @@ func (r *alertResource) ValidateConfig(ctx context.Context, req resource.Validat
 			target = &alertsv1.SloBurnConfigV1{}
 		case recipeSymptom:
 			target = &alertsv1.AdvancedSignalConfigV1{}
+		case recipeQueryThreshold:
+			target = &alertsv1.QueryThresholdConfigV1{}
 		}
 		if target != nil {
 			if err := protoFromJSON(data.RecipeConfig, target); err != nil {
@@ -232,6 +249,13 @@ func (r *alertResource) Create(ctx context.Context, req resource.CreateRequest, 
 			request := &alertsv1.CreateAdvancedSignalAlertRequest{Base: base, Condition: config}
 			r.setCreateIdempotency(base, request, data.Slug.ValueString())
 			result, err = r.client.Definitions.CreateAdvancedSignalAlert(rpcCtx, request)
+		}
+	case recipeQueryThreshold:
+		config := &alertsv1.QueryThresholdConfigV1{}
+		if err = protoFromJSON(data.RecipeConfig, config); err == nil {
+			request := &alertsv1.CreateQueryThresholdAlertRequest{Base: base, Query: config, AlertClass: queryAlertClass(data.AlertClass.ValueString())}
+			r.setCreateIdempotency(base, request, data.Slug.ValueString())
+			result, err = r.client.Definitions.CreateQueryThresholdAlert(rpcCtx, request)
 		}
 	}
 	if err != nil {
@@ -427,6 +451,7 @@ func setAlert(data *alertModel, item *alertsv1.AlertDefinitionV1) {
 	data.Slug = types.StringValue(item.Slug)
 	data.Name = types.StringValue(item.Name)
 	data.Description = types.StringValue(item.Description)
+	data.AlertClass = types.StringValue(strings.ToLower(strings.TrimPrefix(item.Class.String(), "ALERT_CLASS_V1_")))
 	data.Severity = types.StringValue(strings.ToLower(strings.TrimPrefix(item.Severity.String(), "ALERT_SEVERITY_V1_")))
 	data.Scope = jsonFromProtoPreserving(data.Scope, item.Scope)
 	data.Owner = jsonFromProtoPreserving(data.Owner, item.Owner)
@@ -454,8 +479,28 @@ func detectorRecipeConfig(config *alertsv1.AlertDetectorConfigV1) proto.Message 
 		return value.SloBurn
 	case *alertsv1.AlertDetectorConfigV1_AdvancedSignal:
 		return value.AdvancedSignal
+	case *alertsv1.AlertDetectorConfigV1_QueryThreshold:
+		return value.QueryThreshold
 	default:
 		return nil
+	}
+}
+func validQueryAlertClass(value string) bool {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case "outcome", "budget", "symptom":
+		return true
+	default:
+		return false
+	}
+}
+func queryAlertClass(value string) alertsv1.AlertClassV1 {
+	switch strings.ToLower(strings.TrimSpace(value)) {
+	case "outcome":
+		return alertsv1.AlertClassV1_ALERT_CLASS_V1_OUTCOME
+	case "budget":
+		return alertsv1.AlertClassV1_ALERT_CLASS_V1_BUDGET
+	default:
+		return alertsv1.AlertClassV1_ALERT_CLASS_V1_SYMPTOM
 	}
 }
 func alertSeverity(value string) (alertsv1.AlertSeverityV1, bool) {

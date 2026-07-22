@@ -541,12 +541,97 @@ message AdvancedSignalConfigV1 {
   optional uint32 evidence_limit = 7;
 }
 
+enum AlertQueryDatasetV1 {
+  ALERT_QUERY_DATASET_V1_UNSPECIFIED = 0;
+  ALERT_QUERY_DATASET_V1_TRACES = 1;
+  ALERT_QUERY_DATASET_V1_LOGS = 2;
+  ALERT_QUERY_DATASET_V1_METRICS = 3;
+}
+
+enum AlertQueryAggregationV1 {
+  ALERT_QUERY_AGGREGATION_V1_UNSPECIFIED = 0;
+  ALERT_QUERY_AGGREGATION_V1_COUNT = 1;
+  ALERT_QUERY_AGGREGATION_V1_COUNT_DISTINCT = 2;
+  ALERT_QUERY_AGGREGATION_V1_SUM = 3;
+  ALERT_QUERY_AGGREGATION_V1_AVERAGE = 4;
+  ALERT_QUERY_AGGREGATION_V1_MINIMUM = 5;
+  ALERT_QUERY_AGGREGATION_V1_MAXIMUM = 6;
+  ALERT_QUERY_AGGREGATION_V1_P50 = 7;
+  ALERT_QUERY_AGGREGATION_V1_P90 = 8;
+  ALERT_QUERY_AGGREGATION_V1_P95 = 9;
+  ALERT_QUERY_AGGREGATION_V1_P99 = 10;
+}
+
+enum AlertQueryComparisonV1 {
+  ALERT_QUERY_COMPARISON_V1_UNSPECIFIED = 0;
+  ALERT_QUERY_COMPARISON_V1_GREATER_THAN = 1;
+  ALERT_QUERY_COMPARISON_V1_GREATER_THAN_OR_EQUAL = 2;
+  ALERT_QUERY_COMPARISON_V1_LESS_THAN = 3;
+  ALERT_QUERY_COMPARISON_V1_LESS_THAN_OR_EQUAL = 4;
+  ALERT_QUERY_COMPARISON_V1_EQUAL = 5;
+  ALERT_QUERY_COMPARISON_V1_NOT_EQUAL = 6;
+}
+
+enum AlertQueryFilterOperatorV1 {
+  ALERT_QUERY_FILTER_OPERATOR_V1_UNSPECIFIED = 0;
+  ALERT_QUERY_FILTER_OPERATOR_V1_EQUAL = 1;
+  ALERT_QUERY_FILTER_OPERATOR_V1_NOT_EQUAL = 2;
+  ALERT_QUERY_FILTER_OPERATOR_V1_GREATER_THAN = 3;
+  ALERT_QUERY_FILTER_OPERATOR_V1_GREATER_THAN_OR_EQUAL = 4;
+  ALERT_QUERY_FILTER_OPERATOR_V1_LESS_THAN = 5;
+  ALERT_QUERY_FILTER_OPERATOR_V1_LESS_THAN_OR_EQUAL = 6;
+  ALERT_QUERY_FILTER_OPERATOR_V1_CONTAINS = 7;
+  ALERT_QUERY_FILTER_OPERATOR_V1_NOT_CONTAINS = 8;
+  ALERT_QUERY_FILTER_OPERATOR_V1_IN = 9;
+  ALERT_QUERY_FILTER_OPERATOR_V1_NOT_IN = 10;
+  ALERT_QUERY_FILTER_OPERATOR_V1_EXISTS = 11;
+  ALERT_QUERY_FILTER_OPERATOR_V1_NOT_EXISTS = 12;
+  ALERT_QUERY_FILTER_OPERATOR_V1_BETWEEN = 13;
+  ALERT_QUERY_FILTER_OPERATOR_V1_NOT_BETWEEN = 14;
+}
+
+message AlertQueryScalarV1 {
+  oneof value {
+    string string_value = 1;
+    double number_value = 2;
+    bool bool_value = 3;
+    int64 integer_value = 4;
+  }
+}
+
+message AlertQueryFilterV1 {
+  string field = 1;
+  AlertQueryFilterOperatorV1 operator = 2;
+  repeated AlertQueryScalarV1 values = 3;
+  string data_type = 4;
+}
+
+// A bounded structured-query escape hatch. It deliberately has no SQL field.
+// The normalized query is reused across definitions through durable per-window
+// result caching before the ordinary alert state machine is evaluated.
+message QueryThresholdConfigV1 {
+  AlertQueryDatasetV1 dataset = 1;
+  AlertQueryAggregationV1 aggregation = 2;
+  string aggregation_field = 3;
+  repeated AlertQueryFilterV1 filters = 4;
+  repeated string group_by = 5;
+  AlertQueryComparisonV1 comparison = 6;
+  double threshold = 7;
+  int64 window_seconds = 8;
+  int64 evaluation_delay_seconds = 9;
+  uint64 minimum_event_count = 10;
+  uint32 max_groups = 11;
+  uint32 evidence_limit = 12;
+  uint32 timeout_ms = 13;
+}
+
 message AlertDetectorConfigV1 {
   oneof config {
     AgentQualityRegressionConfigV1 agent_quality_regression = 1;
     CostPerSuccessConfigV1 cost_per_success = 2;
     SloBurnConfigV1 slo_burn = 3;
     AdvancedSignalConfigV1 advanced_signal = 4;
+    QueryThresholdConfigV1 query_threshold = 5;
   }
 }
 
@@ -1378,6 +1463,12 @@ message CreateAdvancedSignalAlertRequest {
   reserved "detector_config";
 }
 
+message CreateQueryThresholdAlertRequest {
+  AlertRecipeBaseV1 base = 1;
+  QueryThresholdConfigV1 query = 2;
+  AlertClassV1 alert_class = 3;
+}
+
 message CreateAlertDefinitionResponse {
   AlertDefinitionV1 definition = 1;
   string revision_id = 2;
@@ -1506,6 +1597,28 @@ message ListActiveAlertInstancesRequest {
 message ListActiveAlertInstancesResponse {
   repeated AlertInstanceV1 items = 1;
   int64 total_count = 2;
+}
+
+message GetAlertRuntimeCapabilityRequest {}
+
+message AlertRuntimeCapabilityBlockerV1 {
+  string code = 1;
+  string message = 2;
+  string remediation = 3;
+}
+
+message AlertRuntimeCapabilityV1 {
+  bool alerting_configured = 1;
+  bool source_materializer_configured = 2;
+  bool evaluator_current = 3;
+  bool delivery_current = 4;
+  bool source_materializer_current = 5;
+  bool definition_authoring_available = 6;
+  bool slo_authoring_available = 7;
+  bool notify_delivery_available = 8;
+  string status = 9;
+  repeated AlertRuntimeCapabilityBlockerV1 blockers = 10;
+  google.protobuf.Timestamp checked_at = 11;
 }
 
 message AlertIdRequest {
@@ -2312,12 +2425,24 @@ message NotificationTemplateVariantV1 {
   repeated NotificationTemplateBlockV1 blocks = 3;
 }
 
+message NotificationTemplateLocalizationV1 {
+  string locale = 1;
+  string subject_template = 2;
+  NotificationTemplateVariantV1 firing = 3;
+  NotificationTemplateVariantV1 resolved = 4;
+  NotificationTemplateVariantV1 reminder = 5;
+}
+
 message NotificationTemplateDocumentV1 {
   uint32 schema_version = 1;
   string subject_template = 2;
   NotificationTemplateVariantV1 firing = 3;
   NotificationTemplateVariantV1 resolved = 4;
   NotificationTemplateVariantV1 reminder = 5;
+  // BCP-47 locale used when no matching localization exists. Empty means en-US
+  // for backward compatibility with documents created before localization.
+  string default_locale = 6;
+  repeated NotificationTemplateLocalizationV1 localizations = 7;
 }
 
 message AlertNotificationTemplateRevisionV1 {
@@ -2454,6 +2579,7 @@ message PreviewAlertNotificationTemplateRequest {
   string destination_id = 4;
   string lifecycle_event = 5;
   AlertAttributeSetV1 representative_evidence = 6;
+  string locale = 7;
 }
 
 message PreviewAlertNotificationTemplateResponse {
@@ -2464,6 +2590,7 @@ message PreviewAlertNotificationTemplateResponse {
   string destination_text = 5;
   string destination_html = 6;
   uint64 approximate_payload_bytes = 7;
+  string resolved_locale = 8;
 }
 
 message NotificationTemplateVariableV1 {
@@ -2477,6 +2604,79 @@ message ListNotificationTemplateVariablesRequest {}
 message ListNotificationTemplateVariablesResponse {
   uint32 variable_schema_version = 1;
   repeated NotificationTemplateVariableV1 variables = 2;
+}
+
+message AlertNotificationTemplatePackV1 {
+  string pack_key = 1;
+  string name = 2;
+  string description = 3;
+  NotificationTemplateDocumentV1 document = 4;
+  repeated string supported_locales = 5;
+}
+
+message ListAlertNotificationTemplatePacksRequest {}
+message ListAlertNotificationTemplatePacksResponse { repeated AlertNotificationTemplatePackV1 items = 1; }
+
+message CreateAlertNotificationTemplateFromPackRequest {
+  string org_id = 1;
+  string pack_key = 2;
+  string template_key = 3;
+  string name = 4;
+  string description = 5;
+  string change_reason = 6;
+  string idempotency_key = 7;
+}
+
+message AlertNotificationTemplateSettingsV1 {
+  string org_id = 1;
+  string default_locale = 2;
+  string notification_template_id = 3;
+  string notification_template_revision_id = 4;
+  int64 revision = 5;
+  google.protobuf.Timestamp updated_at = 6;
+}
+
+message GetAlertNotificationTemplateSettingsRequest { string org_id = 1; }
+message UpdateAlertNotificationTemplateSettingsRequest {
+  string org_id = 1;
+  string default_locale = 2;
+  string notification_template_id = 3;
+  string requested_notification_template_revision_id = 4;
+  int64 expected_revision = 5;
+  string reason = 6;
+  string idempotency_key = 7;
+}
+
+enum NotificationTemplateDiffKindV1 {
+  NOTIFICATION_TEMPLATE_DIFF_KIND_V1_UNSPECIFIED = 0;
+  NOTIFICATION_TEMPLATE_DIFF_KIND_V1_ADDED = 1;
+  NOTIFICATION_TEMPLATE_DIFF_KIND_V1_REMOVED = 2;
+  NOTIFICATION_TEMPLATE_DIFF_KIND_V1_MODIFIED = 3;
+  NOTIFICATION_TEMPLATE_DIFF_KIND_V1_UNCHANGED = 4;
+}
+
+message NotificationTemplateBlockDiffV1 {
+  string locale = 1;
+  string lifecycle_event = 2;
+  string block_key = 3;
+  NotificationTemplateDiffKindV1 kind = 4;
+  NotificationTemplateBlockV1 before = 5;
+  NotificationTemplateBlockV1 after = 6;
+}
+
+message DiffAlertNotificationTemplateRevisionsRequest {
+  string org_id = 1;
+  string notification_template_id = 2;
+  string before_revision_id = 3;
+  string after_revision_id = 4;
+  bool include_unchanged = 5;
+}
+
+message DiffAlertNotificationTemplateRevisionsResponse {
+  string before_revision_id = 1;
+  string after_revision_id = 2;
+  bool subject_changed = 3;
+  repeated NotificationTemplateBlockDiffV1 blocks = 4;
 }
 
 message RenderedNotificationFieldV1 {
@@ -2538,6 +2738,7 @@ message RenderedNotificationDocumentV1 {
   string title = 3;
   string summary = 4;
   repeated RenderedNotificationBlockV1 blocks = 5;
+  string locale = 6;
 }
 
 message GetActivationReadinessRequest {
@@ -3084,6 +3285,7 @@ service AlertDefinitionService {
   rpc CreateCostPerSuccessAlert(CreateCostPerSuccessAlertRequest) returns (CreateAlertDefinitionResponse);
   rpc CreateSloBurnAlert(CreateSloBurnAlertRequest) returns (CreateAlertDefinitionResponse);
   rpc CreateAdvancedSignalAlert(CreateAdvancedSignalAlertRequest) returns (CreateAlertDefinitionResponse);
+  rpc CreateQueryThresholdAlert(CreateQueryThresholdAlertRequest) returns (CreateAlertDefinitionResponse);
   rpc GetDefinition(GetAlertDefinitionRequest) returns (AlertDefinitionV1);
   rpc ListDefinitions(ListAlertDefinitionsRequest) returns (ListAlertDefinitionsResponse);
   rpc UpdateObserve(UpdateObserveAlertRequest) returns (AlertDefinitionV1);
@@ -3109,6 +3311,7 @@ service AlertDefinitionService {
 }
 
 service AlertRuntimeService {
+  rpc GetRuntimeCapability(GetAlertRuntimeCapabilityRequest) returns (AlertRuntimeCapabilityV1);
   rpc ListActiveInstances(ListActiveAlertInstancesRequest) returns (ListActiveAlertInstancesResponse);
   rpc GetIncidentCandidate(GetIncidentCandidateRequest) returns (GetIncidentCandidateResponse);
   rpc ListInstances(ListAlertInstancesRequest) returns (ListAlertInstancesResponse);
@@ -3145,6 +3348,11 @@ service AlertNotificationService {
   rpc ListNotificationTemplateRevisions(ListAlertNotificationTemplateRevisionsRequest) returns (ListAlertNotificationTemplateRevisionsResponse);
   rpc PreviewNotificationTemplate(PreviewAlertNotificationTemplateRequest) returns (PreviewAlertNotificationTemplateResponse);
   rpc ListNotificationTemplateVariables(ListNotificationTemplateVariablesRequest) returns (ListNotificationTemplateVariablesResponse);
+  rpc ListNotificationTemplatePacks(ListAlertNotificationTemplatePacksRequest) returns (ListAlertNotificationTemplatePacksResponse);
+  rpc CreateNotificationTemplateFromPack(CreateAlertNotificationTemplateFromPackRequest) returns (AlertNotificationTemplateV1);
+  rpc GetNotificationTemplateSettings(GetAlertNotificationTemplateSettingsRequest) returns (AlertNotificationTemplateSettingsV1);
+  rpc UpdateNotificationTemplateSettings(UpdateAlertNotificationTemplateSettingsRequest) returns (AlertNotificationTemplateSettingsV1);
+  rpc DiffNotificationTemplateRevisions(DiffAlertNotificationTemplateRevisionsRequest) returns (DiffAlertNotificationTemplateRevisionsResponse);
   rpc CreateDestination(UpsertDestinationRequest) returns (AlertDestinationV1);
   rpc UpdateDestination(UpsertDestinationRequest) returns (AlertDestinationV1);
   rpc DeleteDestination(DeleteDestinationRequest) returns (AlertMutationResponse);

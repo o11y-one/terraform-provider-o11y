@@ -65,6 +65,7 @@ resource "o11y_agent_quality_alert" "quality" {
 
 ### Read-Only
 
+- `alert_class` (String) Backend-owned outcome, budget, or symptom classification.
 - `id` (String) The ID of this resource.
 - `mode` (String)
 - `revision_id` (String)
