@@ -15,7 +15,7 @@ func TestSetAlertPreservesExternallyActivatedNotifyState(t *testing.T) {
 	})
 
 	if !data.Notify.ValueBool() {
-		t.Fatal("notify-mode API state must not be relabeled as shadow in Terraform state")
+		t.Fatal("notify-mode API state must not be relabeled as Observe in Terraform state")
 	}
 	if data.Mode.ValueString() != "notify" {
 		t.Fatalf("unexpected mode %q", data.Mode.ValueString())

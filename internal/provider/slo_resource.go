@@ -314,7 +314,7 @@ func (r *sloResource) createRequest(data *sloModel) (*alertsv1.CreateSloRequest,
 }
 
 func sloRevisionInput(data *sloModel) (*alertsv1.SloRevisionInputV1, error) {
-	labels, err := structFromJSON(data.Labels)
+	labels, err := stringMapFromJSON(data.Labels)
 	if err != nil {
 		return nil, fmt.Errorf("labels_json: %w", err)
 	}
@@ -333,7 +333,7 @@ func sloRevisionInput(data *sloModel) (*alertsv1.SloRevisionInputV1, error) {
 	return &alertsv1.SloRevisionInputV1{
 		SliId: data.SLIID.ValueString(), SliRevisionId: data.SLIRevisionID.ValueString(), TargetRatio: data.TargetRatio.ValueFloat64(),
 		RollingWindowSeconds: rollingSeconds, WindowMode: mode, CalendarPeriod: period, CalendarTimezone: timezone,
-		Owner: sloOwnerProto(data.OwnerUserID, data.OwnerTeamID, data.OwnerDisplayName), Labels: labels,
+		Owner: sloOwnerProto(data.OwnerUserID, data.OwnerTeamID, data.OwnerDisplayName), Labels: &alertsv1.AlertLabelsV1{Values: labels},
 	}, nil
 }
 
@@ -390,7 +390,11 @@ func setSLO(data *sloModel, item *alertsv1.AlertSloV1) {
 	} else {
 		data.OwnerDisplayName = types.StringValue(revision.Owner.DisplayName)
 	}
-	data.Labels = jsonFromStruct(revision.Labels)
+	if revision.Labels == nil {
+		data.Labels = jsonFromStringMap(nil)
+	} else {
+		data.Labels = jsonFromStringMap(revision.Labels.Values)
+	}
 	data.RevisionNumber = types.Int64Value(int64(revision.RevisionNumber))
 	data.ConfigHash = types.StringValue(revision.ConfigHash)
 	data.EffectiveFrom = timestampString(revision.EffectiveFrom)

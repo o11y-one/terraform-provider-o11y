@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package o11y_one.alerts.v1;
 
-import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
 
 enum AlertClassV1 {
   ALERT_CLASS_V1_UNSPECIFIED = 0;
@@ -14,8 +14,12 @@ enum AlertClassV1 {
 }
 
 enum AlertModeV1 {
+  option allow_alias = true;
   ALERT_MODE_V1_UNSPECIFIED = 0;
-  ALERT_MODE_V1_SHADOW = 1;
+  // Evaluates against live data and records predicted notifications without
+  // contacting recipients. The durable runtime/storage name remains shadow.
+  ALERT_MODE_V1_OBSERVE = 1;
+  ALERT_MODE_V1_SHADOW = 1 [deprecated = true];
   ALERT_MODE_V1_NOTIFY = 2;
   ALERT_MODE_V1_DISABLED = 3;
 }
@@ -50,6 +54,47 @@ message AlertActionV1 {
   string managed_runbook_id = 3;
   string external_runbook_url = 4;
   string managed_runbook_revision_id = 5;
+}
+
+message AlertStringListV1 { repeated string values = 1; }
+
+message AlertScalarValueV1 {
+  oneof value {
+    string string_value = 1;
+    int64 int_value = 2;
+    double double_value = 3;
+    bool bool_value = 4;
+    AlertStringListV1 string_list = 5;
+  }
+}
+
+message AlertAttributeV1 {
+  string key = 1;
+  AlertScalarValueV1 value = 2;
+}
+
+// Bounded extension point for detector evidence and provider diagnostics. Values
+// are deliberately scalar or string-list only; arbitrary nested JSON is not part
+// of the alerts API contract.
+message AlertAttributeSetV1 { repeated AlertAttributeV1 attributes = 1; }
+
+message AlertLabelsV1 { map<string, string> values = 1; }
+
+message SliEventDescriptionV1 { string count = 1; }
+
+message AlertEvidenceRefV1 {
+  string kind = 1;
+  string id = 2;
+  AlertAttributeSetV1 attributes = 3;
+  string dimension_hash = 4;
+  google.protobuf.Timestamp window_start = 5;
+  google.protobuf.Timestamp window_end = 6;
+}
+
+message AlertDetectorEvidenceV1 {
+  string kind = 1;
+  string id = 2;
+  AlertAttributeSetV1 attributes = 3;
 }
 
 message AgentQualityRegressionConfigV1 {
@@ -144,22 +189,78 @@ enum SliCoverageStateV1 {
   SLI_COVERAGE_STATE_V1_UNAVAILABLE = 4;
 }
 
+enum SliTelemetryFilterOperatorV1 {
+  SLI_TELEMETRY_FILTER_OPERATOR_V1_UNSPECIFIED = 0;
+  SLI_TELEMETRY_FILTER_OPERATOR_V1_EQUALS = 1;
+  SLI_TELEMETRY_FILTER_OPERATOR_V1_NOT_EQUALS = 2;
+  SLI_TELEMETRY_FILTER_OPERATOR_V1_IN = 3;
+  SLI_TELEMETRY_FILTER_OPERATOR_V1_NOT_IN = 4;
+  SLI_TELEMETRY_FILTER_OPERATOR_V1_EXISTS = 5;
+  SLI_TELEMETRY_FILTER_OPERATOR_V1_NOT_EXISTS = 6;
+}
+
+enum SliTelemetryAttributeSourceV1 {
+  SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_UNSPECIFIED = 0;
+  SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_FIXED = 1;
+  SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_SPAN = 2;
+  SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_RESOURCE = 3;
+  SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_SCOPE = 4;
+}
+
+message SliTelemetryAttributeFilterV1 {
+  string field = 1;
+  SliTelemetryFilterOperatorV1 operator = 2;
+  repeated string values = 3;
+  SliTelemetryAttributeSourceV1 source = 4;
+}
+
+enum SliSpanKindV1 {
+  SLI_SPAN_KIND_V1_UNSPECIFIED = 0;
+  SLI_SPAN_KIND_V1_INTERNAL = 1;
+  SLI_SPAN_KIND_V1_SERVER = 2;
+  SLI_SPAN_KIND_V1_CLIENT = 3;
+  SLI_SPAN_KIND_V1_PRODUCER = 4;
+  SLI_SPAN_KIND_V1_CONSUMER = 5;
+}
+
+enum SliReadinessStateV1 {
+  SLI_READINESS_STATE_V1_UNSPECIFIED = 0;
+  SLI_READINESS_STATE_V1_READY = 1;
+  SLI_READINESS_STATE_V1_NO_MATCHING_TRAFFIC = 2;
+  SLI_READINESS_STATE_V1_SOURCE_LAGGING = 3;
+  SLI_READINESS_STATE_V1_BACKFILLING = 4;
+  SLI_READINESS_STATE_V1_MATERIALIZATION_BLOCKED = 5;
+  SLI_READINESS_STATE_V1_COVERAGE_GAP = 6;
+  SLI_READINESS_STATE_V1_SELECTOR_UNSUPPORTED = 7;
+}
+
+message SliReadinessV1 {
+  SliReadinessStateV1 state = 1;
+  string reason = 2;
+  google.protobuf.Timestamp materialized_through = 3;
+  google.protobuf.Timestamp source_frontier = 4;
+  google.protobuf.Timestamp first_blocked_minute = 5;
+  int64 matching_event_count = 6;
+  string blocker = 7;
+}
+
 message AlertSliRevisionV1 {
   string id = 1;
   string sli_id = 2;
   int32 revision_number = 3;
   SliIndicatorKindV1 indicator_kind = 4;
-  google.protobuf.Struct scope = 5;
+  AlertScopeV1 scope = 5;
   AlertOwnerRefV1 owner = 6;
-  google.protobuf.Struct eligible_events = 7;
-  google.protobuf.Struct good_events = 8;
-  google.protobuf.Struct excluded_events = 9;
+  SliEventDescriptionV1 eligible_events = 7;
+  SliEventDescriptionV1 good_events = 8;
+  SliEventDescriptionV1 excluded_events = 9;
   SliAggregationV1 aggregation = 10;
-  optional double threshold = 11;
+  optional double threshold = 11 [deprecated = true];
   SliMissingDataBehaviorV1 missing_data_behavior = 12;
   string config_hash = 13;
   string created_by = 14;
   google.protobuf.Timestamp created_at = 15;
+  google.protobuf.Duration latency_threshold = 16;
 }
 
 message AlertSliV1 {
@@ -177,14 +278,15 @@ message AlertSliV1 {
 
 message SliRevisionInputV1 {
   SliIndicatorKindV1 indicator_kind = 1;
-  google.protobuf.Struct scope = 2;
+  AlertScopeV1 scope = 2;
   AlertOwnerRefV1 owner = 3;
-  google.protobuf.Struct eligible_events = 4;
-  google.protobuf.Struct good_events = 5;
-  google.protobuf.Struct excluded_events = 6;
+  SliEventDescriptionV1 eligible_events = 4;
+  SliEventDescriptionV1 good_events = 5;
+  SliEventDescriptionV1 excluded_events = 6;
   SliAggregationV1 aggregation = 7;
-  optional double threshold = 8;
+  optional double threshold = 8 [deprecated = true];
   SliMissingDataBehaviorV1 missing_data_behavior = 9;
+  google.protobuf.Duration latency_threshold = 10;
 }
 
 message CreateSliRequest {
@@ -209,8 +311,10 @@ message ValidateSliRequest { SliRevisionInputV1 revision = 1; }
 message ValidateSliResponse {
   bool valid = 1;
   repeated AlertFieldViolationV1 violations = 2;
-  repeated double supported_latency_thresholds_ms = 3;
+  repeated double supported_latency_thresholds_ms = 3 [deprecated = true];
   repeated double supported_cost_thresholds_usd = 4;
+  double minimum_latency_threshold_ms = 5;
+  double maximum_latency_threshold_ms = 6;
 }
 
 message GetSliRequest { string sli_id = 1; }
@@ -259,8 +363,9 @@ message SliPreviewV1 {
   SliCoverageStateV1 coverage_state = 10;
   string coverage_reason = 11;
   google.protobuf.Timestamp source_frontier = 12;
-  repeated google.protobuf.Struct evidence = 13;
+  repeated AlertEvidenceRefV1 evidence = 13;
   bool evidence_truncated = 14;
+  SliReadinessV1 readiness = 15;
 }
 
 message AlertSloRevisionV1 {
@@ -272,7 +377,7 @@ message AlertSloRevisionV1 {
   double target_ratio = 6;
   int64 rolling_window_seconds = 7;
   AlertOwnerRefV1 owner = 8;
-  google.protobuf.Struct labels = 9;
+  AlertLabelsV1 labels = 9;
   string config_hash = 10;
   string created_by = 11;
   google.protobuf.Timestamp created_at = 12;
@@ -302,7 +407,7 @@ message SloRevisionInputV1 {
   double target_ratio = 3;
   int64 rolling_window_seconds = 4;
   AlertOwnerRefV1 owner = 5;
-  google.protobuf.Struct labels = 6;
+  AlertLabelsV1 labels = 6;
   SloWindowModeV1 window_mode = 7;
   SloCalendarPeriodV1 calendar_period = 8;
   string calendar_timezone = 9;
@@ -355,6 +460,15 @@ message GetSloStatusRequest {
   google.protobuf.Timestamp evaluated_at = 2;
 }
 
+message SloDataFreshnessV1 {
+  google.protobuf.Timestamp requested_through = 1;
+  google.protobuf.Timestamp evaluated_through = 2;
+  google.protobuf.Timestamp materialized_through = 3;
+  optional int64 materialization_lag_seconds = 4;
+  bool clipped_to_materialized_through = 5;
+  SliReadinessV1 readiness = 6;
+}
+
 message SloStatusV1 {
   string slo_id = 1;
   string slo_revision_id = 2;
@@ -382,6 +496,7 @@ message SloStatusV1 {
   google.protobuf.Timestamp period_start = 24;
   google.protobuf.Timestamp period_end = 25;
   google.protobuf.Timestamp error_budget_resets_at = 26;
+  SloDataFreshnessV1 freshness = 27;
 }
 
 message GetSloBurndownRequest {
@@ -392,7 +507,10 @@ message GetSloBurndownRequest {
   int32 max_points = 5;
 }
 
-message GetSloBurndownResponse { repeated SloStatusV1 points = 1; }
+message GetSloBurndownResponse {
+  repeated SloStatusV1 points = 1;
+  SloDataFreshnessV1 freshness = 2;
+}
 
 message ListSloHistoryRequest {
   string slo_id = 1;
@@ -455,20 +573,21 @@ message AlertDefinitionV1 {
   AlertClassV1 class = 7;
   AlertModeV1 mode = 8;
   AlertSeverityV1 severity = 9;
-  google.protobuf.Struct scope = 10;
-  google.protobuf.Struct owner = 11;
-  google.protobuf.Struct action = 12;
-  google.protobuf.Struct evaluation_settings = 13;
-  google.protobuf.Struct sample_guard = 14;
+  AlertScopeV1 scope = 10;
+  AlertOwnerRefV1 owner = 11;
+  AlertActionV1 action = 12;
+  AlertEvaluationSettingsV1 evaluation_settings = 13;
+  AlertSampleGuardV1 sample_guard = 14;
   string current_revision_id = 15;
   google.protobuf.Timestamp created_at = 16;
   google.protobuf.Timestamp updated_at = 17;
   string detector_kind = 18;
-  google.protobuf.Struct recipe_config = 19;
+  reserved 19;
+  reserved "recipe_config";
   int64 evaluation_interval_seconds = 20;
   AlertDetectorConfigV1 detector_config = 21;
-  AlertOwnerRefV1 owner_ref = 22;
-  AlertActionV1 alert_action = 23;
+  reserved 22, 23;
+  reserved "owner_ref", "alert_action";
   string candidate_revision_id = 24;
   AlertDefinitionRuntimeSummaryV1 runtime = 25;
   AlertManagedResourceV1 management = 26;
@@ -516,6 +635,8 @@ message AlertScopeV1 {
   repeated string model_providers = 6;
   repeated string models = 7;
   repeated string tool_names = 8;
+  repeated SliTelemetryAttributeFilterV1 telemetry_attribute_filters = 9;
+  repeated SliSpanKindV1 span_kinds = 10;
 }
 
 message AlertEvaluationSettingsV1 {
@@ -530,6 +651,245 @@ message AlertEvaluationSettingsV1 {
 message AlertSampleGuardV1 {
   uint64 minimum_events = 1;
   bool require_complete_coverage = 2;
+}
+
+message AlertFactQueryCostV1 {
+  uint64 rows_scanned = 1;
+  uint64 bytes_scanned = 2;
+  uint64 elapsed_ms = 3;
+  uint64 candidate_files = 4;
+  uint64 candidate_row_groups = 5;
+  uint64 bytes_scheduled = 6;
+  uint64 bytes_decoded = 7;
+  uint64 rows_decoded = 8;
+  uint64 planning_time_ms = 9;
+  uint64 scan_time_ms = 10;
+  uint64 output_rows = 11;
+}
+
+message AlertFactPruningDiagnosticsV1 {
+  bool tenant = 1;
+  bool time_window = 2;
+  bool partition = 3;
+  bool service = 4;
+  bool namespace = 5;
+  bool environment = 6;
+  bool service_bucket = 7;
+  uint64 group_cardinality_limit = 8;
+  uint64 row_output_limit = 9;
+}
+
+message AlertFactQueryDiagnosticsV1 {
+  uint64 candidate_files = 1;
+  uint64 candidate_row_groups = 2;
+  uint64 bytes_scheduled = 3;
+  uint64 bytes_decoded = 4;
+  uint64 rows_decoded = 5;
+  uint64 planning_time_ms = 6;
+  uint64 scan_time_ms = 7;
+  google.protobuf.Timestamp latest_queryable_watermark = 8;
+  optional uint64 freshness_gap_ms = 9;
+  optional uint64 no_data_gap_ms = 10;
+  AlertFactPruningDiagnosticsV1 pruning = 11;
+  uint64 output_rows = 12;
+  bool truncated = 13;
+}
+
+message AlertFactFamilySummaryV1 {
+  string family = 1;
+  uint64 rows_written = 2;
+  bool authoritative = 3;
+  SliCoverageStateV1 coverage_state = 4;
+  AlertFactQueryCostV1 query_cost = 5;
+  AlertFactQueryDiagnosticsV1 diagnostics = 6;
+  string error = 7;
+}
+
+message AlertFactMaterializationSummaryV1 {
+  repeated AlertFactFamilySummaryV1 families = 1;
+  string error = 2;
+}
+
+message AlertSourceRuntimeCapabilityV1 {
+  bool enabled = 1;
+  bool trace_log_supported = 2;
+  bool agentic_supported = 3;
+  string scope = 4;
+}
+
+message AlertNotifyReadinessV1 {
+  bool available = 1;
+  string reason = 2;
+}
+
+message AlertEvalNodeDurationV1 {
+  string node_id = 1;
+  uint64 elapsed_ms = 2;
+}
+
+message AlertEvalGraphDiagnosticsV1 {
+  uint64 node_count = 1;
+  uint64 elapsed_ms = 2;
+  repeated AlertEvalNodeDurationV1 node_durations = 3;
+}
+
+message AlertEvalFactsSummaryV1 {
+  string provider = 1;
+  string error = 2;
+  AlertFactMaterializationSummaryV1 materialization = 3;
+  AlertEvalGraphDiagnosticsV1 diagnostics = 4;
+  AlertSourceRuntimeCapabilityV1 source_runtime_capability = 5;
+  AlertNotifyReadinessV1 production_notify_readiness = 6;
+}
+
+message AlertEvalMetadataV1 {
+  string worker_id = 1;
+  optional int32 phase = 2;
+  string meta_detector = 3;
+  string evaluation_state = 4;
+  string canary_run_id = 5;
+  AlertAttributeSetV1 attributes = 6;
+}
+
+message AlertPreviewEventSampleV1 {
+  google.protobuf.Timestamp evaluated_at = 1;
+  string instance_key = 2;
+  string condition_state = 3;
+  string lifecycle_state = 4;
+  bool should_notify = 5;
+  string routing_state = 6;
+  repeated string selected_destination_ids = 7;
+  repeated string blockers = 8;
+  string reason = 9;
+}
+
+message AlertPreviewFactSummaryV1 {
+  google.protobuf.Timestamp evaluated_at = 1;
+  AlertEvalFactsSummaryV1 facts = 2;
+}
+
+message AlertPreviewProjectionRatioV1 {
+  int64 numerator_seconds_per_day = 1;
+  int64 denominator_sample_horizon_seconds = 2;
+  string rounding = 3;
+  bool upper_bound = 4;
+}
+
+message AlertPreviewResultV1 {
+  string status = 1;
+  string failure_reason = 2;
+  google.protobuf.Timestamp requested_range_start = 3;
+  google.protobuf.Timestamp requested_range_end = 4;
+  uint32 requested_evidence_limit = 5;
+  string canonical_config_hash = 6;
+  int64 schedule_interval_seconds = 7;
+  optional int64 configured_horizon_seconds = 8;
+  int64 sample_horizon_seconds = 9;
+  int64 sample_interval_count = 10;
+  bool horizon_complete = 11;
+  bool facts_complete = 12;
+  string policy_resolution_purpose = 13;
+  string activation_approval = 14;
+  string activation_signoff = 15;
+  int64 observed_firing_count = 16;
+  int64 observed_routed_notification_count = 17;
+  int64 projected_notifications_per_day = 18;
+  bool projected_notifications_per_day_is_exact = 19;
+  bool projection_hard_gate_applied = 20;
+  string projection_confidence = 21;
+  repeated AlertPreviewEventSampleV1 predicted_firing_samples = 22;
+  repeated AlertPreviewEventSampleV1 predicted_notification_samples = 23;
+  bool predicted_firing_samples_truncated = 24;
+  bool predicted_notification_samples_truncated = 25;
+  repeated AlertPreviewFactSummaryV1 fact_summaries = 26;
+  string sample_contract = 27;
+  optional int64 evaluated_steps = 28;
+  string projection_method = 29;
+  AlertPreviewProjectionRatioV1 projection_ratio = 30;
+}
+
+message AlertCorrelationHintsV1 {
+  string detector_kind = 1;
+  string alert_class = 2;
+  string service = 3;
+  string provider = 4;
+  string model = 5;
+  string tool = 6;
+  string customer_cohort = 7;
+  string release = 8;
+  string canary_run_id = 9;
+  string instance_id = 10;
+  repeated string default_channels = 11;
+  string routing_intent = 12;
+  bool symptom_only_page_allowed = 13;
+  string symptom_kind = 14;
+  AlertAttributeSetV1 attributes = 15;
+}
+
+message AlertSampleSummaryV1 {
+  optional bool passed = 1;
+  AlertAttributeSetV1 attributes = 2;
+}
+
+message AlertDetectorDecisionV1 {
+  string instance_key = 1;
+  string dedupe_key = 2;
+  string condition_state = 3;
+  AlertSeverityV1 severity = 4;
+  string hypothesis = 5;
+  AlertAttributeSetV1 dimensions = 6;
+  AlertSampleSummaryV1 sample_summary = 7;
+  AlertAttributeSetV1 measured_values = 8;
+  AlertAttributeSetV1 baseline_values = 9;
+  repeated AlertDetectorEvidenceV1 evidence = 10;
+  AlertCorrelationHintsV1 correlation_hints = 11;
+  string suggested_action = 12;
+  double confidence = 13;
+  double impact_score = 14;
+  double actionability_score = 15;
+}
+
+message AlertDetectorWindowSettingsV1 {
+  optional int64 window_seconds = 1;
+  optional int64 short_window_seconds = 2;
+  optional int64 long_window_seconds = 3;
+  optional int64 baseline_window_seconds = 4;
+  optional int64 fast_short_window_seconds = 5;
+  optional int64 fast_long_window_seconds = 6;
+  optional int64 slow_short_window_seconds = 7;
+  optional int64 slow_long_window_seconds = 8;
+  optional int64 slo_window_seconds = 9;
+  SloWindowModeV1 window_mode = 10;
+  SloCalendarPeriodV1 calendar_period = 11;
+  string calendar_timezone = 12;
+  google.protobuf.Timestamp revision_effective_from = 13;
+  AlertAttributeSetV1 attributes = 14;
+}
+
+message AlertMatcherV1 { repeated AlertMatcherClauseV1 clauses = 1; }
+
+message AlertNoiseBudgetStatusV1 {
+  string policy_id = 1;
+  optional int32 max_pages_per_day = 2;
+  optional int32 max_pages_per_week = 3;
+  int32 pages_sent_today = 4;
+  int32 pages_sent_this_week = 5;
+  int32 predicted_notifications_today = 6;
+  bool too_noisy = 7;
+  bool exempt = 8;
+}
+
+message AlertFiringExplanationV1 {
+  bool fired = 1;
+  string definition_name = 2;
+  string detector_kind = 3;
+  string why = 4;
+  AlertSampleSummaryV1 sample_guard = 5;
+  AlertAttributeSetV1 current_values = 6;
+  AlertAttributeSetV1 baseline_values = 7;
+  AlertDetectorWindowSettingsV1 window_settings = 8;
+  repeated AlertDetectorEvidenceV1 evidence = 9;
+  string suggested_action = 10;
 }
 
 message AlertRevisionV1 {
@@ -601,8 +961,8 @@ message AlertEvalRunV1 {
   google.protobuf.Timestamp started_at = 7;
   google.protobuf.Timestamp finished_at = 8;
   string error_message = 9;
-  google.protobuf.Struct facts_summary = 10;
-  google.protobuf.Struct metadata = 11;
+  AlertEvalFactsSummaryV1 facts_summary = 10;
+  AlertEvalMetadataV1 metadata = 11;
 }
 
 message AlertStateEventV1 {
@@ -626,13 +986,14 @@ message AlertPreviewRunV1 {
   string revision_id = 3;
   int32 predicted_firing_count = 4;
   int32 predicted_notification_count = 5;
-  google.protobuf.Struct sample_guard_result = 6;
-  google.protobuf.Value evidence_refs = 7;
-  google.protobuf.Value activation_blockers = 8;
-  google.protobuf.Struct result = 9;
+  AlertPreviewSampleGuardResultV1 sample_guard_result = 6;
+  repeated AlertDetectorEvidenceV1 evidence_refs = 7;
+  repeated string activation_blockers = 8;
+  AlertPreviewResultV1 result = 9;
   google.protobuf.Timestamp created_at = 10;
   AlertPreviewCoverageV1 coverage = 11;
-  AlertPreviewSampleGuardResultV1 typed_sample_guard = 12;
+  reserved 12;
+  reserved "typed_sample_guard";
   repeated AlertPreviewRouteDecisionV1 route_decisions = 13;
   AlertPreviewNoiseBudgetEffectV1 noise_budget_effect = 14;
   google.protobuf.Timestamp range_start = 15;
@@ -695,6 +1056,12 @@ message AlertDeliveryHistoryV1 {
   string instance_id = 15;
   string incident_id = 16;
   repeated AlertDeliveryAttemptV1 attempt_history = 17;
+  string notification_template_id = 18;
+  string notification_template_revision_id = 19;
+  int32 notification_renderer_version = 20;
+  repeated AlertPolicyDiagnosticV1 notification_render_diagnostics = 21;
+  AlertDeliveryRoutingProvenanceV1 routing_provenance = 22;
+  AlertDeliveryRenderProvenanceV1 render_provenance = 23;
 }
 
 message AlertDeliveryAttemptV1 {
@@ -748,6 +1115,49 @@ message AlertDestinationVerificationV1 {
   string error_message = 13;
 }
 
+enum AlertWebhookMethodV1 {
+  ALERT_WEBHOOK_METHOD_V1_UNSPECIFIED = 0;
+  ALERT_WEBHOOK_METHOD_V1_POST = 1;
+  ALERT_WEBHOOK_METHOD_V1_PUT = 2;
+  ALERT_WEBHOOK_METHOD_V1_PATCH = 3;
+}
+
+message AlertEmailDestinationConfigV1 {
+  repeated string recipients = 1;
+  string reply_to = 2;
+}
+
+message AlertWebhookHeaderV1 {
+  string name = 1;
+  string value = 2;
+}
+
+message AlertWebhookDestinationConfigV1 {
+  string url = 1;
+  AlertWebhookMethodV1 method = 2;
+  repeated AlertWebhookHeaderV1 headers = 3;
+}
+
+message AlertSlackDestinationConfigV1 { string channel_id = 1; }
+
+message AlertPagerDutyDestinationConfigV1 {}
+
+message AlertDestinationConfigV1 {
+  oneof config {
+    AlertEmailDestinationConfigV1 email = 1;
+    AlertWebhookDestinationConfigV1 webhook = 2;
+    AlertSlackDestinationConfigV1 slack = 3;
+    AlertPagerDutyDestinationConfigV1 pagerduty = 4;
+  }
+}
+
+message AlertDestinationSecretRefsV1 {
+  string token = 1;
+  string signing_secret = 2;
+  string authorization = 3;
+  string routing_key = 4;
+}
+
 message AlertDestinationRouteUsageV1 {
   string policy_id = 1;
   string policy_key = 2;
@@ -770,8 +1180,8 @@ message AlertDestinationV1 {
   string name = 3;
   AlertDestinationKindV1 kind = 4;
   bool enabled = 5;
-  google.protobuf.Struct config = 6;
-  google.protobuf.Struct secret_refs = 7;
+  AlertDestinationConfigV1 config = 6;
+  AlertDestinationSecretRefsV1 secret_refs = 7;
   google.protobuf.Timestamp last_tested_at = 8;
   google.protobuf.Timestamp created_at = 9;
   google.protobuf.Timestamp updated_at = 10;
@@ -817,6 +1227,13 @@ message AlertNotificationRouteV1 {
   AlertNotificationRouteTargetV1 target = 6;
   AlertNotificationRouteBehaviorV1 behavior = 7;
   repeated string tree_path = 8;
+  string notification_template_id = 9;
+  // Output authority selected by the backend from the template's published revision.
+  // Clients choose notification_template_id and must not treat this field as mutable input.
+  string bound_notification_template_revision_id = 10;
+  // Optional mutation input. When omitted, new bindings resolve the template's current
+  // published revision. Existing bindings retain their pinned revision unless explicitly changed.
+  string requested_notification_template_revision_id = 11;
 }
 
 enum AlertPolicyTreeNodeKindV1 {
@@ -834,6 +1251,9 @@ message AlertPolicyTreeNodeV1 {
   repeated AlertMatcherClauseV1 matcher = 6;
   AlertNotificationRouteTargetV1 target = 7;
   AlertNotificationRouteBehaviorV1 behavior = 8;
+  string notification_template_id = 9;
+  string bound_notification_template_revision_id = 10;
+  string requested_notification_template_revision_id = 11;
 }
 
 message AlertPolicyTreeV1 { repeated AlertPolicyTreeNodeV1 nodes = 1; }
@@ -884,11 +1304,12 @@ message AlertNotificationPolicyV1 {
   string policy_key = 2;
   string name = 3;
   bool enabled = 4;
-  google.protobuf.Struct config = 5;
+  AlertNotificationPolicyConfigV1 config = 5;
   google.protobuf.Timestamp created_at = 6;
   google.protobuf.Timestamp updated_at = 7;
   int64 revision = 8;
-  AlertNotificationPolicyConfigV1 effective_policy = 9;
+  reserved 9;
+  reserved "effective_policy";
   repeated AlertNotificationRouteV1 routes = 10;
   repeated AlertPolicyDiagnosticV1 diagnostics = 11;
 }
@@ -897,7 +1318,7 @@ message AlertMaintenanceWindowV1 {
   string id = 1;
   string window_key = 2;
   string name = 3;
-  google.protobuf.Struct scope = 4;
+  AlertScopeV1 scope = 4;
   google.protobuf.Timestamp starts_at = 5;
   google.protobuf.Timestamp ends_at = 6;
   string reason = 7;
@@ -906,7 +1327,7 @@ message AlertMaintenanceWindowV1 {
 message AlertSilenceV1 {
   string id = 1;
   string silence_key = 2;
-  google.protobuf.Struct matcher = 3;
+  AlertMatcherV1 matcher = 3;
   string reason = 4;
   google.protobuf.Timestamp starts_at = 5;
   google.protobuf.Timestamp ends_at = 6;
@@ -918,39 +1339,43 @@ message AlertRecipeBaseV1 {
   string name = 3;
   string description = 4;
   AlertSeverityV1 severity = 5;
-  google.protobuf.Struct scope = 6;
-  google.protobuf.Struct owner = 7;
-  google.protobuf.Struct action = 8;
-  google.protobuf.Struct evaluation_settings = 9;
-  google.protobuf.Struct sample_guard = 10;
+  AlertScopeV1 scope = 6;
+  AlertOwnerRefV1 owner = 7;
+  AlertActionV1 action = 8;
+  AlertEvaluationSettingsV1 evaluation_settings = 9;
+  AlertSampleGuardV1 sample_guard = 10;
   string idempotency_key = 11;
   int64 evaluation_interval_seconds = 12;
-  AlertOwnerRefV1 owner_ref = 13;
-  AlertActionV1 alert_action = 14;
+  reserved 13, 14;
+  reserved "owner_ref", "alert_action";
 }
 
 message CreateAgentQualityRegressionAlertRequest {
   AlertRecipeBaseV1 base = 1;
-  google.protobuf.Struct recipe_config = 2;
-  AlertDetectorConfigV1 detector_config = 3;
+  AgentQualityRegressionConfigV1 recipe_config = 2;
+  reserved 3;
+  reserved "detector_config";
 }
 
 message CreateCostPerSuccessAlertRequest {
   AlertRecipeBaseV1 base = 1;
-  google.protobuf.Struct recipe_config = 2;
-  AlertDetectorConfigV1 detector_config = 3;
+  CostPerSuccessConfigV1 recipe_config = 2;
+  reserved 3;
+  reserved "detector_config";
 }
 
 message CreateSloBurnAlertRequest {
   AlertRecipeBaseV1 base = 1;
-  google.protobuf.Struct recipe_config = 2;
-  AlertDetectorConfigV1 detector_config = 3;
+  SloBurnConfigV1 recipe_config = 2;
+  reserved 3;
+  reserved "detector_config";
 }
 
 message CreateAdvancedSignalAlertRequest {
   AlertRecipeBaseV1 base = 1;
-  google.protobuf.Struct condition = 2;
-  AlertDetectorConfigV1 detector_config = 3;
+  AdvancedSignalConfigV1 condition = 2;
+  reserved 3;
+  reserved "detector_config";
 }
 
 message CreateAlertDefinitionResponse {
@@ -991,18 +1416,33 @@ message ListAlertDefinitionsResponse {
   string next_cursor = 3;
 }
 
+message UpdateObserveAlertRequest {
+  string definition_id = 1;
+  string name = 2;
+  string description = 3;
+  AlertOwnerRefV1 owner = 4;
+  AlertActionV1 action = 5;
+  AlertEvaluationSettingsV1 evaluation_settings = 6;
+  AlertSampleGuardV1 sample_guard = 7;
+  string idempotency_key = 8;
+  optional int64 evaluation_interval_seconds = 9;
+  reserved 10, 11;
+  reserved "owner_ref", "alert_action";
+}
+
+// Deprecated compatibility request for clients generated before Observe mode.
 message UpdateShadowAlertRequest {
   string definition_id = 1;
   string name = 2;
   string description = 3;
-  google.protobuf.Struct owner = 4;
-  google.protobuf.Struct action = 5;
-  google.protobuf.Struct evaluation_settings = 6;
-  google.protobuf.Struct sample_guard = 7;
+  AlertOwnerRefV1 owner = 4;
+  AlertActionV1 action = 5;
+  AlertEvaluationSettingsV1 evaluation_settings = 6;
+  AlertSampleGuardV1 sample_guard = 7;
   string idempotency_key = 8;
   optional int64 evaluation_interval_seconds = 9;
-  AlertOwnerRefV1 owner_ref = 10;
-  AlertActionV1 alert_action = 11;
+  reserved 10, 11;
+  reserved "owner_ref", "alert_action";
 }
 
 message UpsertAlertCandidateRevisionRequest {
@@ -1110,7 +1550,7 @@ message AlertIncidentMemberV1 {
   string lifecycle_state = 12;
   string routing_state = 13;
   string hypothesis = 14;
-  google.protobuf.Struct decision = 15;
+  AlertDetectorDecisionV1 decision = 15;
   google.protobuf.Timestamp first_observed_at = 16;
   google.protobuf.Timestamp last_observed_at = 17;
   google.protobuf.Timestamp resolved_at = 18;
@@ -1121,7 +1561,7 @@ message AlertIncidentV1 {
   string id = 1;
   string incident_key = 2;
   string correlation_key = 3;
-  google.protobuf.Struct correlation_hints = 4;
+  AlertCorrelationHintsV1 correlation_hints = 4;
   string lifecycle_state = 5;
   string precedence = 6;
   string primary_membership_id = 7;
@@ -1253,7 +1693,7 @@ message ListAlertIncidentsRequest {
   string definition_id = 6;
   google.protobuf.Timestamp observed_after = 7;
   google.protobuf.Timestamp observed_before = 8;
-  google.protobuf.Struct scope = 9;
+  AlertScopeV1 scope = 9;
 }
 
 message ListAlertIncidentsResponse {
@@ -1273,7 +1713,7 @@ message AlertIncidentTimelineEventV1 {
   string instance_id = 6;
   string delivery_id = 7;
   string summary = 8;
-  google.protobuf.Struct details = 9;
+  AlertAttributeSetV1 details = 9;
   google.protobuf.Timestamp occurred_at = 10;
 }
 
@@ -1383,7 +1823,7 @@ message ListAlertInstancesRequest {
   string definition_id = 3;
   string lifecycle_state = 4;
   string severity = 5;
-  google.protobuf.Struct scope = 6;
+  AlertScopeV1 scope = 6;
   google.protobuf.Timestamp updated_after = 7;
   google.protobuf.Timestamp updated_before = 8;
 }
@@ -1397,7 +1837,7 @@ message ExplainWhyFiredRequest {
 }
 
 message ExplainWhyFiredResponse {
-  google.protobuf.Struct explanation = 1;
+  AlertFiringExplanationV1 explanation = 1;
 }
 
 message AcknowledgeAlertRequest {
@@ -1448,8 +1888,8 @@ message UpsertDestinationRequest {
   string name = 3;
   AlertDestinationKindV1 kind = 4;
   bool enabled = 5;
-  google.protobuf.Struct config = 6;
-  google.protobuf.Struct secret_refs = 7;
+  AlertDestinationConfigV1 config = 6;
+  AlertDestinationSecretRefsV1 secret_refs = 7;
   string idempotency_key = 8;
 }
 
@@ -1640,9 +2080,10 @@ message UpsertNotificationPolicyRequest {
   string policy_key = 2;
   string name = 3;
   bool enabled = 4;
-  google.protobuf.Struct config = 5;
+  AlertNotificationPolicyConfigV1 config = 5;
   string idempotency_key = 6;
-  AlertNotificationPolicyConfigV1 typed_policy = 7;
+  reserved 7;
+  reserved "typed_policy";
   optional int64 expected_revision = 8;
 }
 
@@ -1661,7 +2102,7 @@ message AlertRoutingSubjectV1 {
   string alert_class = 1;
   AlertModeV1 mode = 2;
   AlertSeverityV1 severity = 3;
-  google.protobuf.Struct scope = 4;
+  AlertScopeV1 scope = 4;
   AlertOwnerRefV1 owner = 5;
   AlertActionV1 action = 6;
   string detector_kind = 7;
@@ -1673,6 +2114,25 @@ message PreviewNotificationRouteRequest {
   AlertRoutingSubjectV1 candidate = 3;
   repeated AlertMatcherClauseV1 dimensions = 4;
   repeated AlertMatcherClauseV1 correlation_hints = 5;
+  AlertNotificationPolicyPreviewCandidateV1 candidate_policy = 6;
+}
+
+message AlertNotificationPolicyPreviewCandidateV1 {
+  // Empty for a new unsaved policy. Required for previewing an update.
+  string policy_id = 1;
+  optional int64 expected_revision = 2;
+  string policy_key = 3;
+  string name = 4;
+  bool enabled = 5;
+  AlertNotificationPolicyConfigV1 config = 6;
+  // Evaluates a disabled candidate as enabled without persisting that state.
+  bool evaluate_as_enabled = 7;
+}
+
+enum AlertRouteEvaluationSourceV1 {
+  ALERT_ROUTE_EVALUATION_SOURCE_V1_UNSPECIFIED = 0;
+  ALERT_ROUTE_EVALUATION_SOURCE_V1_PERSISTED = 1;
+  ALERT_ROUTE_EVALUATION_SOURCE_V1_CANDIDATE = 2;
 }
 
 message AlertRouteEvaluationV1 {
@@ -1691,6 +2151,9 @@ message AlertRouteEvaluationV1 {
   string group_id = 13;
   repeated string expanded_destination_ids = 14;
   repeated string tree_path = 15;
+  string notification_template_id = 16;
+  string notification_template_revision_id = 17;
+  AlertRouteEvaluationSourceV1 source = 18;
 }
 
 message AlertNotificationTimelineEntryV1 {
@@ -1709,7 +2172,7 @@ message PreviewNotificationRouteResponse {
   string routing_state = 6;
   repeated string blockers = 7;
   repeated string reasons = 8;
-  google.protobuf.Struct noise_budget_status = 9;
+  AlertNoiseBudgetStatusV1 noise_budget_status = 9;
   string grouping_key = 10;
   repeated string group_by = 11;
   repeated AlertNotificationTimelineEntryV1 timeline = 12;
@@ -1720,6 +2183,14 @@ message PreviewNotificationRouteResponse {
   AlertEscalationScheduleV1 escalation = 17;
   string selected_policy_id = 18;
   int64 policy_revision = 19;
+  bool candidate_evaluated = 20;
+  string candidate_policy_id = 21;
+  AlertNotificationPolicyConfigV1 normalized_candidate_policy = 22;
+  AlertRouteEvaluationSourceV1 selected_policy_source = 23;
+  string selected_route_id = 24;
+  string selected_route_key = 25;
+  string selected_notification_template_id = 26;
+  string selected_notification_template_revision_id = 27;
 }
 
 message PreviewNotificationPayloadRequest {
@@ -1727,7 +2198,9 @@ message PreviewNotificationPayloadRequest {
   string revision_id = 2;
   string destination_id = 3;
   string lifecycle_event = 4;
-  google.protobuf.Struct representative_evidence = 5;
+  AlertAttributeSetV1 representative_evidence = 5;
+  string notification_template_id = 6;
+  string notification_template_revision_id = 7;
 }
 
 message PreviewNotificationPayloadResponse {
@@ -1735,10 +2208,336 @@ message PreviewNotificationPayloadResponse {
   AlertDestinationKindV1 destination_kind = 2;
   string title = 3;
   string body = 4;
-  google.protobuf.Struct fields = 5;
+  AlertAttributeSetV1 fields = 5;
   repeated string omitted_field_warnings = 6;
   repeated AlertPolicyDiagnosticV1 template_diagnostics = 7;
   uint64 approximate_payload_bytes = 8;
+  RenderedNotificationDocumentV1 rendered_document = 9;
+  AlertDeliveryRenderProvenanceV1 render_provenance = 10;
+}
+
+enum NotificationTemplateValueFormatV1 {
+  NOTIFICATION_TEMPLATE_VALUE_FORMAT_V1_UNSPECIFIED = 0;
+  NOTIFICATION_TEMPLATE_VALUE_FORMAT_V1_TEXT = 1;
+  NOTIFICATION_TEMPLATE_VALUE_FORMAT_V1_NUMBER = 2;
+  NOTIFICATION_TEMPLATE_VALUE_FORMAT_V1_PERCENT = 3;
+  NOTIFICATION_TEMPLATE_VALUE_FORMAT_V1_CURRENCY_USD = 4;
+  NOTIFICATION_TEMPLATE_VALUE_FORMAT_V1_DURATION_MS = 5;
+  NOTIFICATION_TEMPLATE_VALUE_FORMAT_V1_TIMESTAMP = 6;
+  NOTIFICATION_TEMPLATE_VALUE_FORMAT_V1_JSON = 7;
+}
+
+enum NotificationTemplateActionLinkV1 {
+  NOTIFICATION_TEMPLATE_ACTION_LINK_V1_UNSPECIFIED = 0;
+  NOTIFICATION_TEMPLATE_ACTION_LINK_V1_OPEN_ALERT = 1;
+  NOTIFICATION_TEMPLATE_ACTION_LINK_V1_VIEW_TRACES = 2;
+  NOTIFICATION_TEMPLATE_ACTION_LINK_V1_VIEW_EVALS = 3;
+  NOTIFICATION_TEMPLATE_ACTION_LINK_V1_SILENCE = 4;
+  NOTIFICATION_TEMPLATE_ACTION_LINK_V1_ACKNOWLEDGE = 5;
+}
+
+enum NotificationTemplateActionStyleV1 {
+  NOTIFICATION_TEMPLATE_ACTION_STYLE_V1_UNSPECIFIED = 0;
+  NOTIFICATION_TEMPLATE_ACTION_STYLE_V1_DEFAULT = 1;
+  NOTIFICATION_TEMPLATE_ACTION_STYLE_V1_PRIMARY = 2;
+  NOTIFICATION_TEMPLATE_ACTION_STYLE_V1_DANGER = 3;
+}
+
+message NotificationTemplateConditionV1 {
+  string path = 1;
+  string equals = 2;
+}
+
+message NotificationTemplateFieldV1 {
+  string label_template = 1;
+  string value_path = 2;
+  NotificationTemplateValueFormatV1 format = 3;
+}
+
+message NotificationTemplateActionV1 {
+  string label_template = 1;
+  NotificationTemplateActionLinkV1 link = 2;
+  NotificationTemplateActionStyleV1 style = 3;
+}
+
+message NotificationTemplateMarkdownBlockV1 { string text_template = 1; }
+
+message NotificationTemplateFieldsBlockV1 {
+  string title_template = 1;
+  repeated NotificationTemplateFieldV1 fields = 2;
+}
+
+message NotificationTemplateProgressBlockV1 {
+  string label_template = 1;
+  string value_path = 2;
+}
+
+message NotificationTemplateChartBlockV1 {
+  string chart_key = 1;
+  string title_template = 2;
+}
+
+message NotificationTemplateEvidenceBlockV1 {
+  string title_template = 1;
+  uint32 max_items = 2;
+}
+
+message NotificationTemplateCodeBlockV1 {
+  string title_template = 1;
+  string value_path = 2;
+  uint32 max_characters = 3;
+}
+
+message NotificationTemplateActionsBlockV1 { repeated NotificationTemplateActionV1 actions = 1; }
+message NotificationTemplateFooterBlockV1 { string text_template = 1; }
+
+message NotificationTemplateBlockV1 {
+  string key = 1;
+  NotificationTemplateConditionV1 visible_when = 2;
+  oneof content {
+    NotificationTemplateMarkdownBlockV1 markdown = 3;
+    NotificationTemplateFieldsBlockV1 fields = 4;
+    NotificationTemplateProgressBlockV1 progress = 5;
+    NotificationTemplateChartBlockV1 chart = 6;
+    NotificationTemplateEvidenceBlockV1 evidence = 7;
+    NotificationTemplateCodeBlockV1 code = 8;
+    NotificationTemplateActionsBlockV1 actions = 9;
+    NotificationTemplateFooterBlockV1 footer = 10;
+  }
+}
+
+message NotificationTemplateVariantV1 {
+  string title_template = 1;
+  string summary_template = 2;
+  repeated NotificationTemplateBlockV1 blocks = 3;
+}
+
+message NotificationTemplateDocumentV1 {
+  uint32 schema_version = 1;
+  string subject_template = 2;
+  NotificationTemplateVariantV1 firing = 3;
+  NotificationTemplateVariantV1 resolved = 4;
+  NotificationTemplateVariantV1 reminder = 5;
+}
+
+message AlertNotificationTemplateRevisionV1 {
+  string id = 1;
+  string notification_template_id = 2;
+  int64 revision_number = 3;
+  NotificationTemplateDocumentV1 document = 4;
+  uint32 variable_schema_version = 5;
+  string content_hash = 6;
+  string change_reason = 7;
+  string created_by = 8;
+  google.protobuf.Timestamp created_at = 9;
+  AlertActorSnapshotV1 created_by_actor = 10;
+  bool has_been_published = 11;
+  google.protobuf.Timestamp first_published_at = 12;
+  AlertActorSnapshotV1 first_published_by_actor = 13;
+}
+
+enum AlertActorKindV1 {
+  ALERT_ACTOR_KIND_V1_UNSPECIFIED = 0;
+  ALERT_ACTOR_KIND_V1_USER = 1;
+  ALERT_ACTOR_KIND_V1_CLIENT = 2;
+  ALERT_ACTOR_KIND_V1_SYSTEM = 3;
+}
+
+message AlertActorSnapshotV1 {
+  string id = 1;
+  AlertActorKindV1 kind = 2;
+  string display_name = 3;
+  string email = 4;
+  optional bool active = 5;
+  // False means the historical row predates snapshot capture or could not be resolved authoritatively.
+  bool identity_available = 6;
+}
+
+enum AlertNotificationTemplateKindV1 {
+  ALERT_NOTIFICATION_TEMPLATE_KIND_V1_UNSPECIFIED = 0;
+  ALERT_NOTIFICATION_TEMPLATE_KIND_V1_USER = 1;
+  ALERT_NOTIFICATION_TEMPLATE_KIND_V1_SYSTEM_DEFAULT = 2;
+}
+
+message AlertNotificationTemplateCapabilitiesV1 {
+  bool can_update = 1;
+  bool can_publish = 2;
+  bool can_archive = 3;
+  bool can_clone = 4;
+  bool can_bind = 5;
+}
+
+message AlertNotificationTemplateV1 {
+  string id = 1;
+  string template_key = 2;
+  string name = 3;
+  string description = 4;
+  string current_revision_id = 5;
+  string published_revision_id = 6;
+  int64 revision = 7;
+  string provenance = 8;
+  string provenance_ref = 9;
+  google.protobuf.Timestamp archived_at = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+  AlertNotificationTemplateRevisionV1 current_revision = 13;
+  bool idempotent_replay = 14;
+  AlertNotificationTemplateKindV1 kind = 15;
+  AlertNotificationTemplateCapabilitiesV1 capabilities = 16;
+}
+
+message UpsertAlertNotificationTemplateRequest {
+  string id = 1;
+  string org_id = 2;
+  string template_key = 3;
+  string name = 4;
+  string description = 5;
+  NotificationTemplateDocumentV1 document = 6;
+  optional int64 expected_revision = 7;
+  string change_reason = 8;
+  string provenance = 9;
+  string provenance_ref = 10;
+  string idempotency_key = 11;
+}
+
+message PublishAlertNotificationTemplateRequest {
+  string org_id = 1;
+  string notification_template_id = 2;
+  int64 expected_revision = 3;
+  string reason = 4;
+  string idempotency_key = 5;
+}
+
+message SetAlertNotificationTemplateArchivedRequest {
+  string org_id = 1;
+  string notification_template_id = 2;
+  int64 expected_revision = 3;
+  bool archived = 4;
+  string reason = 5;
+  string idempotency_key = 6;
+}
+
+message GetAlertNotificationTemplateRequest {
+  string org_id = 1;
+  string notification_template_id = 2;
+}
+
+message ListAlertNotificationTemplatesRequest {
+  string org_id = 1;
+  bool include_archived = 2;
+  int32 limit = 3;
+  int32 offset = 4;
+}
+
+message ListAlertNotificationTemplatesResponse { repeated AlertNotificationTemplateV1 items = 1; }
+
+message GetAlertNotificationTemplateRevisionRequest {
+  string org_id = 1;
+  string notification_template_id = 2;
+  string revision_id = 3;
+}
+
+message ListAlertNotificationTemplateRevisionsRequest {
+  string org_id = 1;
+  string notification_template_id = 2;
+  int32 limit = 3;
+}
+
+message ListAlertNotificationTemplateRevisionsResponse {
+  repeated AlertNotificationTemplateRevisionV1 items = 1;
+}
+
+message PreviewAlertNotificationTemplateRequest {
+  NotificationTemplateDocumentV1 document = 1;
+  string definition_id = 2;
+  string revision_id = 3;
+  string destination_id = 4;
+  string lifecycle_event = 5;
+  AlertAttributeSetV1 representative_evidence = 6;
+}
+
+message PreviewAlertNotificationTemplateResponse {
+  bool valid = 1;
+  repeated AlertPolicyDiagnosticV1 diagnostics = 2;
+  RenderedNotificationDocumentV1 rendered_document = 3;
+  string destination_subject = 4;
+  string destination_text = 5;
+  string destination_html = 6;
+  uint64 approximate_payload_bytes = 7;
+}
+
+message NotificationTemplateVariableV1 {
+  string path = 1;
+  string value_type = 2;
+  string description = 3;
+  string example = 4;
+}
+
+message ListNotificationTemplateVariablesRequest {}
+message ListNotificationTemplateVariablesResponse {
+  uint32 variable_schema_version = 1;
+  repeated NotificationTemplateVariableV1 variables = 2;
+}
+
+message RenderedNotificationFieldV1 {
+  string label = 1;
+  string value = 2;
+}
+
+message RenderedNotificationActionV1 {
+  string label = 1;
+  string url = 2;
+  NotificationTemplateActionStyleV1 style = 3;
+}
+
+message RenderedNotificationBlockV1 {
+  string key = 1;
+  oneof content {
+    string markdown = 2;
+    RenderedNotificationFieldsBlockV1 fields = 3;
+    RenderedNotificationProgressBlockV1 progress = 4;
+    RenderedNotificationChartBlockV1 chart = 5;
+    RenderedNotificationEvidenceBlockV1 evidence = 6;
+    RenderedNotificationCodeBlockV1 code = 7;
+    RenderedNotificationActionsBlockV1 actions = 8;
+    string footer = 9;
+  }
+}
+
+message RenderedNotificationFieldsBlockV1 {
+  string title = 1;
+  repeated RenderedNotificationFieldV1 fields = 2;
+}
+
+message RenderedNotificationProgressBlockV1 {
+  string label = 1;
+  double value = 2;
+}
+
+message RenderedNotificationChartBlockV1 {
+  string chart_key = 1;
+  string title = 2;
+  string chart_kind = 3;
+}
+
+message RenderedNotificationEvidenceBlockV1 {
+  string title = 1;
+  repeated AlertAttributeSetV1 items = 2;
+}
+
+message RenderedNotificationCodeBlockV1 {
+  string title = 1;
+  string value = 2;
+}
+
+message RenderedNotificationActionsBlockV1 { repeated RenderedNotificationActionV1 actions = 1; }
+
+message RenderedNotificationDocumentV1 {
+  uint32 renderer_version = 1;
+  string subject = 2;
+  string title = 3;
+  string summary = 4;
+  repeated RenderedNotificationBlockV1 blocks = 5;
 }
 
 message GetActivationReadinessRequest {
@@ -1789,7 +2588,7 @@ message UpsertMaintenanceWindowRequest {
   string id = 1;
   string window_key = 2;
   string name = 3;
-  google.protobuf.Struct scope = 4;
+  AlertScopeV1 scope = 4;
   google.protobuf.Timestamp starts_at = 5;
   google.protobuf.Timestamp ends_at = 6;
   string idempotency_key = 7;
@@ -1799,7 +2598,7 @@ message UpsertMaintenanceWindowRequest {
 message UpsertSilenceRequest {
   string id = 1;
   string silence_key = 2;
-  google.protobuf.Struct matcher = 3;
+  AlertMatcherV1 matcher = 3;
   string reason = 4;
   google.protobuf.Timestamp starts_at = 5;
   google.protobuf.Timestamp ends_at = 6;
@@ -1917,6 +2716,32 @@ message AlertDeliveryV1 {
   google.protobuf.Timestamp created_at = 22;
   google.protobuf.Timestamp updated_at = 23;
   repeated AlertDeliveryAttemptV1 attempts = 24;
+  string notification_template_id = 25;
+  string notification_template_revision_id = 26;
+  int32 notification_renderer_version = 27;
+  repeated AlertPolicyDiagnosticV1 notification_render_diagnostics = 28;
+  AlertDeliveryRoutingProvenanceV1 routing_provenance = 29;
+  AlertDeliveryRenderProvenanceV1 render_provenance = 30;
+  // Populated by GetDelivery for Email/Slack deliveries. List responses may omit it.
+  RenderedNotificationDocumentV1 rendered_document = 31;
+}
+
+message AlertDeliveryRoutingProvenanceV1 {
+  string notification_policy_id = 1;
+  int64 notification_policy_revision = 2;
+  string notification_policy_name = 3;
+  string notification_route_id = 4;
+  string notification_route_key = 5;
+  string grouping_key = 6;
+}
+
+message AlertDeliveryRenderProvenanceV1 {
+  string selected_template_id = 1;
+  string selected_template_revision_id = 2;
+  string rendered_template_id = 3;
+  string rendered_template_revision_id = 4;
+  bool default_fallback_used = 5;
+  AlertPolicyDiagnosticV1 fallback_diagnostic = 6;
 }
 
 message ListAlertAuditRequest {
@@ -1943,7 +2768,7 @@ message AlertAuditEventV1 {
   string resource_id = 9;
   string managed_by = 10;
   string management_ref = 11;
-  google.protobuf.Struct details = 12;
+  AlertAttributeSetV1 details = 12;
   google.protobuf.Timestamp occurred_at = 13;
 }
 
@@ -1954,7 +2779,7 @@ message ListAlertAuditResponse {
 message GetAlertAuditRequest { string audit_event_id = 1; }
 message GetAlertAuditResponse { AlertAuditEventV1 event = 1; }
 
-message PreviewAlertSuppressionRequest { google.protobuf.Struct matcher = 1; }
+message PreviewAlertSuppressionRequest { AlertMatcherV1 matcher = 1; }
 message PreviewAlertSuppressionResponse {
   int64 matched_rule_count = 1;
   int64 matched_notify_rule_count = 2;
@@ -2099,12 +2924,36 @@ message PurgeAlertDefinitionRequest {
   string idempotency_key = 5;
 }
 
+message AlertSloDraftPayloadV1 {
+  string slo_key = 1;
+  string name = 2;
+  string description = 3;
+  SloRevisionInputV1 revision = 4;
+}
+
+message AlertRunbookDraftPayloadV1 {
+  string runbook_key = 1;
+  string name = 2;
+  string description = 3;
+  string markdown = 4;
+  AlertLabelsV1 labels = 5;
+}
+
+message AlertDraftPayloadV1 {
+  oneof payload {
+    PortableAlertDefinitionV1 definition = 1;
+    AlertNotificationPolicyConfigV1 policy = 2;
+    AlertSloDraftPayloadV1 slo = 3;
+    AlertRunbookDraftPayloadV1 runbook = 4;
+  }
+}
+
 message AlertDraftV1 {
   string id = 1;
   string draft_key = 2;
   string name = 3;
   string draft_kind = 4;
-  google.protobuf.Struct payload = 5;
+  AlertDraftPayloadV1 payload = 5;
   string base_resource_id = 6;
   string expected_base_revision_id = 7;
   int64 revision = 8;
@@ -2120,7 +2969,7 @@ message PutAlertDraftRequest {
   string draft_key = 1;
   string name = 2;
   string draft_kind = 3;
-  google.protobuf.Struct payload = 4;
+  AlertDraftPayloadV1 payload = 4;
   string base_resource_id = 5;
   string expected_base_revision_id = 6;
   optional int64 expected_draft_revision = 7;
@@ -2175,11 +3024,11 @@ message PortableAlertDefinitionV1 {
   string description = 3;
   AlertClassV1 class = 4;
   AlertSeverityV1 severity = 5;
-  google.protobuf.Struct scope = 6;
+  AlertScopeV1 scope = 6;
   AlertOwnerRefV1 owner = 7;
   AlertActionV1 action = 8;
-  google.protobuf.Struct evaluation_settings = 9;
-  google.protobuf.Struct sample_guard = 10;
+  AlertEvaluationSettingsV1 evaluation_settings = 9;
+  AlertSampleGuardV1 sample_guard = 10;
   string detector_kind = 11;
   AlertDetectorConfigV1 detector_config = 12;
   string config_hash = 13;
@@ -2237,7 +3086,10 @@ service AlertDefinitionService {
   rpc CreateAdvancedSignalAlert(CreateAdvancedSignalAlertRequest) returns (CreateAlertDefinitionResponse);
   rpc GetDefinition(GetAlertDefinitionRequest) returns (AlertDefinitionV1);
   rpc ListDefinitions(ListAlertDefinitionsRequest) returns (ListAlertDefinitionsResponse);
-  rpc UpdateShadow(UpdateShadowAlertRequest) returns (AlertDefinitionV1);
+  rpc UpdateObserve(UpdateObserveAlertRequest) returns (AlertDefinitionV1);
+  rpc UpdateShadow(UpdateShadowAlertRequest) returns (AlertDefinitionV1) {
+    option deprecated = true;
+  }
   rpc UpsertCandidateRevision(UpsertAlertCandidateRevisionRequest) returns (AlertRevisionV1);
   rpc GetRevision(GetAlertRevisionRequest) returns (AlertRevisionV1);
   rpc ListRevisions(ListAlertRevisionsRequest) returns (ListAlertRevisionsResponse);
@@ -2283,6 +3135,16 @@ service AlertRuntimeService {
 }
 
 service AlertNotificationService {
+  rpc CreateNotificationTemplate(UpsertAlertNotificationTemplateRequest) returns (AlertNotificationTemplateV1);
+  rpc UpdateNotificationTemplate(UpsertAlertNotificationTemplateRequest) returns (AlertNotificationTemplateV1);
+  rpc PublishNotificationTemplate(PublishAlertNotificationTemplateRequest) returns (AlertNotificationTemplateV1);
+  rpc SetNotificationTemplateArchived(SetAlertNotificationTemplateArchivedRequest) returns (AlertNotificationTemplateV1);
+  rpc GetNotificationTemplate(GetAlertNotificationTemplateRequest) returns (AlertNotificationTemplateV1);
+  rpc ListNotificationTemplates(ListAlertNotificationTemplatesRequest) returns (ListAlertNotificationTemplatesResponse);
+  rpc GetNotificationTemplateRevision(GetAlertNotificationTemplateRevisionRequest) returns (AlertNotificationTemplateRevisionV1);
+  rpc ListNotificationTemplateRevisions(ListAlertNotificationTemplateRevisionsRequest) returns (ListAlertNotificationTemplateRevisionsResponse);
+  rpc PreviewNotificationTemplate(PreviewAlertNotificationTemplateRequest) returns (PreviewAlertNotificationTemplateResponse);
+  rpc ListNotificationTemplateVariables(ListNotificationTemplateVariablesRequest) returns (ListNotificationTemplateVariablesResponse);
   rpc CreateDestination(UpsertDestinationRequest) returns (AlertDestinationV1);
   rpc UpdateDestination(UpsertDestinationRequest) returns (AlertDestinationV1);
   rpc DeleteDestination(DeleteDestinationRequest) returns (AlertMutationResponse);

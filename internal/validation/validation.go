@@ -89,7 +89,7 @@ func rejectSecretLikeValues(value any, location string) error {
 
 func NotifyActivation(notify bool) error {
 	if notify {
-		return fmt.Errorf("Terraform manages shadow alerts only; notify activation requires explicit confirmation and an audit reason")
+		return fmt.Errorf("Terraform manages Observe alerts only; notify activation requires explicit confirmation and an audit reason")
 	}
 	return nil
 }

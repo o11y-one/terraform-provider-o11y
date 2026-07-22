@@ -3,12 +3,12 @@
 page_title: "o11y_cost_per_success_alert Resource - O11y.one"
 subcategory: ""
 description: |-
-  A shadow-only O11y.one alert definition. Notify activation is intentionally unsupported and fails closed.
+  An Observe-mode O11y.one alert definition. Notify activation is intentionally unsupported and fails closed.
 ---
 
 # o11y_cost_per_success_alert (Resource)
 
-A shadow-only O11y.one alert definition. Notify activation is intentionally unsupported and fails closed.
+An Observe-mode O11y.one alert definition. Notify activation is intentionally unsupported and fails closed.
 
 
 
@@ -17,22 +17,22 @@ A shadow-only O11y.one alert definition. Notify activation is intentionally unsu
 
 ### Required
 
-- `action_json` (String)
+- `action_json` (String) Exact AlertActionV1 protobuf JSON.
 - `description` (String)
-- `evaluation_settings_json` (String) Detector evaluation settings as JSON.
+- `evaluation_settings_json` (String) Exact AlertEvaluationSettingsV1 protobuf JSON.
 - `name` (String)
 - `notify` (Boolean) Must be false. Notify activation requires an out-of-band, audited API workflow.
-- `owner_json` (String)
+- `owner_json` (String) Exact AlertOwnerRefV1 protobuf JSON.
 - `paused` (Boolean)
-- `sample_guard_json` (String)
-- `scope_json` (String)
+- `sample_guard_json` (String) Exact AlertSampleGuardV1 protobuf JSON.
+- `scope_json` (String) Exact AlertScopeV1 protobuf JSON.
 - `severity` (String)
 - `slug` (String)
 
 ### Optional
 
 - `evaluation_interval_seconds` (Number) Evaluation schedule interval in seconds.
-- `recipe_config_json` (String)
+- `recipe_config_json` (String) Exact recipe-specific detector protobuf JSON.
 
 ### Read-Only
 

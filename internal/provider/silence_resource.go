@@ -69,6 +69,10 @@ func (r *silenceResource) ValidateConfig(ctx context.Context, req resource.Valid
 		if err := validationutil.JSONDocument(data.Matcher.ValueString()); err != nil {
 			resp.Diagnostics.AddAttributeError(path.Root("matcher_json"), "Invalid matcher", err.Error())
 		}
+		matcher := &alertsv1.AlertMatcherV1{}
+		if err := protoFromJSON(data.Matcher, matcher); err != nil {
+			resp.Diagnostics.AddAttributeError(path.Root("matcher_json"), "Invalid typed matcher", err.Error())
+		}
 	}
 	validateTimeRange(&resp.Diagnostics, data.StartsAt, data.EndsAt)
 }
@@ -160,8 +164,8 @@ func (r *silenceResource) ImportState(ctx context.Context, req resource.ImportSt
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 func (r *silenceResource) request(data *silenceModel, operation, identity string) (*alertsv1.UpsertSilenceRequest, error) {
-	matcher, err := structFromJSON(data.Matcher)
-	if err != nil {
+	matcher := &alertsv1.AlertMatcherV1{}
+	if err := protoFromJSON(data.Matcher, matcher); err != nil {
 		return nil, err
 	}
 	startsAt, err := time.Parse(time.RFC3339, data.StartsAt.ValueString())
@@ -183,7 +187,7 @@ func (r *silenceResource) request(data *silenceModel, operation, identity string
 func setSilence(data *silenceModel, item *alertsv1.AlertSilenceV1) {
 	data.ID = types.StringValue(item.Id)
 	data.SilenceKey = types.StringValue(item.SilenceKey)
-	data.Matcher = jsonFromStruct(item.Matcher)
+	data.Matcher = jsonFromProtoPreserving(data.Matcher, item.Matcher)
 	data.Reason = types.StringValue(item.Reason)
 	data.StartsAt = timestampString(item.StartsAt)
 	data.EndsAt = timestampString(item.EndsAt)

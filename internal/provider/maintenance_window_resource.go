@@ -73,6 +73,10 @@ func (r *maintenanceWindowResource) ValidateConfig(ctx context.Context, req reso
 		if err := validationutil.JSONDocument(data.Scope.ValueString()); err != nil {
 			resp.Diagnostics.AddAttributeError(path.Root("scope_json"), "Invalid scope", err.Error())
 		}
+		scope := &alertsv1.AlertScopeV1{}
+		if err := protoFromJSON(data.Scope, scope); err != nil {
+			resp.Diagnostics.AddAttributeError(path.Root("scope_json"), "Invalid typed scope", err.Error())
+		}
 	}
 }
 func (r *maintenanceWindowResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
@@ -163,8 +167,8 @@ func (r *maintenanceWindowResource) ImportState(ctx context.Context, req resourc
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
 func (r *maintenanceWindowResource) request(data *maintenanceWindowModel, operation, identity string) (*alertsv1.UpsertMaintenanceWindowRequest, error) {
-	scope, err := structFromJSON(data.Scope)
-	if err != nil {
+	scope := &alertsv1.AlertScopeV1{}
+	if err := protoFromJSON(data.Scope, scope); err != nil {
 		return nil, err
 	}
 	startsAt, err := time.Parse(time.RFC3339, data.StartsAt.ValueString())
@@ -187,7 +191,7 @@ func setMaintenanceWindow(data *maintenanceWindowModel, item *alertsv1.AlertMain
 	data.ID = types.StringValue(item.Id)
 	data.WindowKey = types.StringValue(item.WindowKey)
 	data.Name = types.StringValue(item.Name)
-	data.Scope = jsonFromStruct(item.Scope)
+	data.Scope = jsonFromProtoPreserving(data.Scope, item.Scope)
 	data.StartsAt = timestampString(item.StartsAt)
 	data.EndsAt = timestampString(item.EndsAt)
 }

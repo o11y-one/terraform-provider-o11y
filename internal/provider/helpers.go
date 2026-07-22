@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"google.golang.org/protobuf/encoding/protojson"
-	"google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -50,18 +50,17 @@ func (m canonicalJSONPlanModifier) PlanModifyString(
 	resp.PlanValue = value
 }
 
-func structFromJSON(value types.String) (*structpb.Struct, error) {
+func protoFromJSON(value types.String, result proto.Message) error {
+	if result == nil {
+		return fmt.Errorf("protobuf destination must not be nil")
+	}
 	if value.IsNull() || value.IsUnknown() || value.ValueString() == "" {
-		return &structpb.Struct{}, nil
+		return nil
 	}
-	var result structpb.Struct
-	if err := protojson.Unmarshal([]byte(value.ValueString()), &result); err != nil {
-		return nil, err
-	}
-	return &result, nil
+	return protojson.UnmarshalOptions{DiscardUnknown: false}.Unmarshal([]byte(value.ValueString()), result)
 }
 
-func jsonFromStruct(value *structpb.Struct) types.String {
+func jsonFromProto(value proto.Message) types.String {
 	if value == nil {
 		return types.StringValue("{}")
 	}
@@ -70,6 +69,41 @@ func jsonFromStruct(value *structpb.Struct) types.String {
 	_ = json.Unmarshal(raw, &document)
 	canonical, _ := json.Marshal(document)
 	return types.StringValue(string(canonical))
+}
+
+func jsonFromProtoPreserving(configured types.String, value proto.Message) types.String {
+	if value != nil && knownNonEmpty(configured) {
+		candidate := value.ProtoReflect().New().Interface()
+		if err := protoFromJSON(configured, candidate); err == nil && proto.Equal(candidate, value) {
+			canonical, canonicalErr := canonicalJSONString(configured)
+			if canonicalErr == nil {
+				return canonical
+			}
+		}
+	}
+	return jsonFromProto(value)
+}
+
+func stringMapFromJSON(value types.String) (map[string]string, error) {
+	if value.IsNull() || value.IsUnknown() || value.ValueString() == "" {
+		return map[string]string{}, nil
+	}
+	var result map[string]string
+	if err := json.Unmarshal([]byte(value.ValueString()), &result); err != nil {
+		return nil, err
+	}
+	if result == nil {
+		result = map[string]string{}
+	}
+	return result, nil
+}
+
+func jsonFromStringMap(value map[string]string) types.String {
+	if value == nil {
+		value = map[string]string{}
+	}
+	raw, _ := json.Marshal(value)
+	return types.StringValue(string(raw))
 }
 
 func canonicalJSONString(value types.String) (types.String, error) {

@@ -3,12 +3,12 @@
 page_title: "o11y_agent_quality_alert Resource - O11y.one"
 subcategory: ""
 description: |-
-  A shadow-only O11y.one alert definition. Notify activation is intentionally unsupported and fails closed.
+  An Observe-mode O11y.one alert definition. Notify activation is intentionally unsupported and fails closed.
 ---
 
 # o11y_agent_quality_alert (Resource)
 
-A shadow-only O11y.one alert definition. Notify activation is intentionally unsupported and fails closed.
+An Observe-mode O11y.one alert definition. Notify activation is intentionally unsupported and fails closed.
 
 ## Example Usage
 
@@ -18,17 +18,17 @@ resource "o11y_agent_quality_alert" "quality" {
   name                        = "Agent quality regression"
   description                 = "Detect sustained quality regressions."
   severity                    = "warning"
-  scope_json                  = jsonencode({ "service.name" = "agent-api" })
-  owner_json                  = jsonencode({ team = "ai-platform" })
+  scope_json                  = jsonencode({ service_names = ["agent-api"] })
+  owner_json                  = jsonencode({ team_id = "019f7aa2-6c7f-7000-8000-000000000010" })
   action_json                 = jsonencode({ summary = "Inspect failed agent runs and eval evidence." })
-  evaluation_settings_json    = jsonencode({ pending_for_secs = 300 })
+  evaluation_settings_json    = jsonencode({ pending_for_seconds = 300 })
   evaluation_interval_seconds = 300
-  sample_guard_json           = jsonencode({ min_events = 50 })
+  sample_guard_json           = jsonencode({ minimum_events = "50" })
   recipe_config_json = jsonencode({
     short_window_seconds      = 900
     long_window_seconds       = 3600
     baseline_window_seconds   = 86400
-    min_run_count             = 50
+    min_run_count             = "50"
     max_bad_outcome_rate      = 0.05
     max_eval_fail_rate        = 0.05
     min_eval_pass_rate        = 0.95
@@ -46,22 +46,22 @@ resource "o11y_agent_quality_alert" "quality" {
 
 ### Required
 
-- `action_json` (String)
+- `action_json` (String) Exact AlertActionV1 protobuf JSON.
 - `description` (String)
-- `evaluation_settings_json` (String) Detector evaluation settings as JSON.
+- `evaluation_settings_json` (String) Exact AlertEvaluationSettingsV1 protobuf JSON.
 - `name` (String)
 - `notify` (Boolean) Must be false. Notify activation requires an out-of-band, audited API workflow.
-- `owner_json` (String)
+- `owner_json` (String) Exact AlertOwnerRefV1 protobuf JSON.
 - `paused` (Boolean)
-- `sample_guard_json` (String)
-- `scope_json` (String)
+- `sample_guard_json` (String) Exact AlertSampleGuardV1 protobuf JSON.
+- `scope_json` (String) Exact AlertScopeV1 protobuf JSON.
 - `severity` (String)
 - `slug` (String)
 
 ### Optional
 
 - `evaluation_interval_seconds` (Number) Evaluation schedule interval in seconds.
-- `recipe_config_json` (String)
+- `recipe_config_json` (String) Exact recipe-specific detector protobuf JSON.
 
 ### Read-Only
 

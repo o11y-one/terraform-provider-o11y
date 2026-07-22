@@ -17,7 +17,7 @@ func TestProviderAndResourceValidation(t *testing.T) {
 		{"raw ref", OpaqueSecretRefsJSON(`{"authorization":"Bearer raw"}`), true},
 		{"inline token key", RejectSecretLikeConfig(`{"token":"raw"}`), true},
 		{"ordinary config", RejectSecretLikeConfig(`{"url":"https://hooks.example.test"}`), false},
-		{"shadow allowed", NotifyActivation(false), false},
+		{"Observe allowed", NotifyActivation(false), false},
 		{"notify rejected", NotifyActivation(true), true},
 		{"uuid", UUID("019f430f-90d4-74c3-95b7-9120db366252"), false},
 		{"bad uuid", UUID("tenant-a"), true},

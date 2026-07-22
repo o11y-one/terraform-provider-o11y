@@ -4,10 +4,10 @@ This provider is intentionally bounded by `o11y_one.alerts.v1` and does not infe
 
 ## Alert definitions
 
-`AlertDefinitionService` exposes create RPCs, exact get/list, shadow update, and soft delete.
+`AlertDefinitionService` exposes recipe-specific create RPCs, exact get/list, Observe update, candidate-revision workflows, and revision-fenced archive.
 
-- Terraform destroy calls `DeleteDefinition`; replacement-triggering changes can complete without orphaning the prior definition.
-- `UpdateShadow` cannot update slug, severity, scope, or recipe/condition configuration, so these attributes are replacement-triggering.
+- Terraform destroy calls `ArchiveDefinitionV2` with the expected revision.
+- `UpdateObserve` cannot update slug, severity, scope, or detector configuration, so these attributes are replacement-triggering.
 - `GetDefinition` returns detector kind, recipe-specific configuration, and evaluation interval for stable import and drift detection.
 
 ## Notify activation
@@ -24,6 +24,12 @@ The API exposes exact get and delete RPCs for destinations and notification poli
 
 - Read/import/drift use exact ID lookups.
 - Missing IDs remove the resource from Terraform state.
+
+Policy JSON follows the exact typed protobuf JSON contract. Route targets live under `target`, matchers are repeated typed clauses, route behavior is an enum, notification budgets are top-level fields, and `requested_notification_template_revision_id` pins an exact published template revision. `bound_notification_template_revision_id` remains backend output authority and must not be configured.
+
+## Notification templates
+
+Terraform manages user templates only. `published = true` publishes the current revision explicitly; publishing a newer revision never rebinds an existing policy. A policy can select `notification_template_id` alone to bind the then-current published revision, or add `requested_notification_template_revision_id` to pin an exact published revision. System-default templates remain backend-owned.
 
 ## Secret references
 
