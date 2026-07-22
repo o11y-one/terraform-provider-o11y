@@ -36,6 +36,7 @@ An Observe-mode O11y.one alert definition. Notify activation is intentionally un
 
 ### Read-Only
 
+- `alert_class` (String) Backend-owned outcome, budget, or symptom classification.
 - `id` (String) The ID of this resource.
 - `mode` (String)
 - `revision_id` (String)

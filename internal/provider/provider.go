@@ -129,7 +129,7 @@ func (p *o11yProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 }
 
 func (p *o11yProvider) Resources(_ context.Context) []func() resource.Resource {
-	return []func() resource.Resource{NewSLIResource, NewSLOResource, NewRunbookResource, NewContactResource, NewNotificationGroupResource, NewDestinationResource, NewNotificationTemplateResource, NewNotificationPolicyResource, NewMaintenanceWindowResource, NewSilenceResource, NewAgentQualityAlertResource, NewCostAlertResource, NewSLOAlertResource, NewSymptomAlertResource}
+	return []func() resource.Resource{NewSLIResource, NewSLOResource, NewRunbookResource, NewContactResource, NewNotificationGroupResource, NewDestinationResource, NewNotificationTemplateResource, NewNotificationPolicyResource, NewMaintenanceWindowResource, NewSilenceResource, NewAgentQualityAlertResource, NewCostAlertResource, NewSLOAlertResource, NewSymptomAlertResource, NewQueryThresholdAlertResource}
 }
 func (p *o11yProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{NewAlertPreviewDataSource, NewRunbookDataSource, NewRunbookRevisionsDataSource, NewRunbookPreviewDataSource, NewRunbookUsageDataSource}
