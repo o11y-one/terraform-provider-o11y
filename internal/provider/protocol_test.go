@@ -38,11 +38,24 @@ func TestProviderProtocolAlertingLifecycle(t *testing.T) {
 					terraformresource.TestCheckResourceAttr("o11y_alert_notification_policy.default", "name", "Default"),
 					terraformresource.TestCheckResourceAttrSet("o11y_alert_notification_policy.default", "id"),
 					terraformresource.TestCheckResourceAttr("o11y_alert_notification_policy.default", "revision", "1"),
+					terraformresource.TestCheckResourceAttrWith("o11y_alert_notification_policy.default", "config_json", func(value string) error {
+						if strings.Contains(value, "persisted-primary") {
+							return fmt.Errorf("desired config_json was replaced by backend-expanded routes")
+						}
+						return nil
+					}),
+					terraformresource.TestCheckResourceAttrWith("o11y_alert_notification_policy.default", "normalized_config_json", func(value string) error {
+						if !strings.Contains(value, "persisted-primary") {
+							return fmt.Errorf("normalized_config_json does not expose backend-expanded routes")
+						}
+						return nil
+					}),
 					terraformresource.TestCheckResourceAttr("o11y_alert_maintenance_window.deploy", "name", "Deploy freeze"),
 					terraformresource.TestCheckResourceAttrSet("o11y_alert_maintenance_window.deploy", "id"),
 					terraformresource.TestCheckResourceAttr("o11y_alert_silence.provider", "reason", "Provider maintenance"),
 					terraformresource.TestCheckResourceAttrSet("o11y_alert_silence.provider", "id"),
 					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "name", "Quality"),
+					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "owner_json", `{"team_id":"platform"}`),
 					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "evaluation_settings_json", `{}`),
 					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "evaluation_interval_seconds", "60"),
 					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "recipe_config_json", `{"max_bad_outcome_rate":0.1}`),
@@ -58,7 +71,7 @@ func TestProviderProtocolAlertingLifecycle(t *testing.T) {
 				),
 			},
 			{ResourceName: "o11y_alert_destination.primary", ImportState: true, ImportStateVerify: true},
-			{ResourceName: "o11y_alert_notification_policy.default", ImportState: true, ImportStateVerify: true},
+			{ResourceName: "o11y_alert_notification_policy.default", ImportState: true, ImportStateVerify: true, ImportStateVerifyIgnore: []string{"config_json"}},
 			{ResourceName: "o11y_alert_maintenance_window.deploy", ImportState: true, ImportStateVerify: true},
 			{ResourceName: "o11y_alert_silence.provider", ImportState: true, ImportStateVerify: true},
 			{ResourceName: "o11y_agent_quality_alert.quality", ImportState: true, ImportStateVerify: true},
@@ -281,14 +294,30 @@ resource "o11y_alert_notification_template" "customer_impact" {
     firing = {
       title_template = "{{ incident.title }}"
       summary_template = %q
+      blocks = [{
+        key = "impact"
+        markdown = { text_template = %q }
+      }]
     }
     resolved = {
       title_template = "Resolved: {{ incident.title }}"
       summary_template = "Customer impact has recovered"
+      blocks = [{
+        key = "recovery"
+        markdown = { text_template = "Customer impact has recovered" }
+      }]
+    }
+    reminder = {
+      title_template = "Reminder: {{ incident.title }}"
+      summary_template = "Customer impact is still ongoing"
+      blocks = [{
+        key = "ongoing-impact"
+        markdown = { text_template = "Customer impact is still ongoing" }
+      }]
     }
   })
 }
-`, name, summary)
+`, name, summary, summary)
 }
 
 func protocolAlertingConfig(endpoint, destinationName, alertName string) string {

@@ -3,6 +3,7 @@ package provider
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
@@ -21,6 +22,7 @@ import (
 
 var _ resource.ResourceWithConfigure = &runbookResource{}
 var _ resource.ResourceWithImportState = &runbookResource{}
+var _ resource.ResourceWithModifyPlan = &runbookResource{}
 var _ resource.ResourceWithValidateConfig = &runbookResource{}
 
 type runbookResource struct{ client *client.Client }
@@ -82,6 +84,21 @@ func (r *runbookResource) Configure(_ context.Context, req resource.ConfigureReq
 		return
 	}
 	r.client = c
+}
+
+func (r *runbookResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
+	if req.Plan.Raw.IsNull() {
+		return
+	}
+	var data runbookModel
+	resp.Diagnostics.Append(req.Plan.Get(ctx, &data)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+	if !data.Markdown.IsUnknown() && !data.Markdown.IsNull() {
+		data.Markdown = types.StringValue(canonicalRunbookMarkdown(data.Markdown.ValueString()))
+	}
+	resp.Diagnostics.Append(resp.Plan.Set(ctx, &data)...)
 }
 
 func (r *runbookResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
@@ -241,7 +258,7 @@ func (r *runbookResource) ImportState(ctx context.Context, req resource.ImportSt
 func (r *runbookResource) request(data *runbookModel, operation, identity string, expected *int64) *alertsv1.UpsertAlertRunbookRequest {
 	message := &alertsv1.UpsertAlertRunbookRequest{
 		Id: data.ID.ValueString(), OrgId: r.client.OrgID(), RunbookKey: data.RunbookKey.ValueString(),
-		Title: data.Title.ValueString(), Owner: ownerProto(data.OwnerUserID, data.OwnerTeamID), Markdown: data.Markdown.ValueString(),
+		Title: data.Title.ValueString(), Owner: ownerProto(data.OwnerUserID, data.OwnerTeamID), Markdown: canonicalRunbookMarkdown(data.Markdown.ValueString()),
 		ExpectedRevision: expected, ChangeReason: data.ChangeReason.ValueString(), Provenance: "terraform", ProvenanceRef: stringValue(data.ProvenanceRef),
 	}
 	message.IdempotencyKey = idempotency.Key(r.client.TenantID(), r.client.OrgID(), "runbook", operation, identity, message.RunbookKey, message.Title, message.Markdown, message.ChangeReason, message.ProvenanceRef)
@@ -288,8 +305,12 @@ func runbookContentChanged(plan, state runbookModel) bool {
 		plan.Title.ValueString() != state.Title.ValueString() ||
 		stringValue(plan.OwnerUserID) != stringValue(state.OwnerUserID) ||
 		stringValue(plan.OwnerTeamID) != stringValue(state.OwnerTeamID) ||
-		plan.Markdown.ValueString() != state.Markdown.ValueString() ||
+		canonicalRunbookMarkdown(plan.Markdown.ValueString()) != canonicalRunbookMarkdown(state.Markdown.ValueString()) ||
 		stringValue(plan.ProvenanceRef) != stringValue(state.ProvenanceRef)
+}
+
+func canonicalRunbookMarkdown(markdown string) string {
+	return strings.TrimSpace(markdown)
 }
 
 func runbookProtoFromState(data runbookModel) *alertsv1.AlertRunbookV1 {
