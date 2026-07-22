@@ -73,7 +73,7 @@ resource "o11y_alert_notification_policy" "default" {
 
 ### Required
 
-- `config_json` (String) Exact AlertNotificationPolicyConfigV1 protobuf JSON. Route targets, matcher values, behavior, template revision bindings, grouping, timing, escalation, inhibition, and page budgets are typed.
+- `config_json` (String) Desired AlertNotificationPolicyConfigV1 protobuf JSON. Backend-generated route IDs, inherited matchers, tree paths, and template bindings do not rewrite this input.
 - `enabled` (Boolean)
 - `name` (String)
 - `policy_key` (String)
@@ -81,4 +81,5 @@ resource "o11y_alert_notification_policy" "default" {
 ### Read-Only
 
 - `id` (String) The ID of this resource.
+- `normalized_config_json` (String) Backend-authoritative expanded AlertNotificationPolicyConfigV1, including persisted routes and revision-pinned template bindings.
 - `revision` (Number) Monotonic server revision used to fence concurrent updates.

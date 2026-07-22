@@ -287,7 +287,7 @@ func (s *alertTestServer) CreateNotificationPolicy(ctx context.Context, req *ale
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	id := s.id("policy", req.IdempotencyKey)
-	item := &alertsv1.AlertNotificationPolicyV1{Id: id, PolicyKey: req.PolicyKey, Name: req.Name, Enabled: req.Enabled, Config: req.Config, Revision: 1}
+	item := &alertsv1.AlertNotificationPolicyV1{Id: id, PolicyKey: req.PolicyKey, Name: req.Name, Enabled: req.Enabled, Config: expandedTestNotificationPolicyConfig(req.Config), Revision: 1}
 	s.policies[id] = item
 	return item, nil
 }
@@ -304,9 +304,31 @@ func (s *alertTestServer) UpdateNotificationPolicy(ctx context.Context, req *ale
 	if req.ExpectedRevision == nil || req.GetExpectedRevision() != existing.Revision {
 		return nil, status.Error(codes.Aborted, "stale policy revision")
 	}
-	item := &alertsv1.AlertNotificationPolicyV1{Id: req.Id, PolicyKey: req.PolicyKey, Name: req.Name, Enabled: req.Enabled, Config: req.Config, Revision: existing.Revision + 1}
+	item := &alertsv1.AlertNotificationPolicyV1{Id: req.Id, PolicyKey: req.PolicyKey, Name: req.Name, Enabled: req.Enabled, Config: expandedTestNotificationPolicyConfig(req.Config), Revision: existing.Revision + 1}
 	s.policies[req.Id] = item
 	return item, nil
+}
+
+func expandedTestNotificationPolicyConfig(input *alertsv1.AlertNotificationPolicyConfigV1) *alertsv1.AlertNotificationPolicyConfigV1 {
+	config := proto.Clone(input).(*alertsv1.AlertNotificationPolicyConfigV1)
+	if config.Tree == nil {
+		return config
+	}
+	for _, node := range config.Tree.Nodes {
+		if node.NodeKind != alertsv1.AlertPolicyTreeNodeKindV1_ALERT_POLICY_TREE_NODE_KIND_V1_ROUTE {
+			continue
+		}
+		config.Routes = append(config.Routes, &alertsv1.AlertNotificationRouteV1{
+			Id:       "persisted-" + node.NodeKey,
+			RouteKey: node.NodeKey,
+			Priority: node.Priority,
+			Enabled:  node.Enabled,
+			Target:   node.Target,
+			Behavior: node.Behavior,
+			TreePath: []string{node.ParentNodeKey, node.NodeKey},
+		})
+	}
+	return config
 }
 func (s *alertTestServer) ListNotificationPolicies(ctx context.Context, req *alertsv1.ListOperatorResourcesRequest) (*alertsv1.ListNotificationPoliciesResponse, error) {
 	if err := s.authorize(ctx); err != nil {
@@ -553,7 +575,10 @@ func (s *alertTestServer) createAlert(ctx context.Context, base *alertsv1.AlertR
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	id := s.id("alert", base.IdempotencyKey)
-	item := &alertsv1.AlertDefinitionV1{Id: id, TenantId: testTenantID, OrgId: base.OrgId, Slug: base.Slug, Name: base.Name, Description: base.Description, Severity: base.Severity, Mode: alertsv1.AlertModeV1_ALERT_MODE_V1_OBSERVE, Scope: base.Scope, Owner: base.Owner, Action: base.Action, EvaluationSettings: base.EvaluationSettings, SampleGuard: base.SampleGuard, CurrentRevisionId: "revision-1", DetectorKind: detectorKind, DetectorConfig: detectorConfig, EvaluationIntervalSeconds: base.EvaluationIntervalSeconds}
+	owner := proto.Clone(base.Owner).(*alertsv1.AlertOwnerRefV1)
+	owner.DisplayName = "Engineering"
+	owner.Active = true
+	item := &alertsv1.AlertDefinitionV1{Id: id, TenantId: testTenantID, OrgId: base.OrgId, Slug: base.Slug, Name: base.Name, Description: base.Description, Severity: base.Severity, Mode: alertsv1.AlertModeV1_ALERT_MODE_V1_OBSERVE, Scope: base.Scope, Owner: owner, Action: base.Action, EvaluationSettings: base.EvaluationSettings, SampleGuard: base.SampleGuard, CurrentRevisionId: "revision-1", DetectorKind: detectorKind, DetectorConfig: detectorConfig, EvaluationIntervalSeconds: base.EvaluationIntervalSeconds}
 	s.definitions[id] = item
 	return &alertsv1.CreateAlertDefinitionResponse{Definition: item, RevisionId: "revision-1"}, nil
 }

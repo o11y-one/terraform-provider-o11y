@@ -26,12 +26,13 @@ var _ resource.ResourceWithModifyPlan = &notificationPolicyResource{}
 
 type notificationPolicyResource struct{ client *client.Client }
 type notificationPolicyModel struct {
-	ID        types.String `tfsdk:"id"`
-	PolicyKey types.String `tfsdk:"policy_key"`
-	Name      types.String `tfsdk:"name"`
-	Enabled   types.Bool   `tfsdk:"enabled"`
-	Config    types.String `tfsdk:"config_json"`
-	Revision  types.Int64  `tfsdk:"revision"`
+	ID               types.String `tfsdk:"id"`
+	PolicyKey        types.String `tfsdk:"policy_key"`
+	Name             types.String `tfsdk:"name"`
+	Enabled          types.Bool   `tfsdk:"enabled"`
+	Config           types.String `tfsdk:"config_json"`
+	NormalizedConfig types.String `tfsdk:"normalized_config_json"`
+	Revision         types.Int64  `tfsdk:"revision"`
 }
 
 func NewNotificationPolicyResource() resource.Resource { return &notificationPolicyResource{} }
@@ -39,7 +40,7 @@ func (r *notificationPolicyResource) Metadata(_ context.Context, req resource.Me
 	resp.TypeName = req.ProviderTypeName + "_alert_notification_policy"
 }
 func (r *notificationPolicyResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{Description: "An O11y.one alert notification policy with bounded route trees, grouping, repeats, escalation, revision-pinned templates, and notification budgets.", Attributes: map[string]schema.Attribute{"id": schema.StringAttribute{Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()}}, "policy_key": schema.StringAttribute{Required: true}, "name": schema.StringAttribute{Required: true}, "enabled": schema.BoolAttribute{Required: true}, "config_json": schema.StringAttribute{Required: true, PlanModifiers: []planmodifier.String{canonicalJSONPlanModifier{}}, Description: "Exact AlertNotificationPolicyConfigV1 protobuf JSON. Route targets, matcher values, behavior, template revision bindings, grouping, timing, escalation, inhibition, and page budgets are typed."}, "revision": schema.Int64Attribute{Computed: true, Description: "Monotonic server revision used to fence concurrent updates."}}}
+	resp.Schema = schema.Schema{Description: "An O11y.one alert notification policy with bounded route trees, grouping, repeats, escalation, revision-pinned templates, and notification budgets.", Attributes: map[string]schema.Attribute{"id": schema.StringAttribute{Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()}}, "policy_key": schema.StringAttribute{Required: true}, "name": schema.StringAttribute{Required: true}, "enabled": schema.BoolAttribute{Required: true}, "config_json": schema.StringAttribute{Required: true, PlanModifiers: []planmodifier.String{canonicalJSONPlanModifier{}}, Description: "Desired AlertNotificationPolicyConfigV1 protobuf JSON. Backend-generated route IDs, inherited matchers, tree paths, and template bindings do not rewrite this input."}, "normalized_config_json": schema.StringAttribute{Computed: true, Description: "Backend-authoritative expanded AlertNotificationPolicyConfigV1, including persisted routes and revision-pinned template bindings."}, "revision": schema.Int64Attribute{Computed: true, Description: "Monotonic server revision used to fence concurrent updates."}}}
 }
 func (r *notificationPolicyResource) ModifyPlan(ctx context.Context, req resource.ModifyPlanRequest, resp *resource.ModifyPlanResponse) {
 	if req.Plan.Raw.IsNull() {
@@ -95,7 +96,7 @@ func (r *notificationPolicyResource) Create(ctx context.Context, req resource.Cr
 	if resp.Diagnostics.HasError() {
 		return
 	}
-	message, err := r.request(&data, "create", data.PolicyKey.ValueString())
+	message, err := r.request(&data, "create", data.PolicyKey.ValueString(), nil)
 	if err != nil {
 		addRPCError(&resp.Diagnostics, "build policy request", err)
 		return
@@ -138,7 +139,8 @@ func (r *notificationPolicyResource) Update(ctx context.Context, req resource.Up
 		return
 	}
 	data.ID = state.ID
-	message, err := r.request(&data, "update", state.ID.ValueString())
+	expectedRevision := state.Revision.ValueInt64()
+	message, err := r.request(&data, "update", state.ID.ValueString(), &expectedRevision)
 	if err != nil {
 		addRPCError(&resp.Diagnostics, "build policy request", err)
 		return
@@ -173,16 +175,12 @@ func (r *notificationPolicyResource) Delete(ctx context.Context, req resource.De
 func (r *notificationPolicyResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
 	resource.ImportStatePassthroughID(ctx, path.Root("id"), req, resp)
 }
-func (r *notificationPolicyResource) request(data *notificationPolicyModel, operation, identity string) (*alertsv1.UpsertNotificationPolicyRequest, error) {
+func (r *notificationPolicyResource) request(data *notificationPolicyModel, operation, identity string, expectedRevision *int64) (*alertsv1.UpsertNotificationPolicyRequest, error) {
 	config := &alertsv1.AlertNotificationPolicyConfigV1{}
 	if err := protoFromJSON(data.Config, config); err != nil {
 		return nil, err
 	}
-	message := &alertsv1.UpsertNotificationPolicyRequest{Id: data.ID.ValueString(), PolicyKey: data.PolicyKey.ValueString(), Name: data.Name.ValueString(), Enabled: data.Enabled.ValueBool(), Config: config}
-	if operation == "update" {
-		expectedRevision := data.Revision.ValueInt64()
-		message.ExpectedRevision = &expectedRevision
-	}
+	message := &alertsv1.UpsertNotificationPolicyRequest{Id: data.ID.ValueString(), PolicyKey: data.PolicyKey.ValueString(), Name: data.Name.ValueString(), Enabled: data.Enabled.ValueBool(), Config: config, ExpectedRevision: expectedRevision}
 	payload, err := protojson.Marshal(message)
 	if err != nil {
 		return nil, err
@@ -191,10 +189,20 @@ func (r *notificationPolicyResource) request(data *notificationPolicyModel, oper
 	return message, nil
 }
 func setNotificationPolicy(data *notificationPolicyModel, item *alertsv1.AlertNotificationPolicyV1) {
+	desiredConfig := data.Config
 	data.ID = types.StringValue(item.Id)
 	data.PolicyKey = types.StringValue(item.PolicyKey)
 	data.Name = types.StringValue(item.Name)
 	data.Enabled = types.BoolValue(item.Enabled)
-	data.Config = jsonFromProtoPreserving(data.Config, item.Config)
+	data.NormalizedConfig = jsonFromProto(item.Config)
+	if knownNonEmpty(desiredConfig) {
+		if canonical, err := canonicalJSONString(desiredConfig); err == nil {
+			data.Config = canonical
+		} else {
+			data.Config = desiredConfig
+		}
+	} else {
+		data.Config = data.NormalizedConfig
+	}
 	data.Revision = types.Int64Value(item.Revision)
 }

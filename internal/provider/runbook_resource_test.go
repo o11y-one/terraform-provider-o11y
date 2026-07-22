@@ -60,3 +60,18 @@ func TestRunbookContentChangesIgnoreLifecycleOnlyFields(t *testing.T) {
 		t.Fatal("markdown change must create a content revision")
 	}
 }
+
+func TestCanonicalRunbookMarkdownMatchesServerNormalization(t *testing.T) {
+	const configured = "\n  # Checkout response\n\n1. Inspect evidence.\n  \n"
+	const canonical = "# Checkout response\n\n1. Inspect evidence."
+	if got := canonicalRunbookMarkdown(configured); got != canonical {
+		t.Fatalf("canonical runbook markdown = %q, want %q", got, canonical)
+	}
+
+	state := runbookModel{Markdown: types.StringValue(canonical)}
+	plan := state
+	plan.Markdown = types.StringValue(configured)
+	if runbookContentChanged(plan, state) {
+		t.Fatal("server-equivalent surrounding whitespace must not create runbook drift")
+	}
+}

@@ -101,6 +101,8 @@ func (r *notificationTemplateResource) ValidateConfig(ctx context.Context, req r
 		document := &alertsv1.NotificationTemplateDocumentV1{}
 		if err := protoFromJSON(data.Document, document); err != nil {
 			resp.Diagnostics.AddAttributeError(path.Root("document_json"), "Invalid typed notification template", err.Error())
+		} else if err := validateNotificationTemplateDocument(document); err != nil {
+			resp.Diagnostics.AddAttributeError(path.Root("document_json"), "Incomplete notification template", err.Error())
 		}
 	}
 }
@@ -285,7 +287,65 @@ func notificationTemplateDocument(value types.String) (*alertsv1.NotificationTem
 	if err := protoFromJSON(value, document); err != nil {
 		return nil, err
 	}
+	if err := validateNotificationTemplateDocument(document); err != nil {
+		return nil, err
+	}
 	return document, nil
+}
+
+func validateNotificationTemplateDocument(document *alertsv1.NotificationTemplateDocumentV1) error {
+	if document == nil {
+		return fmt.Errorf("document is required")
+	}
+	if document.Firing == nil {
+		return fmt.Errorf("document.firing is required")
+	}
+	if document.Resolved == nil {
+		return fmt.Errorf("document.resolved is required")
+	}
+	if document.Reminder == nil {
+		return fmt.Errorf("document.reminder is required")
+	}
+	for name, variant := range map[string]*alertsv1.NotificationTemplateVariantV1{
+		"document.firing":   document.Firing,
+		"document.resolved": document.Resolved,
+		"document.reminder": document.Reminder,
+	} {
+		if err := validateNotificationTemplateVariant(name, variant); err != nil {
+			return err
+		}
+	}
+	for index, localization := range document.Localizations {
+		if localization == nil {
+			return fmt.Errorf("document.localizations[%d] is required", index)
+		}
+		if localization.Firing == nil {
+			return fmt.Errorf("document.localizations[%d].firing is required", index)
+		}
+		if localization.Resolved == nil {
+			return fmt.Errorf("document.localizations[%d].resolved is required", index)
+		}
+		if localization.Reminder == nil {
+			return fmt.Errorf("document.localizations[%d].reminder is required", index)
+		}
+		for name, variant := range map[string]*alertsv1.NotificationTemplateVariantV1{
+			fmt.Sprintf("document.localizations[%d].firing", index):   localization.Firing,
+			fmt.Sprintf("document.localizations[%d].resolved", index): localization.Resolved,
+			fmt.Sprintf("document.localizations[%d].reminder", index): localization.Reminder,
+		} {
+			if err := validateNotificationTemplateVariant(name, variant); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func validateNotificationTemplateVariant(name string, variant *alertsv1.NotificationTemplateVariantV1) error {
+	if count := len(variant.Blocks); count < 1 || count > 32 {
+		return fmt.Errorf("%s must contain 1..=32 blocks", name)
+	}
+	return nil
 }
 
 func notificationTemplateContentChanged(plan, state notificationTemplateModel) bool {

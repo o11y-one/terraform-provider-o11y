@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -454,9 +455,13 @@ func setAlert(data *alertModel, item *alertsv1.AlertDefinitionV1) {
 	data.AlertClass = types.StringValue(strings.ToLower(strings.TrimPrefix(item.Class.String(), "ALERT_CLASS_V1_")))
 	data.Severity = types.StringValue(strings.ToLower(strings.TrimPrefix(item.Severity.String(), "ALERT_SEVERITY_V1_")))
 	data.Scope = jsonFromProtoPreserving(data.Scope, item.Scope)
-	data.Owner = jsonFromProtoPreserving(data.Owner, item.Owner)
+	data.Owner = alertOwnerJSONFromProtoPreserving(data.Owner, item.Owner)
 	data.Action = jsonFromProtoPreserving(data.Action, item.Action)
-	data.EvaluationSettings = jsonFromProtoPreserving(data.EvaluationSettings, item.EvaluationSettings)
+	data.EvaluationSettings = alertEvaluationSettingsJSONFromProtoPreserving(
+		data.EvaluationSettings,
+		data.EvaluationInterval,
+		item.EvaluationSettings,
+	)
 	data.EvaluationInterval = types.Int64Value(item.EvaluationIntervalSeconds)
 	data.SampleGuard = jsonFromProtoPreserving(data.SampleGuard, item.SampleGuard)
 	data.RecipeConfig = jsonFromProtoPreserving(data.RecipeConfig, detectorRecipeConfig(item.DetectorConfig))
@@ -464,6 +469,70 @@ func setAlert(data *alertModel, item *alertsv1.AlertDefinitionV1) {
 	data.Paused = types.BoolValue(item.Mode == alertsv1.AlertModeV1_ALERT_MODE_V1_DISABLED)
 	data.Notify = types.BoolValue(item.Mode == alertsv1.AlertModeV1_ALERT_MODE_V1_NOTIFY)
 	data.RevisionID = types.StringValue(item.CurrentRevisionId)
+}
+
+func alertOwnerJSONFromProtoPreserving(configured types.String, value *alertsv1.AlertOwnerRefV1) types.String {
+	if value != nil && knownNonEmpty(configured) {
+		candidate := &alertsv1.AlertOwnerRefV1{}
+		if err := protoFromJSON(configured, candidate); err == nil && sameAlertOwnerIdentity(candidate, value) && configuredAlertOwnerStatusMatches(configured, value) {
+			canonical, canonicalErr := canonicalJSONString(configured)
+			if canonicalErr == nil {
+				return canonical
+			}
+		}
+	}
+	return jsonFromProto(value)
+}
+
+func configuredAlertOwnerStatusMatches(configured types.String, value *alertsv1.AlertOwnerRefV1) bool {
+	var document map[string]json.RawMessage
+	if err := json.Unmarshal([]byte(configured.ValueString()), &document); err != nil {
+		return false
+	}
+	raw, configuredActive := document["active"]
+	if !configuredActive {
+		return true
+	}
+	var active bool
+	return json.Unmarshal(raw, &active) == nil && active == value.Active
+}
+
+func alertEvaluationSettingsJSONFromProtoPreserving(
+	configured types.String,
+	interval types.Int64,
+	value *alertsv1.AlertEvaluationSettingsV1,
+) types.String {
+	if value != nil && knownNonEmpty(configured) {
+		candidate := &alertsv1.AlertEvaluationSettingsV1{}
+		if err := protoFromJSON(configured, candidate); err == nil {
+			if !interval.IsNull() && !interval.IsUnknown() {
+				candidate.IntervalSeconds = interval.ValueInt64()
+			}
+			if candidate.NoDataBehavior == alertsv1.AlertNoDataBehaviorV1_ALERT_NO_DATA_BEHAVIOR_V1_UNSPECIFIED {
+				candidate.NoDataBehavior = alertsv1.AlertNoDataBehaviorV1_ALERT_NO_DATA_BEHAVIOR_V1_HOLD_STATE
+			}
+			if proto.Equal(candidate, value) {
+				canonical, canonicalErr := canonicalJSONString(configured)
+				if canonicalErr == nil {
+					return canonical
+				}
+			}
+		}
+	}
+	return jsonFromProto(value)
+}
+
+func sameAlertOwnerIdentity(left, right *alertsv1.AlertOwnerRefV1) bool {
+	if left == nil || right == nil {
+		return false
+	}
+	if teamID := left.GetTeamId(); teamID != "" {
+		return teamID == right.GetTeamId()
+	}
+	if userID := left.GetUserId(); userID != "" {
+		return userID == right.GetUserId()
+	}
+	return false
 }
 
 func detectorRecipeConfig(config *alertsv1.AlertDetectorConfigV1) proto.Message {

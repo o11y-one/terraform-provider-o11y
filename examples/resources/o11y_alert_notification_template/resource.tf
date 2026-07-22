@@ -31,6 +31,18 @@ resource "o11y_alert_notification_template" "customer_impact" {
     resolved = {
       title_template   = "Resolved: {{ incident.title }}"
       summary_template = "Customer impact has recovered."
+      blocks = [{
+        key      = "recovery"
+        markdown = { text_template = "*Resolved*\nCustomer impact has recovered." }
+      }]
+    }
+    reminder = {
+      title_template   = "Reminder: {{ incident.title }}"
+      summary_template = "Customer impact is still ongoing."
+      blocks = [{
+        key      = "ongoing-impact"
+        markdown = { text_template = "*Ongoing customer impact*\n{{ incident.customer_impact }}" }
+      }]
     }
   })
 }
