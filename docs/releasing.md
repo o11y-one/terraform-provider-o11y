@@ -8,34 +8,152 @@ provider binaries are not uploaded twice.
 
 ## One-time repository setup
 
-1. Rename the public GitHub repository to `terraform-provider-o11y`. Both
-   registries derive the provider address `o11y-one/o11y` from that repository
-   name. Update local remotes after the rename.
-2. Create a dedicated RSA release-signing key. Terraform Registry does not
-   accept the default ECC key type.
-3. Create a protected GitHub environment named `release`. Add environment
-   secrets `GPG_PRIVATE_KEY` and `PASSPHRASE`. Restrict deployments to tags and,
-   where available, require a maintainer approval.
-4. Export the matching public key with `gpg --armor --export <fingerprint>`.
-5. Upload the public key under the `o11y-one` namespace in Terraform Registry
-   under **User Settings > Signing Keys**.
-6. Add the same public key to OpenTofu using its
+Everything in this section is done once, by an organization owner, in this
+order. The registries derive the provider address `o11y-one/o11y` from the
+repository name `terraform-provider-o11y`; the repository already carries that
+name.
+
+1. **Create the release-signing key.** Terraform Registry accepts RSA only, so
+   pass the algorithm explicitly; a default `gpg --generate-key` produces an ECC
+   key the registry rejects.
+
+   ```shell
+   gpg --full-generate-key --expert
+   # (1) RSA and RSA, 4096 bits, expiry 2y, name "O11y One Release Signing",
+   # email the maintainers' shared address, a passphrase you store in the
+   # password manager.
+   gpg --list-secret-keys --keyid-format long   # note the fingerprint
+   gpg --armor --export-secret-keys <fingerprint> > /tmp/release-signing.asc
+   gpg --armor --export <fingerprint> > /tmp/release-signing.pub
+   ```
+
+2. **Store the private key in the `release` environment.** The environment
+   already exists with its deployments restricted to `v*` tags. Add the two
+   secrets, then delete the exported file:
+
+   ```shell
+   gh secret set GPG_PRIVATE_KEY --repo o11y-one/terraform-provider-o11y --env release < /tmp/release-signing.asc
+   gh secret set PASSPHRASE       --repo o11y-one/terraform-provider-o11y --env release   # paste the passphrase
+   /bin/rm /tmp/release-signing.asc
+   ```
+
+   The required-reviewer rule on that environment cannot be added while the
+   repository is private on the Team plan; the "Going public" section below
+   adds it the moment the repository is public.
+
+3. **Register the public key with Terraform Registry.** Sign in at
+   <https://registry.terraform.io> with the GitHub account that owns the
+   `o11y-one` organization. The registry authenticates through the "Terraform
+   Registry" OAuth app; grant that app access to the `o11y-one` organization
+   when GitHub asks (Organization settings > Third-party access), otherwise the
+   organization never appears in the namespace or publish pickers. Then open
+   **User Settings > Signing Keys** (<https://registry.terraform.io/settings/gpg-keys>),
+   choose the `o11y-one` namespace, and paste `/tmp/release-signing.pub`.
+
+4. **Register the same public key with OpenTofu** through the
    [Submit new Provider Signing Key](https://github.com/opentofu/registry/issues/new?assignees=&labels=provider-key%2Csubmission&projects=&template=provider_key.yml&title=Provider+Key%3A+)
-   GitHub issue form.
+   issue form. Use the browser form; the OpenTofu registry refuses submissions
+   made by pull request, `gh`, or the API.
 
 Do not store the private key, passphrase, or exported secret key in the
 repository, release assets, workflow logs, or Terraform state.
 
+## Repository protections
+
+These are configured on the GitHub repository (not in this tree) and are the
+reason a release cannot be cut from anywhere but a reviewed tag on `main`.
+Verify them with the commands shown; re-apply them if a listing comes back empty.
+
+| protection | what it enforces | verify |
+|---|---|---|
+| Ruleset `main` (branch) | pull request required, `verify` and `opentofu-protocol` checks green, no force-push, no deletion | `gh api repos/o11y-one/terraform-provider-o11y/rulesets --jq '.[].name'` |
+| Ruleset `release tags` (tag, `v*`) | only repository Admin and Maintain roles can create a `v*` tag; nobody can move or delete one | same listing |
+| Environment `release` | deployments only from `v*` tags; holds `GPG_PRIVATE_KEY` and `PASSPHRASE`; required reviewer added once public | `gh api repos/o11y-one/terraform-provider-o11y/environments/release` |
+| Code-security configuration `Public SDK repos` | Dependabot alerts and security updates, dependency graph, secret scanning with push protection, private vulnerability reporting; no paid features | `gh api repos/o11y-one/terraform-provider-o11y/code-security-configuration` |
+| `SECURITY.md` | tells reporters to use GitHub's private advisory form | in this tree |
+| `.github/dependabot.yml` | weekly grouped version updates for Go modules and Actions | in this tree |
+
+Secret scanning and push protection are free on public repositories only, so
+the configuration takes effect when the repository is made public. The full
+history was scanned with `gitleaks git` on 2026-09-24 before that step: no
+findings.
+
+## Going public
+
+Order matters. The server-side token confinement (o11y-api `auth`, merged
+2026-09-22) must be deployed to production before customers can follow the
+README, because the README tells them to mint a platform API token.
+
+1. Confirm the production deployment carries the token confinement: call any
+   RPC outside the alert services (for example a query-engine or dashboards
+   method) with a platform API token in `x-o11y-key`. Expected:
+   `PERMISSION_DENIED` with the message "platform API tokens are accepted only
+   on alert rule, runbook, notification and SLO services". A token that reaches
+   the method means the deployment predates the fix; stop here.
+
+2. Make the repository public: **Settings > General > Danger Zone > Change
+   visibility**. The rulesets, environment and code-security configuration
+   survive the change.
+
+3. Add the required reviewer to the `release` environment (available on public
+   repositories):
+
+   ```shell
+   gh api -X PUT repos/o11y-one/terraform-provider-o11y/environments/release \
+     --input - <<'EOF'
+   {"reviewers":[{"type":"User","id":10788442}],"prevent_self_review":false,
+    "deployment_branch_policy":{"protected_branches":false,"custom_branch_policies":true}}
+   EOF
+   ```
+
+   `prevent_self_review` stays `false` while there is one maintainer; flip it
+   once a second maintainer exists.
+
+4. Confirm secret scanning, push protection and private vulnerability reporting
+   switched on with the visibility change:
+
+   ```shell
+   gh api repos/o11y-one/terraform-provider-o11y \
+     --jq '.security_and_analysis | {secret_scanning, secret_scanning_push_protection}'
+   gh api repos/o11y-one/terraform-provider-o11y/private-vulnerability-reporting
+   ```
+
+   If either still reads `disabled`, the repository is still attached to the
+   org's enforced "No paid GitHub security" configuration. Create the
+   free-features configuration once and attach both publishing repositories to
+   it (needs a token with the `admin:org` scope: `gh auth refresh -h github.com
+   -s admin:org`):
+
+   ```shell
+   ID=$(gh api -X POST orgs/o11y-one/code-security/configurations --input - <<'EOF' --jq .id
+   {"name":"Public SDK repos",
+    "description":"Free GitHub security features for the public SDK and Terraform provider repositories; paid features stay off.",
+    "advanced_security":"disabled","dependency_graph":"enabled",
+    "dependabot_alerts":"enabled","dependabot_security_updates":"enabled",
+    "secret_scanning":"enabled","secret_scanning_push_protection":"enabled",
+    "private_vulnerability_reporting":"enabled","enforcement":"unenforced"}
+   EOF
+   )
+   gh api -X POST orgs/o11y-one/code-security/configurations/$ID/attach --input - <<EOF
+   {"scope":"selected","selected_repository_ids":[$(gh api repos/o11y-one/terraform-provider-o11y --jq .id),$(gh api repos/o11y-one/o11y-one-sdk --jq .id)]}
+   EOF
+   ```
+
+5. Cut the first release (next section).
+
 ## First publication
 
-1. Merge the provider to `main` and ensure CI is green.
-2. Create the first release from an up-to-date local `main`:
+1. `main` is green and the "Going public" steps are done.
+2. Create the first release from an up-to-date local `main`. The tag ruleset
+   lets only an Admin or Maintain role push a `v*` tag, so run this from a
+   maintainer's checkout:
 
    ```shell
    ./scripts/release.sh v0.1.0
    ```
 
-3. Wait for the GitHub `Release` workflow. Verify the release contains platform
+3. Approve the `release` job when GitHub asks for the environment review, then
+   wait for the `Release` workflow. Verify the release contains platform
    ZIP archives, `terraform-provider-o11y_0.1.0_manifest.json`,
    `terraform-provider-o11y_0.1.0_SHA256SUMS`, and its detached `.sig`.
 4. In Terraform Registry, sign in with the GitHub account that administers the
