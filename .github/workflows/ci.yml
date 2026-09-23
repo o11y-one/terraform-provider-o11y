@@ -65,6 +65,8 @@ jobs:
       - run: go mod download
       - name: Run protocol lifecycle through OpenTofu
         env:
-          TF_ACC_TERRAFORM_PATH: tofu
           TF_ACC_PROVIDER_NAMESPACE: o11y-one
-        run: go test ./internal/provider -run '^TestProviderProtocol' -count=1 -v
+        # terraform-plugin-testing requires TF_ACC_TERRAFORM_PATH to be absolute.
+        run: |
+          TF_ACC_TERRAFORM_PATH="$(command -v tofu)" \
+            go test ./internal/provider -run '^TestProviderProtocol' -count=1 -v
