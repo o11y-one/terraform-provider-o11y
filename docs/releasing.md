@@ -69,7 +69,7 @@ Verify them with the commands shown; re-apply them if a listing comes back empty
 | Ruleset `main` (branch) | pull request required, `verify` and `opentofu-protocol` checks green, no force-push, no deletion | `gh api repos/o11y-one/terraform-provider-o11y/rulesets --jq '.[].name'` |
 | Ruleset `release tags` (tag, `v*`) | only repository Admin and Maintain roles can create a `v*` tag; nobody can move or delete one | same listing |
 | Environment `release` | deployments only from `v*` tags; holds `GPG_PRIVATE_KEY` and `PASSPHRASE`; required reviewer added once public | `gh api repos/o11y-one/terraform-provider-o11y/environments/release` |
-| Code-security configuration `Public SDK repos` | Dependabot alerts and security updates, dependency graph, secret scanning with push protection, private vulnerability reporting; no paid features | `gh api repos/o11y-one/terraform-provider-o11y/code-security-configuration` |
+| Code-security configuration `Public SDK repos` | dependency graph, Dependabot alerts and security updates, private vulnerability reporting; Secret Protection (secret scanning + push protection) is switched on in it once the repository is public | `gh api repos/o11y-one/terraform-provider-o11y/code-security-configuration` |
 | `SECURITY.md` | tells reporters to use GitHub's private advisory form | in this tree |
 | `.github/dependabot.yml` | weekly grouped version updates for Go modules and Actions | in this tree |
 
@@ -118,24 +118,18 @@ README, because the README tells them to mint a platform API token.
    gh api repos/o11y-one/terraform-provider-o11y/private-vulnerability-reporting
    ```
 
-   If either still reads `disabled`, the repository is still attached to the
-   org's enforced "No paid GitHub security" configuration. Create the
-   free-features configuration once and attach both publishing repositories to
-   it (needs a token with the `admin:org` scope: `gh auth refresh -h github.com
-   -s admin:org`):
+   If they read `disabled`, switch Secret Protection on in the organisation
+   configuration "Public SDK repos" (id 278536, created 2026-09-24 and already
+   attached to both publishing repositories; it carries the dependency graph,
+   Dependabot alerts and security updates, and private vulnerability
+   reporting). Secret Protection is a paid product on private repositories and
+   free on public ones, which is why it is added only now. A configuration
+   edit propagates to every attached repository; the call needs a token with
+   `admin:org` (`gh auth refresh -h github.com -s admin:org`):
 
-   ```shell
-   ID=$(gh api -X POST orgs/o11y-one/code-security/configurations --input - <<'EOF' --jq .id
-   {"name":"Public SDK repos",
-    "description":"Free GitHub security features for the public SDK and Terraform provider repositories; paid features stay off.",
-    "advanced_security":"disabled","dependency_graph":"enabled",
-    "dependabot_alerts":"enabled","dependabot_security_updates":"enabled",
-    "secret_scanning":"enabled","secret_scanning_push_protection":"enabled",
-    "private_vulnerability_reporting":"enabled","enforcement":"unenforced"}
-   EOF
-   )
-   gh api -X POST orgs/o11y-one/code-security/configurations/$ID/attach --input - <<EOF
-   {"scope":"selected","selected_repository_ids":[$(gh api repos/o11y-one/terraform-provider-o11y --jq .id),$(gh api repos/o11y-one/o11y-one-sdk --jq .id)]}
+   ```sh
+   gh api -X PATCH orgs/o11y-one/code-security/configurations/278536 --input - <<'EOF'
+   {"secret_protection":"enabled","secret_scanning":"enabled","secret_scanning_push_protection":"enabled"}
    EOF
    ```
 
