@@ -2,6 +2,9 @@
 
 Terraform Plugin Framework provider for O11y.one service-level indicators and objectives, alert destinations, notification templates and policies, Observe alert definitions, and alert previews.
 
+Releases are cut from tags on `main` and signed; `docs/releasing.md` is the
+release runbook and `SECURITY.md` says how to report a vulnerability.
+
 ## Provider configuration
 
 ```hcl
