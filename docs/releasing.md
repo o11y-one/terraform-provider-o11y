@@ -67,3 +67,14 @@ second build or upload.
 
 If a Terraform version does not appear, use **Resync** from the provider's
 Terraform Registry settings after checking the repository release webhook.
+
+## Surface
+
+The provider vendors the alerts contract only: `proto/o11y_one/alerts/v1` plus
+any `o11y_one/common` file it imports, and the Go bindings generated from them.
+That matches the platform API token the provider authenticates with, which the
+API confines to the alerting services. `scripts/check-proto-surface.sh` runs in
+CI and in the release `verify` job and fails on any other vendored domain; a new
+common file is admitted only by importing it from the alerts contract. The
+agentic closure is published separately by the
+[SDK repository](https://github.com/o11y-one/o11y-one-sdk), not by this provider.

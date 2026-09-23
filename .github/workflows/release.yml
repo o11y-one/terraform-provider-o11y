@@ -39,6 +39,7 @@ jobs:
       - run: go mod verify
       - run: go test ./... -count=1
       - run: go vet ./...
+      - run: ./scripts/check-proto-surface.sh
       - name: Scan reachable Go vulnerabilities
         run: go run golang.org/x/vuln/cmd/govulncheck@v1.6.0 ./...
       - name: Verify generated provider documentation
