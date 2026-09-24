@@ -115,8 +115,8 @@ func TestProviderProtocolServerDerivedAlertFieldsConverge(t *testing.T) {
 	})
 }
 
-// The published recipe examples are applied as written: an example that omits a
-// field the server fills and echoes plans a replacement, and the step fails.
+// The published recipe examples are applied as written: an example that omits a field
+// the server fills and echoes fails the apply with an inconsistent result.
 func TestProviderProtocolRecipeExamplesConverge(t *testing.T) {
 	t.Setenv("TF_VAR_owner_team_id", "019f7aa2-6c7f-7000-8000-000000000010")
 	for _, name := range []string{"o11y_agent_quality_alert", "o11y_cost_per_success_alert", "o11y_slo_burn_alert", "o11y_advanced_signal_alert", "o11y_query_threshold_alert"} {
