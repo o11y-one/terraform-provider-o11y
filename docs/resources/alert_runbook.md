@@ -13,6 +13,13 @@ A versioned managed alert runbook. Content is sanitized by O11y.one and alert/in
 ## Example Usage
 
 ```terraform
+variable "checkout_team_id" {
+  description = "UUID of the O11y.one team that owns the runbook."
+  type        = string
+}
+
+# Link it from an alert's action_json with managed_runbook_id = this id and
+# managed_runbook_revision_id = this current_revision_id.
 resource "o11y_alert_runbook" "checkout" {
   runbook_key    = "checkout-agent-recovery"
   title          = "Checkout agent recovery"
@@ -56,3 +63,11 @@ resource "o11y_alert_runbook" "checkout" {
 - `rendered_html` (String) Sanitized server-rendered HTML.
 - `revision` (Number)
 - `updated_at` (String)
+
+## Import
+
+```shell
+terraform import o11y_alert_runbook.example <id>
+```
+
+`change_reason` is not read back. After import, the first apply records it in state without creating a revision.

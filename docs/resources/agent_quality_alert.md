@@ -13,30 +13,52 @@ An Observe-mode O11y.one alert definition. Notify activation is intentionally un
 ## Example Usage
 
 ```terraform
-resource "o11y_agent_quality_alert" "quality" {
-  slug                        = "agent-quality-regression"
-  name                        = "Agent quality regression"
-  description                 = "Detect sustained quality regressions."
-  severity                    = "warning"
-  scope_json                  = jsonencode({ service_names = ["agent-api"] })
-  owner_json                  = jsonencode({ team_id = "019f7aa2-6c7f-7000-8000-000000000010" })
-  action_json                 = jsonencode({ summary = "Inspect failed agent runs and eval evidence." })
-  evaluation_settings_json    = jsonencode({ pending_for_seconds = 300 })
+variable "owner_team_id" {
+  description = "UUID of the O11y.one team that owns and responds to this alert."
+  type        = string
+}
+
+# 64-bit integers are quoted because that is how the provider writes them back on import.
+resource "o11y_agent_quality_alert" "checkout" {
+  slug        = "checkout-agent-quality"
+  name        = "Checkout agent quality"
+  description = "Observe sustained bad-outcome and eval-failure regressions for the checkout agent."
+  severity    = "warning"
+
+  scope_json = jsonencode({
+    agent_names  = ["checkout-agent"]
+    environments = ["production"]
+  })
+  owner_json = jsonencode({ team_id = var.owner_team_id })
+  action_json = jsonencode({
+    summary              = "Checkout agent answers are regressing."
+    first_action         = "Compare the failing runs with the most recent prompt release."
+    external_runbook_url = "https://runbooks.example.com/checkout-agent-quality"
+  })
+  evaluation_settings_json = jsonencode({
+    pending_for_seconds    = "300"
+    recovering_for_seconds = "600"
+    no_data_behavior       = "ALERT_NO_DATA_BEHAVIOR_V1_HOLD_STATE"
+  })
   evaluation_interval_seconds = 300
   sample_guard_json           = jsonencode({ minimum_events = "50" })
+
+  # Every field is listed: the server fills an omitted one with its default
+  # and returns it, and the apply fails with an inconsistent result.
   recipe_config_json = jsonencode({
-    short_window_seconds      = 900
-    long_window_seconds       = 3600
-    baseline_window_seconds   = 86400
+    short_window_seconds      = "900"
+    long_window_seconds       = "3600"
+    baseline_window_seconds   = "86400"
     min_run_count             = "50"
     max_bad_outcome_rate      = 0.05
     max_eval_fail_rate        = 0.05
     min_eval_pass_rate        = 0.95
     baseline_bad_outcome_rate = 0.02
-    regression_multiplier     = 2.0
+    regression_multiplier     = 2
     evidence_limit            = 10
-    use_run_quality_facts     = false
+    use_run_quality_facts     = true
   })
+
   paused = false
   notify = false
 }
@@ -70,3 +92,131 @@ resource "o11y_agent_quality_alert" "quality" {
 - `id` (String) The ID of this resource.
 - `mode` (String)
 - `revision_id` (String)
+
+## JSON attributes
+
+Write each `*_json` attribute with `jsonencode()`. The provider decodes it as protobuf JSON and refuses an unknown field at plan time.
+
+- Use the snake_case field names below. The camelCase protobuf JSON names also work, but import and drift write snake_case.
+- Write enum values as the full names listed, for example `ALERT_NO_DATA_BEHAVIOR_V1_HOLD_STATE`.
+- A 64-bit integer (`int64`, `uint64`) may be a number or a string. Write it as a string if you import, because that is how the provider reads it back.
+- "Required" means the server refuses the request without the field. "Read-only" means the server sets the field and ignores or refuses a configured value.
+- When the server stores a value differently from your JSON, the apply fails with `Provider produced inconsistent result after apply`. The notes below say where that happens.
+
+### scope_json
+
+`AlertScopeV1`. Limits the telemetry the detector reads. Every field is optional, and an empty object evaluates everything the recipe reads. Changing the scope replaces the alert.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `service_names` | list(string) | Services, by `service.name`. |
+| `service_namespaces` | list(string) | Service namespaces, by `service.namespace`. |
+| `environments` | list(string) | Deployment environments. |
+| `customer_cohorts` | list(string) | Customer cohorts, by `customer.cohort`. |
+| `agent_names` | list(string) | Agents, by `gen_ai.agent.name`. |
+| `model_providers` | list(string) | Model providers, by `gen_ai.provider.name`. |
+| `models` | list(string) | Models, by `gen_ai.request.model`. |
+| `tool_names` | list(string) | Tools, by `gen_ai.tool.name`. |
+| `telemetry_attribute_filters` | list(object) | Attribute filters, described below. |
+| `span_kinds` | list(enum) | `SLI_SPAN_KIND_V1_` plus `INTERNAL`, `SERVER`, `CLIENT`, `PRODUCER`, or `CONSUMER`. |
+
+The server drops blank list entries and `SLI_SPAN_KIND_V1_UNSPECIFIED`, which fails the apply.
+
+Each `telemetry_attribute_filters` entry:
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `field` | string | Required | Attribute key, for example `http.request.method`. The alert API stores an empty key without checking it. |
+| `operator` | enum | Required | `SLI_TELEMETRY_FILTER_OPERATOR_V1_` plus `EQUALS`, `NOT_EQUALS`, `IN`, `NOT_IN`, `EXISTS`, `NOT_EXISTS`, `LESS_THAN`, `LESS_THAN_OR_EQUAL`, `GREATER_THAN`, or `GREATER_THAN_OR_EQUAL`. The server silently drops a filter without one, which fails the apply. |
+| `values` | list(string) | Optional | String operands. Ignored when `typed_values` is set. |
+| `typed_values` | list(object) | Optional | Typed operands. Each sets one of `string_value`, `int_value` (int64), `double_value`, `bool_value`, or `uint_value` (uint64). `string_list` is dropped. |
+| `source` | enum | Optional | `SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_` plus `SPAN`, `RESOURCE`, `SCOPE`, `LOG`, or `FIXED`. Omitted, it is stored as `FIXED`, and the provider treats the two as equal. |
+
+The server returns string operands in both `values` and `typed_values`; the provider accounts for that. A `uint_value` that fits in int64 comes back as `int_value`, which fails the apply, so write `int_value`.
+
+### owner_json
+
+`AlertOwnerRefV1`. Required. Set exactly one owner.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `team_id` | string | One of `team_id`, `user_id` | UUID of a team in your organization. |
+| `user_id` | string | One of `team_id`, `user_id` | UUID of an active member of your organization. |
+| `display_name` | string | Read-only | The server sets the team or user name. A configured value is ignored. |
+| `active` | bool | Read-only | Always `true` for an accepted owner. Configuring `false` fails the apply. |
+
+### action_json
+
+`AlertActionV1`. Every field is optional, and blank strings are ignored. Notify activation, which happens outside Terraform, needs `first_action`, `external_runbook_url`, or `managed_runbook_id`.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `summary` | string | What is wrong, at most 500 bytes. |
+| `first_action` | string | The first thing a responder does, at most 1,000 bytes. |
+| `external_runbook_url` | string | Absolute `https` URL without credentials, at most 2,048 bytes. The server stores it normalized, so a bare host such as `https://example.com` comes back as `https://example.com/`, which fails the apply. Include a path. |
+| `managed_runbook_id` | string | UUID of a non-archived [o11y_alert_runbook](alert_runbook.md). Set it together with `managed_runbook_revision_id`. |
+| `managed_runbook_revision_id` | string | UUID of a revision of that runbook, usually its `current_revision_id`. Set it together with `managed_runbook_id`. |
+
+### evaluation_settings_json
+
+`AlertEvaluationSettingsV1`. Every field is optional.
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `interval_seconds` | int64 | `evaluation_interval_seconds` | Ignored. The `evaluation_interval_seconds` attribute, 30 to 86,400 seconds, always sets the schedule. |
+| `pending_for_seconds` | int64 | `0` | Seconds a breaching condition must persist before the alert fires. |
+| `recovering_for_seconds` | int64 | `0` | Seconds a recovered condition must persist before the alert resolves. |
+| `no_data_behavior` | enum | `HOLD_STATE` | `ALERT_NO_DATA_BEHAVIOR_V1_` plus `HOLD_STATE`, `RESOLVE`, or `ALERT`: what an evaluation with no data does. |
+| `preview_horizon_seconds` | int64 | `0` | History [o11y_alert_preview](../data-sources/alert_preview.md) replays when no range is given. `0` means one day, and a preview runs at most 96 evaluation intervals. |
+| `evidence_limit` | uint32 | `0` | Stored and returned, but no evaluator reads it. Use the recipe's `evidence_limit`. |
+
+### sample_guard_json
+
+`AlertSampleGuardV1`. Every field is optional. The server stores both fields with each revision and returns them, but no evaluator reads them: the detector takes its minimum sample from `recipe_config_json` (`min_run_count`).
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `minimum_events` | uint64 | `0` | Recorded minimum event count. |
+| `require_complete_coverage` | bool | `false` | Recorded coverage requirement. |
+
+### recipe_config_json
+
+`AgentQualityRegressionConfigV1`. Detects a rise in bad agent outcomes or failing evals against a baseline.
+
+The server fills every omitted field with the default below and returns it, so an omitted field fails the apply. Set every field. Changing the config replaces the alert.
+
+Windows are whole minutes, from 60 seconds to 8,640,000 seconds (100 days). Rates are ratios from 0 to 1.
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `short_window_seconds` | int64 | `900` | Short confirmation window. At most `long_window_seconds`. |
+| `long_window_seconds` | int64 | `3600` | Long confirmation window. At most `baseline_window_seconds`. |
+| `baseline_window_seconds` | int64 | `86400` | Window the baseline rates come from. |
+| `min_run_count` | uint64 | `20` | Fewest runs a window needs, at least 1. |
+| `max_bad_outcome_rate` | double | `0.05` | Highest acceptable bad-outcome rate. |
+| `max_eval_fail_rate` | double | `0.05` | Highest acceptable eval failure rate. |
+| `min_eval_pass_rate` | double | `0.95` | Lowest acceptable eval pass rate. |
+| `baseline_bad_outcome_rate` | double | `0.02` | Expected bad-outcome rate. At most `max_bad_outcome_rate`. |
+| `regression_multiplier` | double | `2` | How many times the baseline counts as a regression, at least 1. |
+| `evidence_limit` | uint32 | `10` | 1 to 100 evidence samples per evaluation. |
+| `use_run_quality_facts` | bool | `false` | Read the evaluation-run quality facts instead of the older agent-outcome and eval-quality facts. |
+
+## Behaviour notes
+
+- `notify` must be `false`. The provider manages Observe alerts only and never activates notify mode.
+- `slug`, `severity`, `scope_json`, and `recipe_config_json` replace the alert when they change, because the update API cannot change them.
+
+## Import
+
+```shell
+terraform import o11y_agent_quality_alert.example <alert definition id>
+```
+
+After import the JSON attributes hold the provider's canonical form: snake_case names, full enum names, 64-bit integers as JSON strings, and zero-valued fields left out. Unless your configuration matches that form, the first plan replaces the alert for a difference in `scope_json` or `recipe_config_json`, and updates it in place for the other JSON attributes. Copy the values from `terraform state show`, or write these fields as strings:
+
+- `evaluation_settings_json`: `interval_seconds`, `pending_for_seconds`, `recovering_for_seconds`, `preview_horizon_seconds`.
+- `sample_guard_json`: `minimum_events`.
+- `scope_json`: `typed_values[].int_value` and `typed_values[].uint_value`.
+- `recipe_config_json`: `short_window_seconds`, `long_window_seconds`, `baseline_window_seconds`, `min_run_count`.
+
+The imported `evaluation_settings_json` also includes `interval_seconds` and `no_data_behavior`, and `owner_json` includes `display_name` and `active`. Add them, or accept one in-place update.
