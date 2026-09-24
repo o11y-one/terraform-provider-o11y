@@ -43,7 +43,7 @@ Write `document_json` with `jsonencode()`. The provider decodes it as protobuf J
 | `default_locale` | string | Optional | BCP-47 locale of the top-level variants, for example `en-US`. Defaults to `en-US`. |
 | `localizations` | list(object) | Optional | Up to 20 translated sets, described below. |
 
-Template strings interpolate variables with `{{"{{"}} path {{"}}"}}`. Control statements (`{{"{%"}}`) and comments (`{{"{#"}}`) are refused, and each template string is at most 8 KiB. A variable that is not in the list below is accepted when the template is saved, but the notification then fails to render.
+Template strings interpolate variables with `{{"{{"}} path {{"}}"}}`, and MiniJinja filters and expressions work inside them. Control statements (`{{"{%"}}`) and comments (`{{"{#"}}`) are refused, and each template string is at most 8 KiB. The server only checks the syntax of an interpolated name when the template is saved; a name the notification does not carry fails when it renders. Use the variables below. String values are Markdown-escaped before they are interpolated.
 
 A variant, `NotificationTemplateVariantV1`:
 
@@ -58,14 +58,14 @@ A block, `NotificationTemplateBlockV1`, has a `key` and exactly one content fiel
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `key` | string | Required | Unique within the variant. ASCII letters, digits, `_`, and `-`, at most 80 bytes. |
-| `visible_when` | object | Optional | `{ path, equals }`: the block renders only when the variable at `path` equals the string `equals`, at most 256 bytes. `path` is a variable from the list below. |
+| `visible_when` | object | Optional | `{ path, equals }`: the block renders only when the variable at `path` equals the string `equals`, at most 256 bytes. `path` is a variable from the list below, and a path the notification does not carry fails the render. The comparison uses the Markdown-escaped value: `_`, `*`, backtick, backslash, `&`, `<`, and `>` are escaped. To match `slo_burn`, the value must be `slo\_burn`, which is `equals = "slo\\_burn"` in HCL. Numbers and booleans compare as text, and `null` matches `"null"`. |
 | `markdown` | object | One content field | `{ text_template }`. Multi-line Markdown. |
 | `fields` | object | One content field | `{ title_template, fields }`, with 1 to 12 fields, each `{ label_template, value_path, format }`. |
-| `progress` | object | One content field | `{ label_template, value_path }`. |
-| `chart` | object | One content field | `{ chart_key, title_template }`. `chart_key` uses ASCII letters, digits, `_`, and `-`. |
-| `evidence` | object | One content field | `{ title_template, max_items }`, with 1 to 20 items. |
-| `code` | object | One content field | `{ title_template, value_path, max_characters }`, with 1 to 8,000 characters. |
-| `actions` | object | One content field | `{ actions }`, with 1 to 5 buttons, each `{ label_template, link, style }`. |
+| `progress` | object | One content field | `{ label_template, value_path }`. The value must be a number; it is clamped to 0 to 1. |
+| `chart` | object | One content field | `{ chart_key, title_template }`. Any key of ASCII letters, digits, `_`, and `-` is accepted, but only `bad_eval_rate`, `cost_per_success`, `burn_rate`, `latency_error`, and `tool_failure_spike` render, and only when the alert provides that chart. Otherwise the block is left out. |
+| `evidence` | object | One content field | `{ title_template, max_items }`, with 1 to 20 items. Left out when the alert has no evidence. |
+| `code` | object | One content field | `{ title_template, value_path, max_characters }`, with 1 to 8,000 characters. Renders the value as compact JSON, cut to `max_characters` with `...`. |
+| `actions` | object | One content field | `{ actions }`, with 1 to 5 buttons, each `{ label_template, link, style }`. A button whose link the notification lacks is left out, and so is the block when none remain. |
 | `footer` | object | One content field | `{ text_template }`. Multi-line. |
 
 Every `*_template` field inside a block is required. Labels, and the titles of `chart`, `evidence`, and `code` blocks, must be one line.
@@ -118,6 +118,7 @@ Variables, for `{{"{{"}} path {{"}}"}}`, `value_path`, and `visible_when.path`:
 ## Behaviour notes
 
 - `template_key` is stored in lowercase and cannot change. Write it in lowercase: an uppercase key comes back lowercased, which fails the apply.
+- The server trims `name` (at most 256 bytes) and `description` (at most 2,000 bytes). Leading or trailing whitespace comes back removed, which fails the apply.
 - A policy binds an exact published revision. Publishing a new revision never changes a policy that already bound an older one.
 - A published revision cannot be unpublished. Change `document_json` to start a new draft, or keep `published = true`.
 
