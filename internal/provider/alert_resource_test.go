@@ -1,11 +1,53 @@
 package provider
 
 import (
+	"context"
+	"strings"
 	"testing"
 
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-go/tftypes"
 	alertsv1 "github.com/o11y-one/terraform-provider-o11y/internal/gen/proto/o11y_one/alerts/v1"
 )
+
+func validateRecipeConfig(t *testing.T, r resource.Resource, recipe string) string {
+	t.Helper()
+	ctx := context.Background()
+	var schemaResp resource.SchemaResponse
+	r.Schema(ctx, resource.SchemaRequest{}, &schemaResp)
+	objectType := schemaResp.Schema.Type().TerraformType(ctx).(tftypes.Object)
+	values := map[string]tftypes.Value{}
+	for name, attributeType := range objectType.AttributeTypes {
+		values[name] = tftypes.NewValue(attributeType, nil)
+	}
+	values["recipe_config_json"] = tftypes.NewValue(tftypes.String, recipe)
+	var resp resource.ValidateConfigResponse
+	r.(resource.ResourceWithValidateConfig).ValidateConfig(ctx, resource.ValidateConfigRequest{
+		Config: tfsdk.Config{Schema: schemaResp.Schema, Raw: tftypes.NewValue(objectType, values)},
+	}, &resp)
+	var errors []string
+	for _, d := range resp.Diagnostics.Errors() {
+		errors = append(errors, d.Summary()+": "+d.Detail())
+	}
+	return strings.Join(errors, "\n")
+}
+
+func TestRecipeConfigFollowsServedContract(t *testing.T) {
+	for _, key := range []string{"fact_family", "eligible_event_field", "good_event_field"} {
+		errors := validateRecipeConfig(t, NewSLOAlertResource(), `{"target_percent":99.5,"`+key+`":"x"}`)
+		if !strings.Contains(errors, `"`+key+`"`) {
+			t.Errorf("recipe_config_json with reserved %s was not refused by name; errors: %q", key, errors)
+		}
+	}
+	if errors := validateRecipeConfig(t, NewSLOAlertResource(), `{"target_percent":99.5}`); errors != "" {
+		t.Errorf("valid SLO burn recipe refused: %s", errors)
+	}
+	if errors := validateRecipeConfig(t, NewAgentQualityAlertResource(), `{"use_run_quality_facts":true}`); errors != "" {
+		t.Errorf("served agent-quality field refused: %s", errors)
+	}
+}
 
 func TestSetAlertPreservesExternallyActivatedNotifyState(t *testing.T) {
 	var data alertModel
