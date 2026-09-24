@@ -173,12 +173,12 @@ func (s *alertTestServer) UpdateSlo(ctx context.Context, req *alertsv1.UpdateSlo
 	if id := s.idempotent[req.IdempotencyKey]; id != "" {
 		return proto.Clone(s.slos[id]).(*alertsv1.AlertSloV1), nil
 	}
-	// Like update_slo (appdb objectives.rs:722): a change that mints a revision is refused
-	// while a live burn alert is pinned to the SLO, and the provider sends no disposition.
+	// Like update_slo (appdb objectives.rs:722): a change that mints a revision is refused while
+	// an unpaused burn alert is pinned to the SLO (burn_disposition.rs:104), and the provider sends no disposition.
 	current := existing.CurrentRevision
 	unchanged := &alertsv1.SloRevisionInputV1{SliId: current.SliId, SliRevisionId: current.SliRevisionId, TargetRatio: current.TargetRatio, RollingWindowSeconds: current.RollingWindowSeconds, WindowMode: current.WindowMode, CalendarPeriod: current.CalendarPeriod, CalendarTimezone: current.CalendarTimezone, Owner: current.Owner, Labels: current.Labels}
 	for _, definition := range s.definitions {
-		if definition.GetDetectorConfig().GetSloBurn().GetSloId() == req.SloId && !proto.Equal(req.Revision, unchanged) {
+		if definition.GetDetectorConfig().GetSloBurn().GetSloId() == req.SloId && definition.Mode != alertsv1.AlertModeV1_ALERT_MODE_V1_DISABLED && !proto.Equal(req.Revision, unchanged) {
 			return nil, status.Error(codes.FailedPrecondition, "burn_alert_disposition_required")
 		}
 	}
