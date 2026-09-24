@@ -43,11 +43,11 @@ resource "o11y_query_threshold_alert" "checkout_errors" {
     evidence_limit           = 10
     timeout_ms               = 2000
     group_by                 = ["service.name"]
+    # EXISTS takes no values.
     filters = [{
       field     = "span_attributes.error.type"
       operator  = "ALERT_QUERY_FILTER_OPERATOR_V1_EXISTS"
       data_type = "string"
-      values    = []
     }]
   })
 

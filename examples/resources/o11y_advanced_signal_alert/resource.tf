@@ -27,8 +27,8 @@ resource "o11y_advanced_signal_alert" "checkout" {
   evaluation_interval_seconds = 60
   sample_guard_json           = jsonencode({ minimum_events = "100" })
 
-  # Every field is listed: the server fills any omitted one with its default
-  # and echoes it, which would plan a replacement on every run.
+  # Every field is listed: the server fills an omitted one with its default
+  # and returns it, and the apply fails with an inconsistent result.
   recipe_config_json = jsonencode({
     min_log_errors             = "10"
     max_log_error_rate         = 0.05

@@ -14,7 +14,7 @@ resource "o11y_alert_destination" "incident_webhook" {
   name            = "Incident webhook"
   kind            = "webhook"
   enabled         = true
-  # Set method: the server stores POST when it is omitted and the next plan shows a change.
+  # Set method: omitted, the server stores POST and the apply fails with an inconsistent result.
   config_json = jsonencode({
     url     = "https://hooks.example.com/o11y"
     method  = "ALERT_WEBHOOK_METHOD_V1_POST"

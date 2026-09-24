@@ -9,7 +9,7 @@ resource "o11y_sli" "checkout_availability" {
   good_events           = "checkout server spans without an error status"
 
   # Availability and latency SLIs need span_kinds: omitted, the server stores SERVER
-  # and the next plan shows a change.
+  # and the apply fails with an inconsistent result.
   scope_json = jsonencode({
     service_names = ["checkout"]
     environments  = ["production"]
