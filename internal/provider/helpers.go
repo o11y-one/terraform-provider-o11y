@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	alertsv1 "github.com/o11y-one/terraform-provider-o11y/internal/gen/proto/o11y_one/alerts/v1"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -74,14 +75,39 @@ func jsonFromProto(value proto.Message) types.String {
 func jsonFromProtoPreserving(configured types.String, value proto.Message) types.String {
 	if value != nil && knownNonEmpty(configured) {
 		candidate := value.ProtoReflect().New().Interface()
-		if err := protoFromJSON(configured, candidate); err == nil && proto.Equal(candidate, value) {
-			canonical, canonicalErr := canonicalJSONString(configured)
-			if canonicalErr == nil {
-				return canonical
+		if err := protoFromJSON(configured, candidate); err == nil {
+			if scope, ok := candidate.(*alertsv1.AlertScopeV1); ok {
+				echoScopeFilterValues(scope)
+			}
+			if proto.Equal(candidate, value) {
+				canonical, canonicalErr := canonicalJSONString(configured)
+				if canonicalErr == nil {
+					return canonical
+				}
 			}
 		}
 	}
 	return jsonFromProto(value)
+}
+
+// The server stores one value list per filter and echoes it twice: its string
+// members as values and every member as typed_values.
+// ponytail: a uint_value that fits int64 echoes as int_value and still diffs; map it if anyone authors uint_value.
+func echoScopeFilterValues(scope *alertsv1.AlertScopeV1) {
+	for _, filter := range scope.TelemetryAttributeFilters {
+		if len(filter.TypedValues) == 0 {
+			for _, value := range filter.Values {
+				filter.TypedValues = append(filter.TypedValues, &alertsv1.AlertScalarValueV1{Value: &alertsv1.AlertScalarValueV1_StringValue{StringValue: value}})
+			}
+			continue
+		}
+		filter.Values = nil
+		for _, value := range filter.TypedValues {
+			if text, ok := value.Value.(*alertsv1.AlertScalarValueV1_StringValue); ok {
+				filter.Values = append(filter.Values, text.StringValue)
+			}
+		}
+	}
 }
 
 func stringMapFromJSON(value types.String) (map[string]string, error) {
