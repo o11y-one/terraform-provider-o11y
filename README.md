@@ -33,6 +33,8 @@ Configuration may be supplied directly or with environment variables:
 
 Keep the token in the environment or a secret-backed Terraform variable. Although the schema marks it sensitive, Terraform state handling is ultimately controlled by the selected backend.
 
+The token needs only the `alerts.*` scopes for the resources you manage; see [Token scopes](docs/index.md#token-scopes) for the per-resource list.
+
 ## Resources and data sources
 
 - `o11y_sli`: revisioned SLI CRUD, archive, import, custom latency thresholds, telemetry attribute filters, and exact span-kind scope.
