@@ -3,6 +3,8 @@ package provider
 import (
 	"fmt"
 	"net"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"testing"
@@ -59,7 +61,7 @@ func TestProviderProtocolAlertingLifecycle(t *testing.T) {
 					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "owner_json", `{"team_id":"platform"}`),
 					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "evaluation_settings_json", `{}`),
 					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "evaluation_interval_seconds", "60"),
-					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "recipe_config_json", `{"max_bad_outcome_rate":0.1}`),
+					terraformresource.TestCheckResourceAttr("o11y_agent_quality_alert.quality", "recipe_config_json", agentQualityRecipeJSON),
 					terraformresource.TestCheckResourceAttr("data.o11y_alert_preview.quality", "predicted_firing_count", "2"),
 					terraformresource.TestCheckResourceAttr("data.o11y_alert_preview.quality", "predicted_notification_count", "0"),
 				),
@@ -111,6 +113,26 @@ func TestProviderProtocolServerDerivedAlertFieldsConverge(t *testing.T) {
 			},
 		},
 	})
+}
+
+// The published recipe examples are applied as written: an example that omits a
+// field the server fills and echoes plans a replacement, and the step fails.
+func TestProviderProtocolRecipeExamplesConverge(t *testing.T) {
+	t.Setenv("TF_VAR_owner_team_id", "019f7aa2-6c7f-7000-8000-000000000010")
+	for _, name := range []string{"o11y_agent_quality_alert", "o11y_cost_per_success_alert", "o11y_slo_burn_alert", "o11y_advanced_signal_alert", "o11y_query_threshold_alert"} {
+		t.Run(name, func(t *testing.T) {
+			example, err := os.ReadFile(filepath.Join("..", "..", "examples", "resources", name, "resource.tf"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			endpoint, _, cleanup := startProtocolTestServer(t)
+			defer cleanup()
+			terraformresource.UnitTest(t, terraformresource.TestCase{
+				ProtoV6ProviderFactories: protocolProviderFactories(),
+				Steps:                    []terraformresource.TestStep{{Config: protocolProviderConfig(endpoint) + string(example)}},
+			})
+		})
+	}
 }
 
 func TestProviderProtocolSLOCalendarLifecycle(t *testing.T) {
@@ -294,6 +316,10 @@ resource "o11y_slo" "checkout" {
 `, window)
 }
 
+// Every field the server defaults is set, so the echo matches the plan (detector/v1.rs:224),
+// and the JSON is canonical, so state holds it verbatim.
+const agentQualityRecipeJSON = `{"baseline_bad_outcome_rate":0.02,"baseline_window_seconds":"86400","evidence_limit":10,"long_window_seconds":"3600","max_bad_outcome_rate":0.1,"max_eval_fail_rate":0.05,"min_eval_pass_rate":0.95,"min_run_count":"20","regression_multiplier":2,"short_window_seconds":"900","use_run_quality_facts":false}`
+
 // The SLO-burn alert configures only its inputs; the agent-quality filter omits source.
 func protocolServerDerivedAlertConfig(endpoint, sliID string, fastBurnThreshold float64, method string) string {
 	return protocolProviderConfig(endpoint) + fmt.Sprintf(`
@@ -320,7 +346,14 @@ resource "o11y_slo_burn_alert" "checkout" {
   recipe_config_json = jsonencode({
     slo_id = o11y_slo.checkout.id
     slo_revision_id = o11y_slo.checkout.current_revision_id
+    fast_short_window_seconds = "300"
+    fast_long_window_seconds = "3600"
+    slow_short_window_seconds = "1800"
+    slow_long_window_seconds = "21600"
     fast_burn_threshold = %v
+    slow_burn_threshold = 6
+    min_request_count = "100"
+    evidence_limit = 10
   })
   paused = false
   notify = false
@@ -340,11 +373,11 @@ resource "o11y_agent_quality_alert" "filtered" {
   action_json = jsonencode({})
   evaluation_settings_json = jsonencode({})
   sample_guard_json = jsonencode({})
-  recipe_config_json = jsonencode({ max_bad_outcome_rate = 0.1 })
+  recipe_config_json = %q
   paused = false
   notify = false
 }
-`, sliID, fastBurnThreshold, method)
+`, sliID, fastBurnThreshold, method, agentQualityRecipeJSON)
 }
 
 func protocolSLIConfig(endpoint, name string) string {
@@ -485,7 +518,7 @@ resource "o11y_agent_quality_alert" "quality" {
   action_json = jsonencode({ external_runbook_url = "https://runbooks.example.test/quality" })
   evaluation_settings_json = jsonencode({})
   sample_guard_json = jsonencode({ minimum_events = "20" })
-  recipe_config_json = jsonencode({ max_bad_outcome_rate = 0.1 })
+  recipe_config_json = %q
   paused = false
   notify = false
 }
@@ -493,7 +526,7 @@ resource "o11y_agent_quality_alert" "quality" {
 data "o11y_alert_preview" "quality" {
   definition_id = o11y_agent_quality_alert.quality.id
 }
-`, destinationName, alertName)
+`, destinationName, alertName, agentQualityRecipeJSON)
 }
 
 func protocolAlertConfig(endpoint string, notify bool) string {

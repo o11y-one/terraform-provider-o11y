@@ -18,6 +18,7 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/test/bufconn"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -59,14 +60,20 @@ func first(values []string) string {
 	}
 	return values[0]
 }
-func (s *alertTestServer) id(prefix, key string) string {
+
+// The server issues UUIDs, and the provider refuses references that are not UUIDs.
+func (s *alertTestServer) id(key string) string {
 	if id := s.idempotent[key]; id != "" {
 		return id
 	}
 	s.next++
-	id := prefix + "-" + string(rune('0'+s.next))
+	id := fmt.Sprintf("019f7aa2-6c7f-7000-8fff-%012d", s.next)
 	s.idempotent[key] = id
 	return id
+}
+
+func testRevisionID(id string, number int64) string {
+	return fmt.Sprintf("019f7aa2-6c7f-7000-9%03d-%s", number, id[len(id)-12:])
 }
 
 func (s *alertTestServer) CreateSlo(ctx context.Context, req *alertsv1.CreateSloRequest) (*alertsv1.AlertSloV1, error) {
@@ -75,7 +82,7 @@ func (s *alertTestServer) CreateSlo(ctx context.Context, req *alertsv1.CreateSlo
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	id := s.id("slo", req.IdempotencyKey)
+	id := s.id(req.IdempotencyKey)
 	if existing := s.slos[id]; existing != nil {
 		return proto.Clone(existing).(*alertsv1.AlertSloV1), nil
 	}
@@ -90,7 +97,7 @@ func (s *alertTestServer) CreateSli(ctx context.Context, req *alertsv1.CreateSli
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	id := s.id("sli", req.IdempotencyKey)
+	id := s.id(req.IdempotencyKey)
 	if existing := s.slis[id]; existing != nil {
 		return proto.Clone(existing).(*alertsv1.AlertSliV1), nil
 	}
@@ -145,7 +152,7 @@ func (s *alertTestServer) ArchiveSli(ctx context.Context, req *alertsv1.ArchiveS
 
 func testSLI(id, key, name, description string, input *alertsv1.SliRevisionInputV1, revisionNumber int32) *alertsv1.AlertSliV1 {
 	now := timestamppb.New(time.Date(2030, 1, 1, 0, int(revisionNumber), 0, 0, time.UTC))
-	revisionID := fmt.Sprintf("%s-revision-%d", id, revisionNumber)
+	revisionID := testRevisionID(id, int64(revisionNumber))
 	revision := &alertsv1.AlertSliRevisionV1{Id: revisionID, SliId: id, RevisionNumber: revisionNumber, IndicatorKind: input.IndicatorKind, Scope: input.Scope, Owner: input.Owner, EligibleEvents: input.EligibleEvents, GoodEvents: input.GoodEvents, ExcludedEvents: input.ExcludedEvents, Aggregation: input.Aggregation, MissingDataBehavior: input.MissingDataBehavior, ConfigHash: fmt.Sprintf("config-%d", revisionNumber), CreatedAt: now, LatencyThreshold: input.LatencyThreshold}
 	return &alertsv1.AlertSliV1{Id: id, SliKey: key, Name: name, Description: description, CurrentRevisionId: revisionID, Provenance: "terraform", CreatedAt: now, UpdatedAt: now, CurrentRevision: revision}
 }
@@ -165,6 +172,15 @@ func (s *alertTestServer) UpdateSlo(ctx context.Context, req *alertsv1.UpdateSlo
 	}
 	if id := s.idempotent[req.IdempotencyKey]; id != "" {
 		return proto.Clone(s.slos[id]).(*alertsv1.AlertSloV1), nil
+	}
+	// Like update_slo (appdb objectives.rs:722): a change that mints a revision is refused
+	// while a live burn alert is pinned to the SLO, and the provider sends no disposition.
+	current := existing.CurrentRevision
+	unchanged := &alertsv1.SloRevisionInputV1{SliId: current.SliId, SliRevisionId: current.SliRevisionId, TargetRatio: current.TargetRatio, RollingWindowSeconds: current.RollingWindowSeconds, WindowMode: current.WindowMode, CalendarPeriod: current.CalendarPeriod, CalendarTimezone: current.CalendarTimezone, Owner: current.Owner, Labels: current.Labels}
+	for _, definition := range s.definitions {
+		if definition.GetDetectorConfig().GetSloBurn().GetSloId() == req.SloId && !proto.Equal(req.Revision, unchanged) {
+			return nil, status.Error(codes.FailedPrecondition, "burn_alert_disposition_required")
+		}
 	}
 	s.idempotent[req.IdempotencyKey] = req.SloId
 	item := testSLO(req.SloId, existing.SloKey, req.Name, req.Description, req.Revision, existing.CurrentRevision.RevisionNumber+1)
@@ -204,7 +220,7 @@ func testSLO(id, key, name, description string, input *alertsv1.SloRevisionInput
 	if input.WindowMode == alertsv1.SloWindowModeV1_SLO_WINDOW_MODE_V1_CALENDAR {
 		maximumWindow = maximumSLOWindowSeconds
 	}
-	revisionID := fmt.Sprintf("%s-revision-%d", id, revisionNumber)
+	revisionID := testRevisionID(id, int64(revisionNumber))
 	revision := &alertsv1.AlertSloRevisionV1{
 		Id: revisionID, SloId: id, RevisionNumber: revisionNumber, SliId: input.SliId,
 		SliRevisionId: input.SliRevisionId, TargetRatio: input.TargetRatio,
@@ -227,7 +243,7 @@ func (s *alertTestServer) CreateDestination(ctx context.Context, req *alertsv1.U
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	id := s.id("destination", req.IdempotencyKey)
+	id := s.id(req.IdempotencyKey)
 	item := &alertsv1.AlertDestinationV1{Id: id, DestinationKey: req.DestinationKey, Name: req.Name, Kind: req.Kind, Enabled: req.Enabled, Config: req.Config, SecretRefs: req.SecretRefs}
 	s.destinations[id] = item
 	return item, nil
@@ -286,7 +302,7 @@ func (s *alertTestServer) CreateNotificationPolicy(ctx context.Context, req *ale
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	id := s.id("policy", req.IdempotencyKey)
+	id := s.id(req.IdempotencyKey)
 	item := &alertsv1.AlertNotificationPolicyV1{Id: id, PolicyKey: req.PolicyKey, Name: req.Name, Enabled: req.Enabled, Config: expandedTestNotificationPolicyConfig(req.Config), Revision: 1}
 	s.policies[id] = item
 	return item, nil
@@ -387,7 +403,7 @@ func (s *alertTestServer) CreateNotificationTemplate(ctx context.Context, req *a
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	id := s.id("template", req.IdempotencyKey)
+	id := s.id(req.IdempotencyKey)
 	if existing := s.templates[id]; existing != nil {
 		return proto.Clone(existing).(*alertsv1.AlertNotificationTemplateV1), nil
 	}
@@ -472,7 +488,7 @@ func (s *alertTestServer) GetNotificationTemplate(ctx context.Context, req *aler
 
 func testNotificationTemplate(id string, req *alertsv1.UpsertAlertNotificationTemplateRequest, revision int64, publishedRevisionID string) *alertsv1.AlertNotificationTemplateV1 {
 	now := timestamppb.New(time.Date(2030, 1, 1, 0, int(revision), 0, 0, time.UTC))
-	revisionID := fmt.Sprintf("%s-revision-%d", id, revision)
+	revisionID := testRevisionID(id, revision)
 	current := &alertsv1.AlertNotificationTemplateRevisionV1{Id: revisionID, NotificationTemplateId: id, RevisionNumber: revision, Document: req.Document, VariableSchemaVersion: 1, ContentHash: fmt.Sprintf("content-%d", revision), ChangeReason: req.ChangeReason, CreatedAt: now}
 	return &alertsv1.AlertNotificationTemplateV1{Id: id, TemplateKey: req.TemplateKey, Name: req.Name, Description: req.Description, CurrentRevisionId: revisionID, PublishedRevisionId: publishedRevisionID, Revision: revision, Provenance: "terraform", ProvenanceRef: req.ProvenanceRef, CreatedAt: now, UpdatedAt: now, CurrentRevision: current, Kind: alertsv1.AlertNotificationTemplateKindV1_ALERT_NOTIFICATION_TEMPLATE_KIND_V1_USER}
 }
@@ -483,7 +499,7 @@ func (s *alertTestServer) CreateMaintenanceWindow(ctx context.Context, req *aler
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	id := s.id("window", req.IdempotencyKey)
+	id := s.id(req.IdempotencyKey)
 	item := &alertsv1.AlertMaintenanceWindowV1{Id: id, WindowKey: req.WindowKey, Name: req.Name, Scope: req.Scope, StartsAt: req.StartsAt, EndsAt: req.EndsAt}
 	s.windows[id] = item
 	return item, nil
@@ -528,7 +544,7 @@ func (s *alertTestServer) CreateSilence(ctx context.Context, req *alertsv1.Upser
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	id := s.id("silence", req.IdempotencyKey)
+	id := s.id(req.IdempotencyKey)
 	item := &alertsv1.AlertSilenceV1{Id: id, SilenceKey: req.SilenceKey, Matcher: req.Matcher, Reason: req.Reason, StartsAt: req.StartsAt, EndsAt: req.EndsAt}
 	s.silences[id] = item
 	return item, nil
@@ -568,13 +584,13 @@ func (s *alertTestServer) DeleteSilence(ctx context.Context, req *alertsv1.Delet
 	return &alertsv1.AlertMutationResponse{Ok: true, ResourceId: req.Id}, nil
 }
 
-func (s *alertTestServer) createAlert(ctx context.Context, base *alertsv1.AlertRecipeBaseV1, detectorKind string, detectorConfig *alertsv1.AlertDetectorConfigV1) (*alertsv1.CreateAlertDefinitionResponse, error) {
+func (s *alertTestServer) createAlert(ctx context.Context, base *alertsv1.AlertRecipeBaseV1, class alertsv1.AlertClassV1, detectorKind string, detectorConfig *alertsv1.AlertDetectorConfigV1) (*alertsv1.CreateAlertDefinitionResponse, error) {
 	if err := s.authorize(ctx); err != nil {
 		return nil, err
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	id := s.id("alert", base.IdempotencyKey)
+	id := s.id(base.IdempotencyKey)
 	owner := proto.Clone(base.Owner).(*alertsv1.AlertOwnerRefV1)
 	owner.DisplayName = "Engineering"
 	owner.Active = true
@@ -590,15 +606,36 @@ func (s *alertTestServer) createAlert(ctx context.Context, base *alertsv1.AlertR
 			}
 		}
 	}
-	item := &alertsv1.AlertDefinitionV1{Id: id, TenantId: testTenantID, OrgId: base.OrgId, Slug: base.Slug, Name: base.Name, Description: base.Description, Severity: base.Severity, Mode: alertsv1.AlertModeV1_ALERT_MODE_V1_OBSERVE, Scope: scope, Owner: owner, Action: base.Action, EvaluationSettings: base.EvaluationSettings, SampleGuard: base.SampleGuard, CurrentRevisionId: "revision-1", DetectorKind: detectorKind, DetectorConfig: detectorConfig, EvaluationIntervalSeconds: base.EvaluationIntervalSeconds}
+	item := &alertsv1.AlertDefinitionV1{Id: id, TenantId: testTenantID, OrgId: base.OrgId, Slug: base.Slug, Name: base.Name, Description: base.Description, Class: class, Severity: base.Severity, Mode: alertsv1.AlertModeV1_ALERT_MODE_V1_OBSERVE, Scope: scope, Owner: owner, Action: base.Action, EvaluationSettings: base.EvaluationSettings, SampleGuard: base.SampleGuard, CurrentRevisionId: "revision-1", DetectorKind: detectorKind, DetectorConfig: detectorConfig, EvaluationIntervalSeconds: base.EvaluationIntervalSeconds}
 	s.definitions[id] = item
 	return &alertsv1.CreateAlertDefinitionResponse{Definition: item, RevisionId: "revision-1"}, nil
 }
 func (s *alertTestServer) CreateAgentQualityRegressionAlert(ctx context.Context, req *alertsv1.CreateAgentQualityRegressionAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
-	return s.createAlert(ctx, req.Base, "agent_quality_regression", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_AgentQualityRegression{AgentQualityRegression: req.RecipeConfig}})
+	withServerDefaults(req.RecipeConfig, &alertsv1.AgentQualityRegressionConfigV1{ // detector/v1.rs:224
+		ShortWindowSeconds: proto.Int64(900), LongWindowSeconds: proto.Int64(3_600), BaselineWindowSeconds: proto.Int64(86_400), MinRunCount: proto.Uint64(20),
+		MaxBadOutcomeRate: proto.Float64(0.05), MaxEvalFailRate: proto.Float64(0.05), MinEvalPassRate: proto.Float64(0.95), BaselineBadOutcomeRate: proto.Float64(0.02),
+		RegressionMultiplier: proto.Float64(2), EvidenceLimit: proto.Uint32(10), UseRunQualityFacts: proto.Bool(false),
+	})
+	return s.createAlert(ctx, req.Base, alertsv1.AlertClassV1_ALERT_CLASS_V1_OUTCOME, "agent_quality_regression", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_AgentQualityRegression{AgentQualityRegression: req.RecipeConfig}})
 }
 func (s *alertTestServer) CreateCostPerSuccessAlert(ctx context.Context, req *alertsv1.CreateCostPerSuccessAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
-	return s.createAlert(ctx, req.Base, "cost_per_success_regression", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_CostPerSuccess{CostPerSuccess: req.RecipeConfig}})
+	withServerDefaults(req.RecipeConfig, &alertsv1.CostPerSuccessConfigV1{ // detector/v1.rs:402; budget_remaining_usd has no default
+		WindowSeconds: proto.Int64(3_600), MinSuccessCount: proto.Uint64(20), MaxCostPerSuccessUsd: proto.Float64(0.10), BaselineCostPerSuccessUsd: proto.Float64(0.02),
+		RegressionMultiplier: proto.Float64(2), AllowEstimatedCost: proto.Bool(false), ImminentExhaustionHours: proto.Float64(24), EvidenceLimit: proto.Uint32(10),
+	})
+	return s.createAlert(ctx, req.Base, alertsv1.AlertClassV1_ALERT_CLASS_V1_BUDGET, "cost_per_success_regression", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_CostPerSuccess{CostPerSuccess: req.RecipeConfig}})
+}
+
+// Like canonical_recipe_config (appdb management.rs:4751) on create: every omitted input
+// takes its default, and detector_config_proto (grpc.rs:6903) echoes all of them.
+func withServerDefaults(config, defaults proto.Message) {
+	message := config.ProtoReflect()
+	defaults.ProtoReflect().Range(func(field protoreflect.FieldDescriptor, value protoreflect.Value) bool {
+		if !message.Has(field) {
+			message.Set(field, value)
+		}
+		return true
+	})
 }
 
 // Like create_slo_burn_alert: the ids are required, the current SLO revision overwrites the objective fields,
@@ -621,6 +658,10 @@ func (s *alertTestServer) CreateSloBurnAlert(ctx context.Context, req *alertsv1.
 	if slo.CurrentRevisionId != config.SloRevisionId {
 		return nil, status.Error(codes.FailedPrecondition, "SLO burn alerts must reference the current SLO revision")
 	}
+	withServerDefaults(config, &alertsv1.SloBurnConfigV1{ // detector/v1.rs:510
+		FastShortWindowSeconds: proto.Int64(300), FastLongWindowSeconds: proto.Int64(3_600), SlowShortWindowSeconds: proto.Int64(1_800), SlowLongWindowSeconds: proto.Int64(21_600),
+		FastBurnThreshold: proto.Float64(14.4), SlowBurnThreshold: proto.Float64(6), MinRequestCount: proto.Uint64(100), EvidenceLimit: proto.Uint32(10),
+	})
 	revision := slo.CurrentRevision
 	config.SloWindowSeconds = proto.Int64(revision.MaximumWindowSeconds)
 	config.TargetPercent = proto.Float64(revision.TargetRatio * 100)
@@ -630,10 +671,25 @@ func (s *alertTestServer) CreateSloBurnAlert(ctx context.Context, req *alertsv1.
 	config.RevisionEffectiveFrom = revision.EffectiveFrom
 	base := proto.Clone(req.Base).(*alertsv1.AlertRecipeBaseV1)
 	base.Scope = sli.CurrentRevision.Scope
-	return s.createAlert(ctx, base, "slo_burn", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_SloBurn{SloBurn: config}})
+	return s.createAlert(ctx, base, alertsv1.AlertClassV1_ALERT_CLASS_V1_OUTCOME, "slo_burn", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_SloBurn{SloBurn: config}})
 }
 func (s *alertTestServer) CreateAdvancedSignalAlert(ctx context.Context, req *alertsv1.CreateAdvancedSignalAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
-	return s.createAlert(ctx, req.Base, "advanced_signal", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_AdvancedSignal{AdvancedSignal: req.Condition}})
+	withServerDefaults(req.Condition, &alertsv1.AdvancedSignalConfigV1{ // detector/v1.rs:633
+		MinLogErrors: proto.Uint64(10), MaxLogErrorRate: proto.Float64(0.10), MinToolFailures: proto.Uint64(5), MinFallbackCount: proto.Uint64(5),
+		MaxCacheMissRate: proto.Float64(0.90), SymptomOnlyPageOverride: proto.Bool(false), EvidenceLimit: proto.Uint32(10),
+	})
+	return s.createAlert(ctx, req.Base, alertsv1.AlertClassV1_ALERT_CLASS_V1_SYMPTOM, "advanced_signal", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_AdvancedSignal{AdvancedSignal: req.Condition}})
+}
+
+// Like create_query_threshold_alert (grpc.rs:1605): no field has a default, so the zero values
+// query_threshold_config_from_proto and QueryThresholdConfig::validate refuse are refused
+// (grpc.rs:10733-10760, detector/v1.rs:817-846), and the config is echoed exactly as sent.
+func (s *alertTestServer) CreateQueryThresholdAlert(ctx context.Context, req *alertsv1.CreateQueryThresholdAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
+	query := req.Query
+	if query.GetDataset() == 0 || query.GetAggregation() == 0 || query.GetComparison() == 0 || query.GetWindowSeconds() <= 0 || query.GetMinimumEventCount() == 0 || query.GetMaxGroups() == 0 || query.GetEvidenceLimit() == 0 || query.GetTimeoutMs() < 100 {
+		return nil, status.Error(codes.InvalidArgument, "query-threshold config is incomplete")
+	}
+	return s.createAlert(ctx, req.Base, req.AlertClass, "query_threshold", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_QueryThreshold{QueryThreshold: req.Query}})
 }
 func (s *alertTestServer) DeleteDefinition(ctx context.Context, req *alertsv1.DeleteAlertDefinitionRequest) (*alertsv1.AlertMutationResponse, error) {
 	if err := s.authorize(ctx); err != nil {
