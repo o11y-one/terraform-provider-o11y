@@ -26,6 +26,7 @@ type maintenanceWindowModel struct {
 	ID        types.String `tfsdk:"id"`
 	WindowKey types.String `tfsdk:"window_key"`
 	Name      types.String `tfsdk:"name"`
+	Reason    types.String `tfsdk:"reason"`
 	Scope     types.String `tfsdk:"scope_json"`
 	StartsAt  types.String `tfsdk:"starts_at"`
 	EndsAt    types.String `tfsdk:"ends_at"`
@@ -42,7 +43,7 @@ func (r *maintenanceWindowResource) Metadata(_ context.Context, req resource.Met
 func (r *maintenanceWindowResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = schema.Schema{Description: "An O11y.one alert maintenance window.", Attributes: map[string]schema.Attribute{
 		"id":         schema.StringAttribute{Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()}},
-		"window_key": schema.StringAttribute{Required: true}, "name": schema.StringAttribute{Required: true},
+		"window_key": schema.StringAttribute{Required: true}, "name": schema.StringAttribute{Required: true}, "reason": schema.StringAttribute{Required: true},
 		"scope_json": schema.StringAttribute{Required: true, PlanModifiers: []planmodifier.String{canonicalJSONPlanModifier{}}},
 		"starts_at":  schema.StringAttribute{Required: true}, "ends_at": schema.StringAttribute{Required: true},
 	}}
@@ -61,7 +62,7 @@ func (r *maintenanceWindowResource) Configure(_ context.Context, req resource.Co
 func (r *maintenanceWindowResource) ValidateConfig(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
 	var data maintenanceWindowModel
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
-	for name, value := range map[string]types.String{"window_key": data.WindowKey, "name": data.Name} {
+	for name, value := range map[string]types.String{"window_key": data.WindowKey, "name": data.Name, "reason": data.Reason} {
 		if !value.IsNull() && !value.IsUnknown() {
 			if err := validationutil.NonEmpty(value.ValueString()); err != nil {
 				resp.Diagnostics.AddAttributeError(path.Root(name), "Value must not be empty", err.Error())
@@ -179,7 +180,7 @@ func (r *maintenanceWindowResource) request(data *maintenanceWindowModel, operat
 	if err != nil {
 		return nil, err
 	}
-	message := &alertsv1.UpsertMaintenanceWindowRequest{Id: data.ID.ValueString(), WindowKey: data.WindowKey.ValueString(), Name: data.Name.ValueString(), Scope: scope, StartsAt: timestamppb.New(startsAt), EndsAt: timestamppb.New(endsAt)}
+	message := &alertsv1.UpsertMaintenanceWindowRequest{Id: data.ID.ValueString(), WindowKey: data.WindowKey.ValueString(), Name: data.Name.ValueString(), Reason: data.Reason.ValueString(), Scope: scope, StartsAt: timestamppb.New(startsAt), EndsAt: timestamppb.New(endsAt)}
 	payload, err := protojson.Marshal(message)
 	if err != nil {
 		return nil, err
@@ -191,6 +192,7 @@ func setMaintenanceWindow(data *maintenanceWindowModel, item *alertsv1.AlertMain
 	data.ID = types.StringValue(item.Id)
 	data.WindowKey = types.StringValue(item.WindowKey)
 	data.Name = types.StringValue(item.Name)
+	data.Reason = types.StringValue(item.Reason)
 	data.Scope = jsonFromProtoPreserving(data.Scope, item.Scope)
 	data.StartsAt = timestampString(item.StartsAt)
 	data.EndsAt = timestampString(item.EndsAt)

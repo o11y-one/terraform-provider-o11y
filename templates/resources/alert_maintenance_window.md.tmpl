@@ -10,10 +10,6 @@ description: |-
 
 {{ .Description | trimspace }}
 
-## Known issue
-
-The server requires a `reason` for every maintenance window, and this provider version has no `reason` attribute and does not send one. Creating or updating a window fails with `reason is required` until the provider adds it. The example and reference below describe the intended configuration.
-
 {{ if .HasExamples -}}
 ## Example Usage
 

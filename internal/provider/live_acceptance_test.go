@@ -299,6 +299,7 @@ resource "o11y_alert_notification_policy" "live" {
 resource "o11y_alert_maintenance_window" "live" {
   window_key = __WINDOW_KEY__
   name = "Terraform live maintenance"
+  reason = "Terraform live acceptance"
   scope_json = jsonencode({ service_names = [__SERVICE__] })
   starts_at = "2030-01-01T00:00:00Z"
   ends_at = "2030-01-01T01:00:00Z"
