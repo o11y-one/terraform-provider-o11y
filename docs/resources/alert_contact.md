@@ -40,3 +40,11 @@ resource "o11y_alert_contact" "primary" {
 - `id` (String) The ID of this resource.
 - `revision` (Number)
 - `status` (String)
+
+## Import
+
+```shell
+terraform import o11y_alert_contact.example <id>
+```
+
+`request_verification` is not read back. After import, the first apply updates the contact and, while it is unverified, sends a new verification email when `request_verification = true`.

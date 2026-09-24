@@ -13,6 +13,24 @@ A bounded reusable group of alert contacts, provider destinations, or nested gro
 ## Example Usage
 
 ```terraform
+resource "o11y_alert_contact" "primary" {
+  contact_key          = "primary-oncall"
+  display_name         = "Primary on-call"
+  email                = "oncall@example.com"
+  request_verification = true
+}
+
+resource "o11y_alert_destination" "sre_email" {
+  destination_key  = "sre-email"
+  name             = "SRE email"
+  kind             = "email"
+  enabled          = true
+  config_json      = jsonencode({ recipients = ["sre@example.com"] })
+  secret_refs_json = jsonencode({})
+}
+
+# List members in position order and set enabled on each: the server returns
+# them that way, and any other form fails the apply with an inconsistent result.
 resource "o11y_alert_notification_group" "platform" {
   group_key = "platform-oncall"
   name      = "Platform on-call"
@@ -24,7 +42,13 @@ resource "o11y_alert_notification_group" "platform" {
       member_id = o11y_alert_contact.primary.id
       position  = 0
       enabled   = true
-    }
+    },
+    {
+      kind      = "destination"
+      member_id = o11y_alert_destination.sre_email.id
+      position  = 10
+      enabled   = true
+    },
   ])
 }
 ```
@@ -43,3 +67,26 @@ resource "o11y_alert_notification_group" "platform" {
 
 - `id` (String) The ID of this resource.
 - `revision` (Number)
+
+## JSON attributes
+
+### members_json
+
+A JSON array of members, in `position` order. It is not protobuf JSON; the provider reads it into `AlertNotificationGroupMemberV1` messages. At most 100 members.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `kind` | string | Required | `contact`, `destination`, or `group`, in lowercase. |
+| `member_id` | string | Required | UUID of an [o11y_alert_contact](alert_contact.md), an [o11y_alert_destination](alert_destination.md), or another group, in your organization. |
+| `position` | number | Required | Delivery order, 0 to 9,999, unique within the group. |
+| `enabled` | bool | Optional | Defaults to `true`. |
+
+The same `kind` and `member_id` may appear once. A group may nest other groups up to 8 levels deep, and never itself.
+
+The server returns members sorted by `position`, with `enabled` set on each. List them that way, or the apply fails with `Provider produced inconsistent result after apply`.
+
+## Import
+
+```shell
+terraform import o11y_alert_notification_group.example <group id>
+```

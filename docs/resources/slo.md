@@ -13,19 +13,45 @@ A revisioned O11y.one service-level objective with an exact rolling or timezone-
 ## Example Usage
 
 ```terraform
-resource "o11y_slo" "checkout" {
-  slo_key         = "checkout-availability"
-  name            = "Checkout availability"
-  description     = "Monthly availability budget for checkout"
-  sli_id          = "019f7aa2-6c7f-7000-8000-000000000001"
-  sli_revision_id = "019f7aa2-6c7f-7000-8000-000000000002"
-  target_ratio    = 0.999
+resource "o11y_sli" "checkout_availability" {
+  sli_key               = "checkout-availability"
+  name                  = "Checkout availability"
+  indicator_kind        = "availability"
+  aggregation           = "event_ratio"
+  missing_data_behavior = "unknown"
+  eligible_events       = "checkout server spans"
+  good_events           = "checkout server spans without an error status"
 
+  scope_json = jsonencode({
+    service_names = ["checkout"]
+    span_kinds    = ["SLI_SPAN_KIND_V1_SERVER"]
+  })
+}
+
+# A rolling 28-day objective.
+resource "o11y_slo" "checkout_rolling" {
+  slo_key                = "checkout-availability-28d"
+  name                   = "Checkout availability, 28 days"
+  sli_id                 = o11y_sli.checkout_availability.id
+  sli_revision_id        = o11y_sli.checkout_availability.current_revision_id
+  target_ratio           = 0.999
+  window_mode            = "rolling"
+  rolling_window_seconds = 2419200
+
+  labels_json = jsonencode({ service = "checkout", tier = "1" })
+}
+
+# A calendar-month objective that resets at midnight New York time.
+resource "o11y_slo" "checkout_monthly" {
+  slo_key           = "checkout-availability-monthly"
+  name              = "Checkout availability, monthly"
+  description       = "Monthly availability budget for checkout."
+  sli_id            = o11y_sli.checkout_availability.id
+  sli_revision_id   = o11y_sli.checkout_availability.current_revision_id
+  target_ratio      = 0.995
   window_mode       = "calendar"
   calendar_period   = "month"
   calendar_timezone = "America/New_York"
-
-  labels_json = jsonencode({ service = "checkout" })
 }
 ```
 
@@ -63,3 +89,22 @@ resource "o11y_slo" "checkout" {
 - `maximum_window_seconds` (Number) Maximum fact-retention horizon required by this window contract.
 - `revision_number` (Number)
 - `updated_at` (String)
+
+## JSON attributes
+
+### labels_json
+
+A JSON object of string keys to string values, stored with each SLO revision. It is not protobuf JSON. The server drops an entry whose key or value is blank, which fails the apply, so write non-empty keys and values. Defaults to `{}`.
+
+## Behaviour notes
+
+- A change to `sli_id`, `sli_revision_id`, `target_ratio`, the window, the owner, or `labels_json` mints a new SLO revision, and `current_revision_id` changes. A change to only `name` or `description` does not.
+- An [o11y_slo_burn_alert](slo_burn_alert.md) pins one SLO revision through `recipe_config_json`. When it holds `o11y_slo.<name>.current_revision_id`, a change that mints a revision replaces that alert: Terraform archives it, updates the SLO, and creates a new alert with a new `id`.
+- The provider does not send a burn-alert disposition, so it cannot re-pin, detach, or keep an existing burn alert across a revision. The server refuses a revision-minting change with `FAILED_PRECONDITION` and `burn_alert_disposition_required`, and applies nothing, while any live burn alert still pins this SLO. That happens when a burn alert was created outside this configuration, or pins a literal revision id. Remove or pause those alerts first.
+- Destroying the SLO fails with `slo_archive_blocked` while an alert that is still evaluating references it.
+
+## Import
+
+```shell
+terraform import o11y_slo.example <slo id>
+```

@@ -14,40 +14,55 @@ An Observe-mode O11y.one alert definition. Notify activation is intentionally un
 
 ```terraform
 variable "owner_team_id" {
-  description = "O11y.one team that owns and responds to this alert."
+  description = "UUID of the O11y.one team that owns and responds to this alert."
   type        = string
 }
 
-resource "o11y_query_threshold_alert" "checkout_traffic" {
-  slug                        = "checkout-server-error-rate"
-  name                        = "Checkout server errors"
-  description                 = "Observe sustained checkout server-span errors before promoting to notify mode."
-  alert_class                 = "symptom"
-  severity                    = "warning"
-  scope_json                  = jsonencode({ service_names = ["checkout"] })
-  owner_json                  = jsonencode({ team_id = var.owner_team_id, display_name = "Checkout on-call", active = true })
-  action_json                 = jsonencode({ summary = "Inspect checkout traces and recent deployments." })
-  evaluation_settings_json    = jsonencode({ pending_for_seconds = 300, recovering_for_seconds = 300 })
+# 64-bit integers are quoted because that is how the provider writes them back on import.
+resource "o11y_query_threshold_alert" "checkout_errors" {
+  slug        = "checkout-server-errors"
+  name        = "Checkout server errors"
+  description = "Observe sustained checkout server-span errors before promoting to notify mode."
+  alert_class = "symptom"
+  severity    = "warning"
+
+  # The server adds scope values to the query as filters.
+  scope_json = jsonencode({
+    service_names = ["checkout"]
+    span_kinds    = ["SLI_SPAN_KIND_V1_SERVER"]
+  })
+  owner_json = jsonencode({ team_id = var.owner_team_id })
+  action_json = jsonencode({
+    summary              = "Checkout server spans are failing."
+    external_runbook_url = "https://runbooks.example.com/checkout-errors"
+  })
+  evaluation_settings_json = jsonencode({
+    pending_for_seconds    = "300"
+    recovering_for_seconds = "300"
+    no_data_behavior       = "ALERT_NO_DATA_BEHAVIOR_V1_HOLD_STATE"
+  })
   evaluation_interval_seconds = 60
   sample_guard_json           = jsonencode({ minimum_events = "25" })
 
+  # The server applies no defaults to this recipe: every field below except
+  # aggregation_field (empty for COUNT), filters, and group_by is required.
   recipe_config_json = jsonencode({
-    dataset         = "ALERT_QUERY_DATASET_V1_TRACES"
-    aggregation     = "ALERT_QUERY_AGGREGATION_V1_COUNT"
-    comparison      = "ALERT_QUERY_COMPARISON_V1_GREATER_THAN_OR_EQUAL"
-    threshold       = 10
-    window_seconds  = "300"
+    dataset                  = "ALERT_QUERY_DATASET_V1_TRACES"
+    aggregation              = "ALERT_QUERY_AGGREGATION_V1_COUNT"
+    comparison               = "ALERT_QUERY_COMPARISON_V1_GREATER_THAN_OR_EQUAL"
+    threshold                = 10
+    window_seconds           = "300"
     evaluation_delay_seconds = "120"
-    minimum_event_count       = "25"
-    max_groups                = 20
-    evidence_limit            = 10
-    timeout_ms                = 2000
-    group_by                  = ["service.name"]
+    minimum_event_count      = "25"
+    max_groups               = 20
+    evidence_limit           = 10
+    timeout_ms               = 2000
+    group_by                 = ["service.name"]
+    # EXISTS takes no values.
     filters = [{
-      field     = "service.name"
-      operator  = "ALERT_QUERY_FILTER_OPERATOR_V1_EQUAL"
+      field     = "span_attributes.error.type"
+      operator  = "ALERT_QUERY_FILTER_OPERATOR_V1_EXISTS"
       data_type = "string"
-      values    = [{ string_value = "checkout" }]
     }]
   })
 
@@ -84,3 +99,141 @@ resource "o11y_query_threshold_alert" "checkout_traffic" {
 - `id` (String) The ID of this resource.
 - `mode` (String)
 - `revision_id` (String)
+
+## JSON attributes
+
+Write each `*_json` attribute with `jsonencode()`. The provider decodes it as protobuf JSON and refuses an unknown field at plan time.
+
+- Use the snake_case field names below. The camelCase protobuf JSON names also work, but import and drift write snake_case.
+- Write enum values as the full names listed, for example `ALERT_NO_DATA_BEHAVIOR_V1_HOLD_STATE`.
+- A 64-bit integer (`int64`, `uint64`) may be a number or a string. Write it as a string if you import, because that is how the provider reads it back.
+- "Required" means the server refuses the request without the field. "Read-only" means the server sets the field and ignores or refuses a configured value.
+- When the server stores a value differently from your JSON, the apply fails with `Provider produced inconsistent result after apply`. The notes below say where that happens.
+
+### scope_json
+
+`AlertScopeV1`. Limits the telemetry the detector reads. Every field is optional, and an empty object evaluates everything the recipe reads. Changing the scope replaces the alert.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `service_names` | list(string) | Services, by `service.name`. |
+| `service_namespaces` | list(string) | Service namespaces, by `service.namespace`. |
+| `environments` | list(string) | Deployment environments. |
+| `customer_cohorts` | list(string) | Customer cohorts, by `customer.cohort`. |
+| `agent_names` | list(string) | Agents, by `gen_ai.agent.name`. |
+| `model_providers` | list(string) | Model providers, by `gen_ai.provider.name`. |
+| `models` | list(string) | Models, by `gen_ai.request.model`. |
+| `tool_names` | list(string) | Tools, by `gen_ai.tool.name`. |
+| `telemetry_attribute_filters` | list(object) | Attribute filters, described below. |
+| `span_kinds` | list(enum) | `SLI_SPAN_KIND_V1_` plus `INTERNAL`, `SERVER`, `CLIENT`, `PRODUCER`, or `CONSUMER`. |
+
+The server drops blank list entries and `SLI_SPAN_KIND_V1_UNSPECIFIED`, which fails the apply. For a query-threshold alert the server adds each scope list and the span kinds to the query as filters. Span kinds work only with the traces dataset, and a metrics query refuses attribute filters in its scope.
+
+Each `telemetry_attribute_filters` entry:
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `field` | string | Required | Attribute key, for example `http.request.method`. The alert API stores an empty key without checking it. |
+| `operator` | enum | Required | `SLI_TELEMETRY_FILTER_OPERATOR_V1_` plus `EQUALS`, `NOT_EQUALS`, `IN`, `NOT_IN`, `EXISTS`, `NOT_EXISTS`, `LESS_THAN`, `LESS_THAN_OR_EQUAL`, `GREATER_THAN`, or `GREATER_THAN_OR_EQUAL`. The server silently drops a filter without one, which fails the apply. |
+| `values` | list(string) | Optional | String operands. Ignored when `typed_values` is set. |
+| `typed_values` | list(object) | Optional | Typed operands. Each sets one of `string_value`, `int_value` (int64), `double_value`, `bool_value`, or `uint_value` (uint64). `string_list` is dropped. |
+| `source` | enum | Optional | `SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_` plus `SPAN`, `RESOURCE`, `SCOPE`, `LOG`, or `FIXED`. Omitted, it is stored as `FIXED`, and the provider treats the two as equal. |
+
+The server returns string operands in both `values` and `typed_values`; the provider accounts for that. A `uint_value` that fits in int64 comes back as `int_value`, which fails the apply, so write `int_value`.
+
+### owner_json
+
+`AlertOwnerRefV1`. Required. Set exactly one owner.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `team_id` | string | One of `team_id`, `user_id` | UUID of a team in your organization. |
+| `user_id` | string | One of `team_id`, `user_id` | UUID of an active member of your organization. |
+| `display_name` | string | Read-only | The server sets the team or user name. A configured value is ignored. |
+| `active` | bool | Read-only | Always `true` for an accepted owner. Configuring `false` fails the apply. |
+
+### action_json
+
+`AlertActionV1`. Every field is optional, and blank strings are ignored. Notify activation, which happens outside Terraform, needs `first_action`, `external_runbook_url`, or `managed_runbook_id`.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `summary` | string | What is wrong, at most 500 bytes. |
+| `first_action` | string | The first thing a responder does, at most 1,000 bytes. |
+| `external_runbook_url` | string | Absolute `https` URL without credentials, at most 2,048 bytes. The server stores it normalized, so a bare host such as `https://example.com` comes back as `https://example.com/`, which fails the apply. Include a path. |
+| `managed_runbook_id` | string | UUID of a non-archived [o11y_alert_runbook](alert_runbook.md). Set it together with `managed_runbook_revision_id`. |
+| `managed_runbook_revision_id` | string | UUID of a revision of that runbook, usually its `current_revision_id`. Set it together with `managed_runbook_id`. |
+
+### evaluation_settings_json
+
+`AlertEvaluationSettingsV1`. Every field is optional.
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `interval_seconds` | int64 | `evaluation_interval_seconds` | Ignored. The `evaluation_interval_seconds` attribute, 30 to 86,400 seconds, always sets the schedule. |
+| `pending_for_seconds` | int64 | `0` | Seconds a breaching condition must persist before the alert fires. |
+| `recovering_for_seconds` | int64 | `0` | Seconds a recovered condition must persist before the alert resolves. |
+| `no_data_behavior` | enum | `HOLD_STATE` | `ALERT_NO_DATA_BEHAVIOR_V1_` plus `HOLD_STATE`, `RESOLVE`, or `ALERT`: what an evaluation with no data does. |
+| `preview_horizon_seconds` | int64 | `0` | History [o11y_alert_preview](../data-sources/alert_preview.md) replays when no range is given. `0` means one day, and a preview runs at most 96 evaluation intervals. |
+| `evidence_limit` | uint32 | `0` | Stored and returned, but no evaluator reads it. Use the recipe's `evidence_limit`. |
+
+### sample_guard_json
+
+`AlertSampleGuardV1`. Every field is optional. The server stores both fields with each revision and returns them, but no evaluator reads them: the detector takes its minimum sample from `recipe_config_json` (`minimum_event_count`).
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `minimum_events` | uint64 | `0` | Recorded minimum event count. |
+| `require_complete_coverage` | bool | `false` | Recorded coverage requirement. |
+
+### recipe_config_json
+
+`QueryThresholdConfigV1`. A bounded structured query and the threshold its result is compared with. This recipe has no server defaults: a field marked Required is refused when it is omitted or zero. Changing it replaces the alert.
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `dataset` | enum | Required | `ALERT_QUERY_DATASET_V1_` plus `TRACES`, `LOGS`, or `METRICS`. |
+| `aggregation` | enum | Required | `ALERT_QUERY_AGGREGATION_V1_` plus `COUNT`, `COUNT_DISTINCT`, `SUM`, `AVERAGE`, `MINIMUM`, `MAXIMUM`, `P50`, `P90`, `P95`, or `P99`. |
+| `aggregation_field` | string | All but `COUNT` | Field the aggregation reads. Must be empty for `COUNT`. |
+| `filters` | list(object) | Optional | Query filters, described below. At most 20, counting the filters the scope adds. |
+| `group_by` | list(string) | Optional | At most 3 unique fields. Each group is evaluated separately. |
+| `comparison` | enum | Required | `ALERT_QUERY_COMPARISON_V1_` plus `GREATER_THAN`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN`, `LESS_THAN_OR_EQUAL`, `EQUAL`, or `NOT_EQUAL`. |
+| `threshold` | double | Optional | Finite value the aggregation is compared with. Defaults to `0`. |
+| `window_seconds` | int64 | Required | Whole minutes, 60 to 86,400 seconds. |
+| `evaluation_delay_seconds` | int64 | Optional | Whole minutes, 0 to 3,600 seconds, that each window waits for late data. Defaults to `0`. |
+| `minimum_event_count` | uint64 | Required | Fewest events a window needs, at least 1. |
+| `max_groups` | uint32 | Required | 1 to 50 groups per evaluation. |
+| `evidence_limit` | uint32 | Required | 1 to 100 evidence samples per evaluation. |
+| `timeout_ms` | uint32 | Required | 100 to 10,000 milliseconds. |
+
+Field names use ASCII letters, digits, `_`, `.`, `-`, `/`, and `:`, up to 256 bytes. On traces, attribute keys take the form `span_attributes.<key>` or `resource_attributes.<key>`.
+
+Each `filters` entry:
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `field` | string | Required | Field the filter reads. |
+| `operator` | enum | Required | `ALERT_QUERY_FILTER_OPERATOR_V1_` plus `EQUAL`, `NOT_EQUAL`, `GREATER_THAN`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN`, `LESS_THAN_OR_EQUAL`, `CONTAINS`, `NOT_CONTAINS`, `IN`, `NOT_IN`, `EXISTS`, `NOT_EXISTS`, `BETWEEN`, or `NOT_BETWEEN`. |
+| `data_type` | string | Required | `string`, `number`, `bool`, or `integer`. |
+| `values` | list(object) | Depends on `operator` | None for `EXISTS` and `NOT_EXISTS`, two for `BETWEEN` and `NOT_BETWEEN`, 1 to 50 for `IN` and `NOT_IN`, one otherwise. Each sets the one of `string_value`, `number_value`, `bool_value`, or `integer_value` (int64) that matches `data_type`. |
+
+## Behaviour notes
+
+- `notify` must be `false`. The provider manages Observe alerts only and never activates notify mode.
+- `slug`, `severity`, `scope_json`, and `recipe_config_json` replace the alert when they change, because the update API cannot change them.
+- `alert_class` is `outcome`, `budget`, or `symptom`. The server refuses `system`, which is reserved for platform alerts.
+
+## Import
+
+```shell
+terraform import o11y_query_threshold_alert.example <alert definition id>
+```
+
+After import the JSON attributes hold the provider's canonical form: snake_case names, full enum names, 64-bit integers as JSON strings, and zero-valued fields left out. Unless your configuration matches that form, the first plan replaces the alert for a difference in `scope_json` or `recipe_config_json`, and updates it in place for the other JSON attributes. Copy the values from `terraform state show`, or write these fields as strings:
+
+- `evaluation_settings_json`: `interval_seconds`, `pending_for_seconds`, `recovering_for_seconds`, `preview_horizon_seconds`.
+- `sample_guard_json`: `minimum_events`.
+- `scope_json`: `typed_values[].int_value` and `typed_values[].uint_value`.
+- `recipe_config_json`: `window_seconds`, `evaluation_delay_seconds`, `minimum_event_count`, `filters[].values[].integer_value`.
+
+The imported `evaluation_settings_json` also includes `interval_seconds` and `no_data_behavior`, and `owner_json` includes `display_name` and `active`. Add them, or accept one in-place update.

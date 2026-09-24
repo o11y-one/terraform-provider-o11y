@@ -44,3 +44,16 @@ description: |-
 | `o11y_alert_runbook_usage` | data source | `GetRunbookUsage` | `alerts.read` |
 
 The provider never needs `alerts.activate_notify`, because it never calls `ActivateNotifyMode`. Mint the token from a signed-in session with `POST /api/tokens` and a body of `{"customer_id": "<org UUID>", "token_type": "platform", "scopes": [...]}` that lists only the scopes above; the API refuses any scope your organization role cannot grant.
+
+## Behaviour notes
+
+Each resource page documents the JSON its `*_json` attributes take and the behaviour below in full.
+
+- **JSON attributes are typed.** Every `*_json` attribute is decoded against a protobuf message, and an unknown field fails the plan. Each resource page lists every field, whether the server requires it, and the default it applies.
+- **A value the server rewrites fails the apply.** When the server stores a default or a normalized value that differs from your JSON, the apply fails with `Provider produced inconsistent result after apply`. The largest case is `recipe_config_json` on the alert resources: list every field, as the examples do.
+- **Import writes the canonical form.** After `terraform import`, JSON attributes use snake_case names, full enum names, and 64-bit integers as JSON strings. Write `int64` and `uint64` fields as strings, or copy the values from `terraform state show`; each page lists those fields. On an alert, a difference in `scope_json` or `recipe_config_json` replaces it.
+- **A scope filter without `source` is stored as `FIXED`.** The server records `SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_FIXED` for a telemetry attribute filter that omits `source`, and the provider treats the two as the same value.
+- **An SLO revision replaces its SLO-burn alerts.** An [o11y_slo](resources/slo.md) change that mints a revision replaces each [o11y_slo_burn_alert](resources/slo_burn_alert.md) that references its `current_revision_id`. The provider sends no burn-alert disposition, so the server refuses that SLO change while a burn alert outside this configuration still pins the SLO.
+- **SLO-burn fields that reference a new SLO are checked late.** When `recipe_config_json` refers to an `o11y_slo` created in the same apply, the provider cannot check it at plan time. A server-derived field such as `target_percent` then fails the apply, and the next plan refuses it.
+- **Maintenance windows cannot be created yet.** The server requires a `reason` that this provider version does not send. See [o11y_alert_maintenance_window](resources/alert_maintenance_window.md).
+- **Previews need `revision_id`.** Set [o11y_alert_preview](data-sources/alert_preview.md) `revision_id` to the alert's `revision_id`, or reads fail once the alert changes.
