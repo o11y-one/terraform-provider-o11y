@@ -30,7 +30,7 @@ provider "o11y" {
 - `org_id` (String) Organization UUID. Defaults to O11Y_ORG_ID.
 - `request_timeout_seconds` (Number) Per-RPC timeout in seconds. Defaults to 30.
 - `tenant_id` (String) Tenant UUID. Defaults to O11Y_TENANT_ID.
-- `token` (String, Sensitive) O11y.one bearer token. Defaults to O11Y_TOKEN.
+- `token` (String, Sensitive) O11y.one platform API token, sent as x-o11y-key. Defaults to O11Y_TOKEN.
 
 ## Token scopes
 

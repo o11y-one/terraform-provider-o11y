@@ -45,6 +45,9 @@ The token needs only the `alerts.*` scopes for the resources you manage; see [To
 - `o11y_alert_notification_policy`: policy CRUD, import, drift detection, and arbitrary route configuration through `config_json`.
 - `o11y_alert_maintenance_window`: maintenance-window CRUD and import.
 - `o11y_alert_silence`: silence CRUD and import.
+- `o11y_alert_contact`: notification contact CRUD, archive/restore, import, and optional verification on create or update.
+- `o11y_alert_notification_group`: notification group CRUD, archive/restore, and import.
+- `o11y_query_threshold_alert`: query-threshold Observe alert.
 - `o11y_agent_quality_alert`: agent quality regression Observe alert.
 - `o11y_cost_per_success_alert`: cost-per-success Observe alert.
 - `o11y_slo_burn_alert`: SLO burn Observe alert.

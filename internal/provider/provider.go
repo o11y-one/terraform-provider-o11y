@@ -51,7 +51,7 @@ func (p *o11yProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp 
 		Description: "Manage O11y.one SLIs, SLOs, alert runbooks, contacts, notification groups, destinations, notification templates, policies, maintenance windows, silences, Observe alert definitions, and previews through the authenticated gRPC API.",
 		Attributes: map[string]providerschema.Attribute{
 			"endpoint":                providerschema.StringAttribute{Optional: true, Description: "O11y.one gRPC API origin, https://grpc.o11y.one. Defaults to O11Y_ENDPOINT."},
-			"token":                   providerschema.StringAttribute{Optional: true, Sensitive: true, Description: "O11y.one bearer token. Defaults to O11Y_TOKEN."},
+			"token":                   providerschema.StringAttribute{Optional: true, Sensitive: true, Description: "O11y.one platform API token, sent as x-o11y-key. Defaults to O11Y_TOKEN."},
 			"tenant_id":               providerschema.StringAttribute{Optional: true, Description: "Tenant UUID. Defaults to O11Y_TENANT_ID."},
 			"org_id":                  providerschema.StringAttribute{Optional: true, Description: "Organization UUID. Defaults to O11Y_ORG_ID."},
 			"insecure_skip_verify":    providerschema.BoolAttribute{Optional: true, Description: "Allow HTTP or skip TLS verification. Defaults to false."},
