@@ -65,6 +65,7 @@ message AlertScalarValueV1 {
     double double_value = 3;
     bool bool_value = 4;
     AlertStringListV1 string_list = 5;
+    uint64 uint_value = 6;
   }
 }
 
@@ -108,6 +109,11 @@ message AgentQualityRegressionConfigV1 {
   optional double baseline_bad_outcome_rate = 8;
   optional double regression_multiplier = 9;
   optional uint32 evidence_limit = 10;
+  // Read the v2 eval_run_quality fact family (evaluation runs and their
+  // candidate/scorer projections) instead of the legacy agent_outcome +
+  // eval_quality pair, which reads the eval_scores plane the v2 evaluation path
+  // never writes. Absent or false keeps the legacy behaviour exactly.
+  optional bool use_run_quality_facts = 11;
 }
 
 message CostPerSuccessConfigV1 {
@@ -135,9 +141,8 @@ message SloBurnConfigV1 {
   optional uint32 evidence_limit = 10;
   string slo_id = 11;
   string slo_revision_id = 12;
-  string fact_family = 13;
-  string eligible_event_field = 14;
-  string good_event_field = 15;
+  reserved 13 to 15;
+  reserved "fact_family", "eligible_event_field", "good_event_field";
   SloWindowModeV1 window_mode = 16;
   SloCalendarPeriodV1 calendar_period = 17;
   string calendar_timezone = 18;
@@ -152,6 +157,14 @@ enum SliIndicatorKindV1 {
   SLI_INDICATOR_KIND_V1_EVAL_QUALITY = 4;
   SLI_INDICATOR_KIND_V1_TOOL_SUCCESS = 5;
   SLI_INDICATOR_KIND_V1_COST_PER_SUCCESSFUL_OUTCOME = 6;
+  SLI_INDICATOR_KIND_V1_EVENT_CONDITION = 7;
+}
+
+enum SliSignalV1 {
+  SLI_SIGNAL_V1_UNSPECIFIED = 0;
+  SLI_SIGNAL_V1_TRACES = 1;
+  SLI_SIGNAL_V1_LOGS = 2;
+  SLI_SIGNAL_V1_METRICS = 3;
 }
 
 enum SliAggregationV1 {
@@ -181,12 +194,34 @@ enum SloCalendarPeriodV1 {
   SLO_CALENDAR_PERIOD_V1_QUARTER = 4;
 }
 
+// How much of the window a value was computed over is actually accounted for.
+//
+// One value per state of the objectives-side ObjectiveCoverageStateV1, so every
+// state the evaluator can report crosses the bridge under its own name rather
+// than being collapsed into a neighbour. UNAVAILABLE is the one value with no
+// objectives counterpart: it means the bridge itself could not state coverage.
+//
+// Always pair the state with the companion coverage_reason, which is prose
+// written for display.
 enum SliCoverageStateV1 {
   SLI_COVERAGE_STATE_V1_UNSPECIFIED = 0;
+  // Every expected minute is present and final.
   SLI_COVERAGE_STATE_V1_COMPLETE = 1;
+  // The window was accounted for and held no eligible events. Render as
+  // "no data", never as 0%.
   SLI_COVERAGE_STATE_V1_NO_DATA = 2;
+  // Some expected minutes are missing from the window.
   SLI_COVERAGE_STATE_V1_PARTIAL = 3;
+  // The bridge could not state coverage for the window.
   SLI_COVERAGE_STATE_V1_UNAVAILABLE = 4;
+  // Every event in the window was excluded by the SLI. Distinct from NO_DATA:
+  // traffic did arrive, and the indicator filtered all of it out.
+  SLI_COVERAGE_STATE_V1_EXCLUDED_ONLY = 5;
+  // Some minutes in the window are stale.
+  SLI_COVERAGE_STATE_V1_STALE = 6;
+  // The window contains evaluator errors. Do not present its ratio as
+  // authoritative.
+  SLI_COVERAGE_STATE_V1_ERROR = 7;
 }
 
 enum SliTelemetryFilterOperatorV1 {
@@ -197,6 +232,10 @@ enum SliTelemetryFilterOperatorV1 {
   SLI_TELEMETRY_FILTER_OPERATOR_V1_NOT_IN = 4;
   SLI_TELEMETRY_FILTER_OPERATOR_V1_EXISTS = 5;
   SLI_TELEMETRY_FILTER_OPERATOR_V1_NOT_EXISTS = 6;
+  SLI_TELEMETRY_FILTER_OPERATOR_V1_LESS_THAN = 7;
+  SLI_TELEMETRY_FILTER_OPERATOR_V1_LESS_THAN_OR_EQUAL = 8;
+  SLI_TELEMETRY_FILTER_OPERATOR_V1_GREATER_THAN = 9;
+  SLI_TELEMETRY_FILTER_OPERATOR_V1_GREATER_THAN_OR_EQUAL = 10;
 }
 
 enum SliTelemetryAttributeSourceV1 {
@@ -205,13 +244,17 @@ enum SliTelemetryAttributeSourceV1 {
   SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_SPAN = 2;
   SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_RESOURCE = 3;
   SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_SCOPE = 4;
+  SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_LOG = 5;
 }
 
 message SliTelemetryAttributeFilterV1 {
   string field = 1;
   SliTelemetryFilterOperatorV1 operator = 2;
+  // Compatibility input for existing string-only clients. New clients should
+  // use typed_values so numeric and boolean comparisons remain type-safe.
   repeated string values = 3;
   SliTelemetryAttributeSourceV1 source = 4;
+  repeated AlertScalarValueV1 typed_values = 5;
 }
 
 enum SliSpanKindV1 {
@@ -232,6 +275,34 @@ enum SliReadinessStateV1 {
   SLI_READINESS_STATE_V1_MATERIALIZATION_BLOCKED = 5;
   SLI_READINESS_STATE_V1_COVERAGE_GAP = 6;
   SLI_READINESS_STATE_V1_SELECTOR_UNSUPPORTED = 7;
+  // Telemetry reached the evaluator under this SLI's service, and the SLI
+  // counted none of it because its span-kind scope matched nothing.
+  //
+  // Distinct from NO_MATCHING_TRAFFIC, which is the absence of telemetry. This
+  // state says the scope, not the pipeline, is why the SLI is empty, and it is
+  // only claimed when excluded telemetry was observed under the scoped service.
+  SLI_READINESS_STATE_V1_SCOPE_TELEMETRY_MISMATCH = 8;
+}
+
+// Why an SLI that has telemetry counted none of it.
+//
+// Carried on the readiness of a SCOPE_TELEMETRY_MISMATCH answer so the reader
+// can name the filter that emptied the SLI and jump to the control that owns
+// it. The observed kind distribution of the excluded telemetry is not here: the
+// evaluator records exclusion as a single count with no per-cause attribution,
+// so the distribution arrives with the service telemetry profile.
+message SliScopeTelemetryMismatchV1 {
+  // The span-kind filter in effect when the mismatch was observed.
+  repeated SliSpanKindV1 span_kinds = 1;
+  // Whether the filter above was supplied by the server rather than chosen by
+  // the author. See AlertSliRevisionV1.defaulted_fields.
+  bool span_kinds_defaulted = 2;
+  // The service the excluded telemetry was observed under, which is the service
+  // this SLI is scoped to.
+  string service_name = 3;
+  // Events evaluated over the window that this SLI did not count. This is the
+  // whole excluded count, which is not attributable to the span-kind arm alone.
+  int64 excluded_event_count = 4;
 }
 
 message SliReadinessV1 {
@@ -242,6 +313,26 @@ message SliReadinessV1 {
   google.protobuf.Timestamp first_blocked_minute = 5;
   int64 matching_event_count = 6;
   string blocker = 7;
+  // How old the served values are, when they were not read from a running
+  // evaluator. Absent means the read was current.
+  //
+  // This is serving staleness, which is not the same quantity as
+  // `SloDataFreshnessV1.materialization_lag_seconds`: that one says how far
+  // behind the evaluated data is, this one says how long ago this answer was
+  // last true. A restarting evaluator produces the second without changing the
+  // first.
+  optional int64 staleness_millis = 8;
+  // The evaluator supervision state that produced this answer: "running",
+  // "starting", "catching_up", "restarting", "degraded", "stopped",
+  // "unwired". Empty when the read was current.
+  //
+  // Read this with `blocker` to render partial degradation: an objective that
+  // has never been evaluated carries blocker "objective_provisioning", which
+  // is a new SLO waiting for its first minute rather than a broken one.
+  string evaluator_state = 9;
+  // Present only under SCOPE_TELEMETRY_MISMATCH, naming the scope that emptied
+  // the SLI.
+  SliScopeTelemetryMismatchV1 scope_mismatch = 10;
 }
 
 message AlertSliRevisionV1 {
@@ -261,6 +352,26 @@ message AlertSliRevisionV1 {
   string created_by = 14;
   google.protobuf.Timestamp created_at = 15;
   google.protobuf.Duration latency_threshold = 16;
+  // Unspecified historical requests and rows are normalized to traces.
+  SliSignalV1 signal = 17;
+  // AND-combined typed conditions that define a good eligible event. Empty
+  // retains the built-in recipe semantics for compatible indicator kinds.
+  repeated SliTelemetryAttributeFilterV1 good_event_filters = 18;
+  // Scope fields carrying a server-supplied value rather than an authored one,
+  // so a reader can render "server (default)" instead of presenting the default
+  // as a choice. Today the only member is "span_kinds", which a trace service
+  // SLI receives when the author names no kinds.
+  //
+  // `scope` above is always the effective scope, default included, so this
+  // marks provenance and never changes what the scope is.
+  repeated string defaulted_fields = 19;
+  // The subset of `defaulted_fields` that was read from the default's value
+  // rather than from recorded provenance, because the revision predates the
+  // provenance marker. Such a field is server-supplied *or* was chosen by an
+  // author who picked exactly the default — the two are indistinguishable in
+  // storage — so a reader that draws a hard claim should soften it to "looks
+  // like the default" for these. Empty for every revision written since.
+  repeated string inferred_defaulted_fields = 20;
 }
 
 message AlertSliV1 {
@@ -274,6 +385,7 @@ message AlertSliV1 {
   google.protobuf.Timestamp created_at = 8;
   google.protobuf.Timestamp updated_at = 9;
   AlertSliRevisionV1 current_revision = 10;
+  AlertManagedResourceV1 management = 11;
 }
 
 message SliRevisionInputV1 {
@@ -287,6 +399,8 @@ message SliRevisionInputV1 {
   optional double threshold = 8 [deprecated = true];
   SliMissingDataBehaviorV1 missing_data_behavior = 9;
   google.protobuf.Duration latency_threshold = 10;
+  SliSignalV1 signal = 11;
+  repeated SliTelemetryAttributeFilterV1 good_event_filters = 12;
 }
 
 message CreateSliRequest {
@@ -350,6 +464,15 @@ message PreviewSliRequest {
   optional uint32 evidence_limit = 5;
 }
 
+// Previews an SLI that has not been saved. It is computed in memory from the telemetry lake by the evaluator a
+// saved SLI runs on, and nothing is persisted. The response's sli_id and sli_revision_id are empty.
+message PreviewSliRevisionRequest {
+  SliRevisionInputV1 revision = 1;
+  google.protobuf.Timestamp range_start = 2;
+  google.protobuf.Timestamp range_end = 3;
+  optional uint32 evidence_limit = 4;
+}
+
 message SliPreviewV1 {
   string sli_id = 1;
   string sli_revision_id = 2;
@@ -366,6 +489,11 @@ message SliPreviewV1 {
   repeated AlertEvidenceRefV1 evidence = 13;
   bool evidence_truncated = 14;
   SliReadinessV1 readiness = 15;
+  // Rows the lateness cutoff dropped across the previewed range, and how many of
+  // its minutes contributed one. A preview whose counts look thin because its
+  // slowest events never arrived says so here rather than reading as complete.
+  int64 late_excluded_event_count = 16;
+  int64 late_lossy_minute_count = 17;
 }
 
 message AlertSloRevisionV1 {
@@ -399,6 +527,7 @@ message AlertSloV1 {
   google.protobuf.Timestamp created_at = 8;
   google.protobuf.Timestamp updated_at = 9;
   AlertSloRevisionV1 current_revision = 10;
+  AlertManagedResourceV1 management = 11;
 }
 
 message SloRevisionInputV1 {
@@ -428,6 +557,10 @@ message UpdateSloRequest {
   string description = 4;
   SloRevisionInputV1 revision = 5;
   string idempotency_key = 6;
+  // Required when this change mints a new SLO revision and the SLO has live
+  // burn alerts. Omitting it returns FAILED_PRECONDITION with the affected
+  // alerts and their before/after trigger conditions, and applies nothing.
+  SloBurnAlertDispositionV1 burn_alert_disposition = 7;
 }
 
 message GetSloRequest { string slo_id = 1; }
@@ -446,6 +579,9 @@ message ListSlosResponse {
 message ArchiveSloRequest {
   string slo_id = 1;
   string idempotency_key = 2;
+  // Same contract as UpdateSlo, minus UPDATE: an archived SLO has no
+  // successor revision to re-pin a burn alert to.
+  SloBurnAlertDispositionV1 burn_alert_disposition = 3;
 }
 
 message ListSloRevisionsRequest {
@@ -461,9 +597,21 @@ message GetSloStatusRequest {
 }
 
 message SloDataFreshnessV1 {
+  // The three timestamps are minute-aligned, because the evaluation grid is.
   google.protobuf.Timestamp requested_through = 1;
   google.protobuf.Timestamp evaluated_through = 2;
   google.protobuf.Timestamp materialized_through = 3;
+  // How far behind the request instant the materialization frontier is, in
+  // seconds. Measured before `requested_through` is minute-aligned, so a reader
+  // subtracting the two timestamps above will not always reproduce it: those are
+  // grid positions, this is the staleness.
+  //
+  // Absent means no frontier is known — that is the only "unknown" this field
+  // reports, and it is not interchangeable with 0. Zero means measured and not
+  // behind.
+  //
+  // On GetSloStatus without `evaluated_at` the request instant is wall clock, so
+  // this is wall-clock staleness of the served SLI.
   optional int64 materialization_lag_seconds = 4;
   bool clipped_to_materialized_through = 5;
   SliReadinessV1 readiness = 6;
@@ -497,6 +645,32 @@ message SloStatusV1 {
   google.protobuf.Timestamp period_end = 25;
   google.protobuf.Timestamp error_budget_resets_at = 26;
   SloDataFreshnessV1 freshness = 27;
+  // The four multi-window burn rates, carried through from
+  // ObjectiveSloStatusV1 fields 27-30. Absent means "not computable from this
+  // window", which is a different statement from zero, and no reader may
+  // substitute one for the other.
+  //
+  // fast_long_burn_rate and slow_long_burn_rate are what the deprecated pair
+  // (fields 17/18) mirrors, so a badge reading the long-window rates renders
+  // exactly what it renders today. The short-window pair is what the two-field
+  // shape cannot express at all, and reading all four is what lets 17/18 be
+  // removed in a future release.
+  optional double fast_short_burn_rate = 28;
+  optional double fast_long_burn_rate = 29;
+  optional double slow_short_burn_rate = 30;
+  optional double slow_long_burn_rate = 31;
+  // End-to-end processing freshness measured from OTLP ingress to the durable
+  // live accumulator update. Unlike the lag reported on `freshness`, this does
+  // not include intentional event-time lateness or idle wall-clock time.
+  optional int64 processing_freshness_millis = 32;
+  // What this window dropped at the deterministic lateness cutoff, rolled up
+  // from ObjectiveSloStatusV1 fields 33-34. Zero is the ordinary answer; a
+  // nonzero count means the four counters above describe less than the window
+  // actually saw, and the minutes carrying it must never render as a plain
+  // "Complete". Events whose start fell in the window and whose arrival did
+  // not — commonly spans longer than the lateness window.
+  int64 late_excluded_event_count = 33;
+  int64 late_lossy_minute_count = 34;
 }
 
 message GetSloBurndownRequest {
@@ -518,6 +692,334 @@ message ListSloHistoryRequest {
 }
 
 message ListSloHistoryResponse { repeated SloStatusV1 points = 1; }
+
+// Which optional series a burndown chart needs. Mirrors
+// ObjectiveBurndownProjectionV1: all-false means all four, so a caller that
+// states nothing is asking for everything.
+message SloBurndownProjectionV1 {
+  bool attainment_ratio = 1;
+  bool remaining_budget_ratio = 2;
+  bool fast_burn_rate = 3;
+  bool slow_burn_rate = 4;
+}
+
+// One materialized status point on a batched series.
+//
+// Deliberately narrower than SloStatusV1. A burndown renders the series; the
+// wide message additionally carries plan identity, window bounds, the four raw
+// counters and the calendar configuration, all of which are constant across a
+// series or irrelevant to it. Repeating them per point is what makes a
+// 1440-point chart expensive to encode — read them once from the entry summary.
+//
+// A ratio that was not requested by the projection is absent. A ratio that was
+// requested but is not computable for that window is also absent — the
+// projection echoed on the series says which of the two applies, and callers
+// must read it before treating an absent field as "no data".
+message SloBurndownPointV1 {
+  google.protobuf.Timestamp window_end = 1;
+  string slo_revision_id = 2;
+  optional double attainment_ratio = 3;
+  optional double remaining_budget_ratio = 4;
+  optional double fast_burn_rate = 5;
+  optional double slow_burn_rate = 6;
+  SliCoverageStateV1 coverage_state = 7;
+  google.protobuf.Timestamp source_frontier = 8;
+}
+
+// Where one SLO revision stopped describing the series and the next began.
+//
+// Both sides are carried so a chart can break the line rather than draw a
+// segment implying the two revisions measured the same objective.
+message SloRevisionBoundaryV1 {
+  string previous_slo_revision_id = 1;
+  google.protobuf.Timestamp previous_window_end = 2;
+  string next_slo_revision_id = 3;
+  google.protobuf.Timestamp next_window_end = 4;
+}
+
+// What the returned authority covers, stated rather than interpolated.
+//
+// A series is never padded, extrapolated, or carried forward to fill a
+// requested range. Where authority stops, the points stop and the shortfall is
+// reported here.
+message SloSeriesCoverageV1 {
+  google.protobuf.Timestamp requested_start = 1;
+  google.protobuf.Timestamp requested_end = 2;
+  bool complete = 3;
+  // Absent when no authority was found anywhere in the request.
+  google.protobuf.Timestamp covered_start = 4;
+  google.protobuf.Timestamp covered_end = 5;
+  int64 missing_leading_nanos = 6;
+  int64 missing_trailing_nanos = 7;
+  string reason = 8;
+}
+
+message SloBurndownSeriesV1 {
+  repeated SloBurndownPointV1 points = 1;
+  SloSeriesCoverageV1 coverage = 2;
+  repeated SloRevisionBoundaryV1 revision_boundaries = 3;
+  // Echoed so an absent ratio is unambiguous. See SloBurndownPointV1.
+  SloBurndownProjectionV1 projection = 4;
+}
+
+message SloBurndownSelectorV1 {
+  string slo_id = 1;
+  // Empty selects the active revision for slo_id.
+  string slo_revision_id = 2;
+}
+
+// Tenant and organization come from the authenticated call, not the body.
+message GetSloBurndownBatchRequest {
+  repeated SloBurndownSelectorV1 selectors = 1;
+  google.protobuf.Timestamp range_start = 2;
+  google.protobuf.Timestamp range_end = 3;
+  int64 step_seconds = 4;
+  int32 max_points_per_series = 5;
+  SloBurndownProjectionV1 projection = 6;
+  // Both false means both, on the same reasoning as an all-false projection: a
+  // caller that states nothing is asking for everything, so a client that has
+  // not been taught to narrow the response never gets an empty one.
+  //
+  // include_summary carries a full SloStatusV1 per entry and costs a definition
+  // read per selector. A dashboard that only draws lines should set
+  // include_series alone.
+  bool include_summary = 7;
+  bool include_series = 8;
+}
+
+// One selector's answer. A selector that cannot be served sets
+// unavailable_reason and leaves summary and series unset, so one bad SLO in a
+// twenty-SLO dashboard does not fail the other nineteen.
+message SloBurndownEntryV1 {
+  string slo_id = 1;
+  string slo_revision_id = 2;
+  SloStatusV1 summary = 3;
+  SloBurndownSeriesV1 series = 4;
+  string unavailable_reason = 5;
+}
+
+// Entries are returned in request order, one per selector.
+message GetSloBurndownBatchResponse {
+  repeated SloBurndownEntryV1 entries = 1;
+}
+
+// Which outcome class a drill-down is asking about. Mirrors
+// ObjectiveOutcomeV1.
+//
+// UNSPECIFIED means all three. This is not the all-false trap
+// SloBurndownProjectionV1 documents: the enum's zero value already reads as
+// "unfiltered" upstream, so a client that never sets it gets everything.
+enum SloEvidenceOutcomeV1 {
+  SLO_EVIDENCE_OUTCOME_V1_UNSPECIFIED = 0;
+  SLO_EVIDENCE_OUTCOME_V1_GOOD = 1;
+  SLO_EVIDENCE_OUTCOME_V1_BAD = 2;
+  SLO_EVIDENCE_OUTCOME_V1_EXCLUDED = 3;
+}
+
+// One telemetry row the objective evaluator classified, addressed well enough
+// for a client to open it.
+//
+// Every identifier the evaluator captured crosses as its own typed field. This
+// is deliberately not AlertEvidenceRefV1, the shape PreviewSli uses: that one
+// carries a single `kind`/`id` pair plus a JSON attribute bag, so a metric
+// reference loses the metric_id/series_id pair that addresses it and a span
+// reference loses its span_id to a stringified attribute. A drill-down cannot be
+// built from that.
+//
+// identity_available is false when SLI redaction or a missing column left the
+// row unaddressable. Such a reference still counted toward the observed_* totals
+// on the set, so render it as an unlinkable sample rather than dropping it.
+//
+// ObjectiveEvidenceReferenceV1.source is not carried. It is the Redpanda
+// coordinate the evaluator read the row from — topic, partition, offset range,
+// assignment generation, fencing token, envelope identity. Those address a
+// broker range in the ingestion plane, not a telemetry row, and no query surface
+// in this product accepts them.
+message SloEvidenceRefV1 {
+  SliSignalV1 signal = 1;
+  SloEvidenceOutcomeV1 outcome = 2;
+  // The row's own event time, not the minute bucket it was counted in.
+  google.protobuf.Timestamp event_time = 3;
+  string service_name = 4;
+  string service_namespace = 5;
+  string environment = 6;
+  string deployment = 7;
+  // Lowercase hex. Empty when the signal carries no such identifier or the SLI
+  // redacted the field.
+  string trace_id = 8;
+  string span_id = 9;
+  string log_id = 10;
+  uint64 metric_id = 11;
+  uint64 series_id = 12;
+  string exemplar_trace_id = 13;
+  string eval_id = 14;
+  // Stable identity of this reference across repeated reads of the same minute:
+  // lowercase hex of the evaluator's digest. Carried as hex rather than the
+  // upstream `bytes` so it stays a plain string key in a browser client. Opaque
+  // — compare it, never parse it.
+  string sample_hash = 15;
+  bool identity_available = 16;
+}
+
+// Every reference the evaluator retained for one minute, plus what it observed.
+//
+// The five lists are a bounded sample, not the population: at most one first
+// failure, one last failure, eight representative failures, two successes and
+// two excluded rows survive per minute. observed_*_count are the real totals and
+// `truncated` says the sample is smaller than what was observed, so a drill-down
+// header reads the counts and the body renders the sample.
+//
+// ObjectiveEvidenceSetV1.tenant_id is not carried; the tenant is the
+// authenticated caller.
+message SloEvidenceSetV1 {
+  string sli_revision_id = 1;
+  google.protobuf.Timestamp minute_start = 2;
+  repeated SloEvidenceRefV1 first_failures = 3;
+  repeated SloEvidenceRefV1 last_failures = 4;
+  repeated SloEvidenceRefV1 representative_failures = 5;
+  repeated SloEvidenceRefV1 representative_successes = 6;
+  repeated SloEvidenceRefV1 representative_excluded = 7;
+  uint64 observed_good_count = 8;
+  uint64 observed_bad_count = 9;
+  uint64 observed_excluded_count = 10;
+  bool truncated = 11;
+}
+
+// One requested minute's answer, on the same partial-success contract as
+// SloBurndownEntryV1: a minute that cannot be served sets unavailable_reason and
+// leaves evidence unset, so one gap does not fail the surrounding window.
+message SloEvidenceMinuteV1 {
+  google.protobuf.Timestamp minute_start = 1;
+  // Unset whenever unavailable_reason is set.
+  SloEvidenceSetV1 evidence = 2;
+  // A minute the evaluator recorded no evidence for is the ordinary case, not a
+  // failure, and reads as such. Absent evidence is never a zero-count set.
+  string unavailable_reason = 3;
+}
+
+// Tenant and organization come from the authenticated call, not the body.
+message GetSloEvidenceRequest {
+  string slo_id = 1;
+  // Empty selects the active revision for slo_id.
+  string slo_revision_id = 2;
+  // Truncated to its minute. The window read is
+  // [minute_start, minute_start + minute_count minutes).
+  google.protobuf.Timestamp minute_start = 3;
+  // 0 means 1, so the zero value is the single-minute read the upstream RPC
+  // takes. Each minute costs one read against the objective authority, and the
+  // cap is one bucket of the widest burndown this service draws.
+  uint32 minute_count = 4;
+  // UNSPECIFIED returns all three outcome classes.
+  SloEvidenceOutcomeV1 outcome = 5;
+}
+
+// Minutes are returned in ascending order, one per requested minute.
+message GetSloEvidenceResponse {
+  string slo_id = 1;
+  // The SLO revision that answered — the active one unless the request pinned
+  // another.
+  string slo_revision_id = 2;
+  // The SLI revision the evidence was recorded under. Evidence is keyed by SLI
+  // revision upstream, so this is what the references are actually about; a
+  // minute whose set claims a different one is reported unavailable rather than
+  // served under an identity the bridge could not confirm.
+  string sli_revision_id = 3;
+  repeated SloEvidenceMinuteV1 minutes = 4;
+}
+
+// Which prior window a period is measured against. Mirrors
+// ObjectiveComparisonPresetV1.
+//
+// Every preset but CUSTOM derives the comparison period from the current one.
+// The two calendar-month presets additionally derive the current period from
+// current_end, so for those current_start is validated but not otherwise used.
+// UNSPECIFIED behaves as PREVIOUS_PERIOD.
+enum SloComparisonPresetV1 {
+  SLO_COMPARISON_PRESET_V1_UNSPECIFIED = 0;
+  SLO_COMPARISON_PRESET_V1_PREVIOUS_PERIOD = 1;
+  SLO_COMPARISON_PRESET_V1_PREVIOUS_WEEK = 2;
+  SLO_COMPARISON_PRESET_V1_PREVIOUS_FOUR_WEEKS = 3;
+  SLO_COMPARISON_PRESET_V1_PREVIOUS_MONTH = 4;
+  SLO_COMPARISON_PRESET_V1_PREVIOUS_THREE_MONTHS = 5;
+  SLO_COMPARISON_PRESET_V1_CUSTOM = 6;
+}
+
+// How much of a period the returned authority actually covers, counted in
+// minutes. Mirrors ObjectiveRangeReadinessV1.
+//
+// `complete` is the gate on the period's ratios: a period missing minutes has no
+// attainment to report, because the missing minutes could hold any number of
+// bad events.
+message SloRangeReadinessV1 {
+  bool complete = 1;
+  uint64 expected_minutes = 2;
+  uint64 observed_minutes = 3;
+  uint64 missing_minutes = 4;
+  uint64 partial_minutes = 5;
+  uint64 stale_minutes = 6;
+  uint64 error_minutes = 7;
+  google.protobuf.Timestamp first_incomplete_minute = 8;
+  google.protobuf.Timestamp source_frontier = 9;
+  string reason = 10;
+}
+
+// One side of a period-over-period report.
+//
+// The four counters take SloStatusV1's names and int64 type rather than
+// ObjectivePeriodSummaryV1's bare `eligible`/`good`/`bad`/`excluded` uint64s: a
+// comparison tile renders these beside the status tile's counters, and the same
+// four numbers must not arrive under two names in one proto. Where the alerts
+// proto already names a concept, the bridged shape uses that name.
+message SloPeriodSummaryV1 {
+  google.protobuf.Timestamp start = 1;
+  google.protobuf.Timestamp end = 2;
+  int64 eligible_event_count = 3;
+  int64 good_event_count = 4;
+  int64 bad_event_count = 5;
+  int64 excluded_event_count = 6;
+  // Absent unless readiness.complete is true and the period had eligible events.
+  // Absent means "not computable over this period" and is never zero.
+  optional double attainment_ratio = 7;
+  optional double remaining_budget_ratio = 8;
+  SloRangeReadinessV1 readiness = 9;
+}
+
+// Tenant and organization come from the authenticated call, not the body.
+message CompareSloPeriodsRequest {
+  string slo_id = 1;
+  // Empty selects the active revision for slo_id.
+  string slo_revision_id = 2;
+  SloComparisonPresetV1 preset = 3;
+  // Truncated to the minute. Both periods are half-open: [start, end).
+  google.protobuf.Timestamp current_start = 4;
+  google.protobuf.Timestamp current_end = 5;
+  // Read only when preset is CUSTOM.
+  google.protobuf.Timestamp comparison_start = 6;
+  google.protobuf.Timestamp comparison_end = 7;
+  // IANA zone name. Required by PREVIOUS_MONTH and PREVIOUS_THREE_MONTHS, which
+  // align to local calendar month starts; ignored by every other preset. Left
+  // empty on a calendar SLO it defaults to that SLO's own calendar_timezone, so
+  // a monthly comparison is cut on the same boundaries the objective is.
+  string timezone = 8;
+}
+
+// Both periods are summed under the one SLI revision the answering SLO revision
+// names. When the SLO was revised between the two periods, the older period has
+// no minutes under that SLI revision and comes back with readiness.complete
+// false and absent ratios — the comparison declines rather than comparing two
+// different definitions of the same objective. Show slo_revision_id with the
+// result.
+message CompareSloPeriodsResponse {
+  string slo_id = 1;
+  string slo_revision_id = 2;
+  string sli_revision_id = 3;
+  SloPeriodSummaryV1 current = 4;
+  SloPeriodSummaryV1 comparison = 5;
+  // Absent whenever either side's ratio is absent. A delta of zero means the two
+  // periods matched, which is a different statement from "not comparable".
+  optional double attainment_delta = 6;
+  optional double remaining_budget_delta = 7;
+}
 
 message CreateRecommendedSloBurnAlertRequest {
   string slo_id = 1;
@@ -646,6 +1148,10 @@ message AlertErrorDetailsV1 {
   string current_revision_id = 3;
   string dependency = 4;
   string request_id = 5;
+  // Populated for burn_alert_disposition_required: the alerts the refused
+  // change would have affected, each with the trigger conditions it fires at
+  // today and would fire at afterwards. The payload IS the decision surface.
+  repeated SloBurnAlertImpactV1 affected_burn_alerts = 6;
 }
 
 message AlertDefinitionV1 {
@@ -702,6 +1208,12 @@ message AlertDefinitionRuntimeSummaryV1 {
   string delivery_health = 9;
   bool paused = 10;
   bool archived = 11;
+  // Empty unless the alert is parked in needs-review; one of slo_reauthored or
+  // slo_revision_stale. A needs-review alert emits no plan and evaluates
+  // nothing, but stays on every list with the detail needed to resolve it.
+  string needs_review_reason = 12;
+  string needs_review_detail = 13;
+  google.protobuf.Timestamp needs_review_at = 14;
 }
 
 enum AlertNoDataBehaviorV1 {
@@ -846,6 +1358,8 @@ message AlertPreviewEventSampleV1 {
   repeated string selected_destination_ids = 7;
   repeated string blockers = 8;
   string reason = 9;
+  // Structured form of field 8. Field 8 stays populated for existing clients.
+  repeated AlertPolicyBlockerV1 blocker_details = 10;
 }
 
 message AlertPreviewFactSummaryV1 {
@@ -1114,6 +1628,8 @@ message AlertPreviewRouteDecisionV1 {
   string routing_state = 3;
   repeated string selected_destination_ids = 4;
   repeated string blockers = 5;
+  // Structured form of field 5. Field 5 stays populated for existing clients.
+  repeated AlertPolicyBlockerV1 blocker_details = 6;
 }
 
 message AlertPreviewNoiseBudgetEffectV1 {
@@ -1147,6 +1663,11 @@ message AlertDeliveryHistoryV1 {
   repeated AlertPolicyDiagnosticV1 notification_render_diagnostics = 21;
   AlertDeliveryRoutingProvenanceV1 routing_provenance = 22;
   AlertDeliveryRenderProvenanceV1 render_provenance = 23;
+  string investigation_context_id = 24;
+  string investigation_url = 25;
+  // True when this delivery came from TriggerAlertTestFire rather than a real
+  // evaluation.
+  bool test_fire = 26;
 }
 
 message AlertDeliveryAttemptV1 {
@@ -1273,6 +1794,7 @@ message AlertDestinationV1 {
   AlertDestinationSetupRequirementsV1 setup_requirements = 11;
   AlertDestinationVerificationV1 verification = 12;
   AlertDestinationUsageV1 usage = 13;
+  AlertManagedResourceV1 management = 14;
 }
 
 message AlertMatcherValueV1 {
@@ -1397,6 +1919,7 @@ message AlertNotificationPolicyV1 {
   reserved "effective_policy";
   repeated AlertNotificationRouteV1 routes = 10;
   repeated AlertPolicyDiagnosticV1 diagnostics = 11;
+  AlertManagedResourceV1 management = 12;
 }
 
 message AlertMaintenanceWindowV1 {
@@ -1407,6 +1930,7 @@ message AlertMaintenanceWindowV1 {
   google.protobuf.Timestamp starts_at = 5;
   google.protobuf.Timestamp ends_at = 6;
   string reason = 7;
+  AlertManagedResourceV1 management = 8;
 }
 
 message AlertSilenceV1 {
@@ -1416,6 +1940,7 @@ message AlertSilenceV1 {
   string reason = 4;
   google.protobuf.Timestamp starts_at = 5;
   google.protobuf.Timestamp ends_at = 6;
+  AlertManagedResourceV1 management = 7;
 }
 
 message AlertRecipeBaseV1 {
@@ -1619,6 +2144,85 @@ message AlertRuntimeCapabilityV1 {
   string status = 9;
   repeated AlertRuntimeCapabilityBlockerV1 blockers = 10;
   google.protobuf.Timestamp checked_at = 11;
+  bool live_objectives_configured = 12;
+  reserved 13;
+  reserved "live_objectives_rollout";
+  bool live_objectives_current = 14;
+  repeated AlertRuntimeHealthDimensionV1 objective_health = 15;
+  repeated AlertRuntimeObjectiveCapacityV1 objective_capacity = 16;
+  bool live_objectives_authoritative = 17;
+  // One row per objective replica, in the order the bridge polled them.
+  // `objective_health` is per (replica, dimension) and cannot answer questions
+  // about the replica itself.
+  repeated AlertRuntimeObjectiveReplicaV1 objective_replicas = 18;
+}
+
+message AlertRuntimeHealthDimensionV1 {
+  string replica_id = 1;
+  string dimension = 2;
+  string state = 3;
+  string reason = 4;
+  google.protobuf.Timestamp observed_at = 5;
+}
+
+// Per-replica objective runtime facts, carried from ObjectiveHealthV1.
+//
+// These are replica-scoped, not dimension-scoped: a parked replica A beside a
+// healthy replica B must stay distinguishable, and a replica that reports no
+// dimensions at all still has to report whether it is parked. Both are reasons
+// this is its own row rather than extra columns on
+// AlertRuntimeHealthDimensionV1.
+message AlertRuntimeObjectiveReplicaV1 {
+  string replica_id = 1;
+  // The replica's aggregate verdict: "ready", "degraded", "not_ready", "error".
+  // Read this rather than rolling up the dimension rows client-side.
+  string state = 2;
+  // Whether a complete plan catalog has been installed on this replica.
+  //
+  // False means the replica is parked: it is serving and healthy but will not
+  // consume, so any backlog in its consumer groups is frozen rather than
+  // lagging. True with active_plan_tenant_count == 0 is a different state — the
+  // catalog installed but carries no active plans, and the replica IS
+  // consuming.
+  //
+  // These two fields exist so the parked / no-SLOs-configured / normal decision
+  // is made from the message rather than from the `plans` dimension's reason
+  // string, which is prose and has already moved once.
+  bool plan_catalog_installed = 3;
+  uint32 active_plan_tenant_count = 4;
+  // Highest per-tenant plan generation in the accepted catalog, or 0 when no
+  // catalog has been installed. Monotonic per tenant, so a rising value means
+  // the catalog advanced and equal values across two polls mean the same
+  // catalog is installed.
+  int64 plan_generation = 5;
+  uint32 expected_partition_count = 6;
+  uint32 observed_partition_count = 7;
+  google.protobuf.Timestamp observed_at = 8;
+}
+
+// Per-endpoint mirror of ObjectiveCapacityV1 (objectives/v1). Same two-class split:
+// rows-per-second fields are DECLARED operator configuration, the *_rows counters are
+// MEASURED from the commit path. In particular `supported_rows_per_second` restates a config
+// constant and is not an observed throughput (#154).
+message AlertRuntimeObjectiveCapacityV1 {
+  string endpoint_key = 1;
+  uint64 normalized_rows_per_second = 2;
+  uint64 objective_rows_per_second = 3;
+  uint64 persistence_rows_per_second = 4;
+  // DECLARED, not measured: see message comment.
+  uint64 supported_rows_per_second = 5;
+  uint64 reserved_headroom_rows_per_second = 6;
+  uint64 tenant_reserved_rows_per_second = 7;
+  uint64 admitted_rows = 8;
+  uint64 throttled_rows = 9;
+  uint64 rejected_rows = 10;
+  uint64 buffered_rows = 11;
+  uint64 delayed_rows = 12;
+  uint64 lag_budget_rows = 13;
+  uint64 freshness_deadline_millis = 14;
+  bool backpressure_required = 15;
+  string reason = 16;
+  google.protobuf.Timestamp observed_at = 17;
 }
 
 message AlertIdRequest {
@@ -1697,6 +2301,17 @@ message AlertIncidentV1 {
   string reopened_from_incident_id = 24;
   string reopened_as_incident_id = 25;
   string manual_primary_membership_id = 26;
+  // Where responders are talking, at most one per provider.
+  repeated AlertIncidentThreadLinkV1 thread_links = 27;
+}
+
+// A link to a conversation, and nothing of the conversation itself.
+message AlertIncidentThreadLinkV1 {
+  // "slack" or "teams".
+  string provider = 1;
+  string url = 2;
+  string attached_by = 3;
+  google.protobuf.Timestamp attached_at = 4;
 }
 
 message AlertRunbookRevisionV1 {
@@ -1727,6 +2342,7 @@ message AlertRunbookV1 {
   google.protobuf.Timestamp updated_at = 11;
   AlertRunbookRevisionV1 current_revision = 12;
   bool idempotent_replay = 13;
+  AlertManagedResourceV1 management = 14;
 }
 
 message UpsertAlertRunbookRequest {
@@ -1862,6 +2478,18 @@ message AlertIncidentCommentV1 {
   google.protobuf.Timestamp updated_at = 11;
 }
 
+// Attaching a provider that already has a link replaces it, which is also how a mistyped link is corrected.
+message AttachAlertIncidentThreadRequest {
+  string incident_id = 1;
+  int64 expected_revision = 2;
+  string provider = 3;
+  // https only, no embedded credentials.
+  string url = 4;
+  // Optional; recorded as "attached <provider> thread" when empty.
+  string reason = 5;
+  string idempotency_key = 6;
+}
+
 message AssignAlertIncidentRequest {
   string incident_id = 1;
   int64 expected_revision = 2;
@@ -1987,6 +2615,18 @@ message PreviewAlertRequest {
   optional uint32 evidence_limit = 6;
 }
 
+// Backtests a rule that has not been saved. The draft is compiled exactly as a create would compile it and run
+// through the loop a saved rule's preview runs; nothing is persisted. The returned run has empty id, definition_id
+// and revision_id, and can never stand as go-live sign-off, which is keyed to a persisted run.
+message PreviewPortableAlertRequest {
+  PortableAlertDefinitionV1 draft = 1;
+  google.protobuf.Timestamp range_start = 2;
+  google.protobuf.Timestamp range_end = 3;
+  optional uint32 evidence_limit = 4;
+  // A draft has no schedule yet. Zero means every 60 seconds.
+  int32 evaluation_interval_seconds = 5;
+}
+
 message PreviewAlertResponse {
   AlertPreviewRunV1 preview = 1;
 }
@@ -2041,6 +2681,7 @@ message AlertContactV1 {
   google.protobuf.Timestamp archived_at = 10;
   google.protobuf.Timestamp created_at = 11;
   google.protobuf.Timestamp updated_at = 12;
+  AlertManagedResourceV1 management = 13;
 }
 
 message UpsertAlertContactRequest {
@@ -2117,6 +2758,7 @@ message AlertNotificationGroupV1 {
   repeated AlertNotificationGroupMemberV1 members = 7;
   google.protobuf.Timestamp created_at = 8;
   google.protobuf.Timestamp updated_at = 9;
+  AlertManagedResourceV1 management = 10;
 }
 
 message UpsertAlertNotificationGroupRequest {
@@ -2228,6 +2870,9 @@ message PreviewNotificationRouteRequest {
   repeated AlertMatcherClauseV1 dimensions = 4;
   repeated AlertMatcherClauseV1 correlation_hints = 5;
   AlertNotificationPolicyPreviewCandidateV1 candidate_policy = 6;
+  // Set instead of definition_id to route a rule that has not been saved. It is compiled exactly as a create would
+  // compile it and saved nowhere; the response's definition_id and revision_id are empty.
+  PortableAlertDefinitionV1 draft = 7;
 }
 
 message AlertNotificationPolicyPreviewCandidateV1 {
@@ -2304,6 +2949,8 @@ message PreviewNotificationRouteResponse {
   string selected_route_key = 25;
   string selected_notification_template_id = 26;
   string selected_notification_template_revision_id = 27;
+  // Structured form of field 7. Field 7 stays populated for existing clients.
+  repeated AlertPolicyBlockerV1 blocker_details = 28;
 }
 
 message PreviewNotificationPayloadRequest {
@@ -2347,6 +2994,11 @@ enum NotificationTemplateActionLinkV1 {
   NOTIFICATION_TEMPLATE_ACTION_LINK_V1_VIEW_EVALS = 3;
   NOTIFICATION_TEMPLATE_ACTION_LINK_V1_SILENCE = 4;
   NOTIFICATION_TEMPLATE_ACTION_LINK_V1_ACKNOWLEDGE = 5;
+  NOTIFICATION_TEMPLATE_ACTION_LINK_V1_OPEN_INVESTIGATION = 6;
+  NOTIFICATION_TEMPLATE_ACTION_LINK_V1_VIEW_LOGS = 7;
+  NOTIFICATION_TEMPLATE_ACTION_LINK_V1_VIEW_METRICS = 8;
+  NOTIFICATION_TEMPLATE_ACTION_LINK_V1_VIEW_SLO = 9;
+  NOTIFICATION_TEMPLATE_ACTION_LINK_V1_OPEN_RUNBOOK = 10;
 }
 
 enum NotificationTemplateActionStyleV1 {
@@ -2509,6 +3161,7 @@ message AlertNotificationTemplateV1 {
   bool idempotent_replay = 14;
   AlertNotificationTemplateKindV1 kind = 15;
   AlertNotificationTemplateCapabilitiesV1 capabilities = 16;
+  AlertManagedResourceV1 management = 17;
 }
 
 message UpsertAlertNotificationTemplateRequest {
@@ -2755,6 +3408,39 @@ message AlertActivationBlockerV1 {
   string remediation = 5;
 }
 
+// Structured form of a policy-resolution blocker. `code` is a stable
+// snake_case identifier clients may branch on; `message` is the same prose the
+// deprecated `repeated string blockers` fields still carry.
+message AlertPolicyBlockerV1 {
+  string code = 1;
+  string message = 2;
+  string remediation = 3;
+}
+
+// Sends one synthetic notification through an alert's real policy routing to
+// its real destinations, so an operator can prove delivery end to end before
+// promoting to notify mode. The notification is marked as a test and changes
+// no alert state.
+message TriggerAlertTestFireRequest {
+  string definition_id = 1;
+  string idempotency_key = 2;
+}
+
+message TriggerAlertTestFireResponse {
+  bool delivered = 1;
+  string definition_id = 2;
+  string revision_id = 3;
+  string notification_event_id = 4;
+  repeated string delivery_outbox_ids = 5;
+  repeated string selected_destination_ids = 6;
+  string routing_state = 7;
+  // Populated instead of a delivery when routing refuses: the same structured
+  // blockers the policy-resolution surfaces return.
+  repeated AlertPolicyBlockerV1 blockers = 8;
+  google.protobuf.Timestamp triggered_at = 9;
+  int32 remaining_test_fires_this_hour = 10;
+}
+
 message GetActivationReadinessResponse {
   bool ready = 1;
   string definition_id = 2;
@@ -2925,6 +3611,8 @@ message AlertDeliveryV1 {
   AlertDeliveryRenderProvenanceV1 render_provenance = 30;
   // Populated by GetDelivery for Email/Slack deliveries. List responses may omit it.
   RenderedNotificationDocumentV1 rendered_document = 31;
+  string investigation_context_id = 32;
+  string investigation_url = 33;
 }
 
 message AlertDeliveryRoutingProvenanceV1 {
@@ -2943,6 +3631,121 @@ message AlertDeliveryRenderProvenanceV1 {
   string rendered_template_revision_id = 4;
   bool default_fallback_used = 5;
   AlertPolicyDiagnosticV1 fallback_diagnostic = 6;
+}
+
+enum AlertInvestigationTabV1 {
+  ALERT_INVESTIGATION_TAB_V1_UNSPECIFIED = 0;
+  ALERT_INVESTIGATION_TAB_V1_OVERVIEW = 1;
+  ALERT_INVESTIGATION_TAB_V1_TRACES = 2;
+  ALERT_INVESTIGATION_TAB_V1_LOGS = 3;
+  ALERT_INVESTIGATION_TAB_V1_METRICS = 4;
+  ALERT_INVESTIGATION_TAB_V1_EVALS = 5;
+  ALERT_INVESTIGATION_TAB_V1_SLO = 6;
+  ALERT_INVESTIGATION_TAB_V1_RUNBOOK = 7;
+}
+
+message AlertInvestigationTabContextV1 {
+  AlertInvestigationTabV1 tab = 1;
+  bool available = 2;
+  bool recommended = 3;
+  string reason = 4;
+  string url = 5;
+}
+
+message AlertInvestigationFilterV1 {
+  string field = 1;
+  repeated string values = 2;
+  string operator = 3;
+  string source = 4;
+}
+
+message AlertInvestigationResourceRefV1 {
+  string id = 1;
+  string revision_id = 2;
+}
+
+message AlertInvestigationChartV1 {
+  string chart_key = 1;
+  string kind = 2;
+  string title = 3;
+  string data_ref = 4;
+  AlertAttributeSetV1 bounds = 5;
+}
+
+message AlertInvestigationLinksV1 {
+  string open_investigation_url = 1;
+  string view_traces_url = 2;
+  string view_logs_url = 3;
+  string view_metrics_url = 4;
+  string view_evals_url = 5;
+  string view_slo_url = 6;
+  string open_runbook_url = 7;
+  string silence_url = 8;
+  string acknowledge_url = 9;
+}
+
+message AlertInvestigationOverviewV1 {
+  string event_type = 1;
+  string incident_key = 2;
+  string title = 3;
+  string summary = 4;
+  AlertSeverityV1 severity = 5;
+  string customer_impact = 6;
+  string hypothesis = 7;
+  string condition_state = 8;
+  string lifecycle_state = 9;
+  string routing_state = 10;
+  double confidence = 11;
+  double impact_score = 12;
+  double actionability_score = 13;
+  AlertSampleSummaryV1 sample_summary = 14;
+  AlertOwnerRefV1 owner = 15;
+  AlertActionV1 action = 16;
+  AlertAttributeSetV1 scope = 17;
+  AlertAttributeSetV1 dimensions = 18;
+  google.protobuf.Timestamp first_firing_at = 19;
+  google.protobuf.Timestamp resolved_at = 20;
+  string alert_mode = 21;
+  string result_key = 22;
+  AlertAttributeSetV1 correlation_hints = 23;
+}
+
+message AlertInvestigationContextV1 {
+  uint32 schema_version = 1;
+  string context_id = 2;
+  string notification_event_id = 3;
+  string incident_id = 4;
+  string definition_id = 5;
+  string revision_id = 6;
+  string eval_run_id = 7;
+  string instance_id = 8;
+  string detector_kind = 9;
+  string alert_class = 10;
+  google.protobuf.Timestamp generated_at = 11;
+  google.protobuf.Timestamp range_start = 12;
+  google.protobuf.Timestamp range_end = 13;
+  repeated AlertInvestigationTabContextV1 tabs = 14;
+  repeated AlertInvestigationFilterV1 filters = 15;
+  repeated AlertEvidenceRefV1 evidence = 16;
+  AlertAttributeSetV1 measured_values = 17;
+  AlertAttributeSetV1 baseline_values = 18;
+  repeated AlertInvestigationChartV1 charts = 19;
+  AlertInvestigationResourceRefV1 slo = 20;
+  AlertInvestigationResourceRefV1 runbook = 21;
+  string external_runbook_url = 22;
+  AlertInvestigationLinksV1 links = 23;
+  AlertInvestigationOverviewV1 overview = 24;
+}
+
+message GetAlertInvestigationContextRequest {
+  string context_id = 1;
+  // Set instead of context_id to open an incident's context. An incident that never produced a notification still
+  // answers: its context is built from its primary member and carries an empty notification_event_id.
+  string incident_id = 2;
+}
+
+message GetAlertInvestigationContextResponse {
+  AlertInvestigationContextV1 context = 1;
 }
 
 message ListAlertAuditRequest {
@@ -2971,6 +3774,8 @@ message AlertAuditEventV1 {
   string management_ref = 11;
   AlertAttributeSetV1 details = 12;
   google.protobuf.Timestamp occurred_at = 13;
+  string idempotency_key = 14;
+  string actor_display_name = 15;
 }
 
 message ListAlertAuditResponse {
@@ -2979,6 +3784,40 @@ message ListAlertAuditResponse {
 }
 message GetAlertAuditRequest { string audit_event_id = 1; }
 message GetAlertAuditResponse { AlertAuditEventV1 event = 1; }
+
+message GetAlertAuditEffectsRequest { string audit_event_id = 1; }
+
+// What followed an audited decision. `basis` is how to read it:
+//   "in_force_window" — a decision on a rule. Everything the rule did from the decision until the next one that
+//                       changed its mode or revision. This is "while it was in force", never "because of it":
+//                       an evaluator effect is caused by data and configuration together.
+//   "direct"          — a decision on an incident. What that incident did afterwards.
+//   "not_applicable"  — the decision has no runtime effects to show; render nothing.
+message AlertAuditEffectsV1 {
+  string audit_event_id = 1;
+  string basis = 2;
+  google.protobuf.Timestamp in_force_from = 3;
+  // Unset while the decision still stands.
+  google.protobuf.Timestamp in_force_until = 4;
+  string superseded_by_audit_event_id = 5;
+  int64 state_transition_count = 6;
+  int64 incident_count = 7;
+  int64 notification_count = 8;
+  int64 delivery_sent_count = 9;
+  int64 delivery_failed_count = 10;
+  // Newest first, at most 20 across all kinds.
+  repeated AlertAuditEffectRefV1 recent = 11;
+}
+
+message AlertAuditEffectRefV1 {
+  // "state_transition", "incident" or "notification".
+  string kind = 1;
+  string id = 2;
+  google.protobuf.Timestamp occurred_at = 3;
+  string summary = 4;
+}
+
+message GetAlertAuditEffectsResponse { AlertAuditEffectsV1 effects = 1; }
 
 message PreviewAlertSuppressionRequest { AlertMatcherV1 matcher = 1; }
 message PreviewAlertSuppressionResponse {
@@ -2998,6 +3837,61 @@ message TriggerCanaryRequest {
   string idempotency_key = 1;
 }
 
+enum AlertCanaryStageKindV1 {
+  ALERT_CANARY_STAGE_KIND_V1_UNSPECIFIED = 0;
+  ALERT_CANARY_STAGE_KIND_V1_DEFINITION = 1;
+  ALERT_CANARY_STAGE_KIND_V1_EVALUATION = 2;
+  ALERT_CANARY_STAGE_KIND_V1_POLICY_ROUTING = 3;
+  ALERT_CANARY_STAGE_KIND_V1_OUTBOX = 4;
+  ALERT_CANARY_STAGE_KIND_V1_PROVIDER_DELIVERY = 5;
+  ALERT_CANARY_STAGE_KIND_V1_PROVIDER_RECEIPT = 6;
+  ALERT_CANARY_STAGE_KIND_V1_COMPLETE = 7;
+}
+
+enum AlertCanaryStageStatusV1 {
+  ALERT_CANARY_STAGE_STATUS_V1_UNSPECIFIED = 0;
+  ALERT_CANARY_STAGE_STATUS_V1_PENDING = 1;
+  ALERT_CANARY_STAGE_STATUS_V1_PASSED = 2;
+  ALERT_CANARY_STAGE_STATUS_V1_FAILED = 3;
+}
+
+enum AlertCanaryDeliveryStatusV1 {
+  ALERT_CANARY_DELIVERY_STATUS_V1_UNSPECIFIED = 0;
+  ALERT_CANARY_DELIVERY_STATUS_V1_PENDING = 1;
+  ALERT_CANARY_DELIVERY_STATUS_V1_SENT = 2;
+  ALERT_CANARY_DELIVERY_STATUS_V1_FAILED = 3;
+}
+
+message AlertCanaryStageV1 {
+  AlertCanaryStageKindV1 kind = 1;
+  AlertCanaryStageStatusV1 status = 2;
+  string summary = 3;
+  string detail = 4;
+  string resource_id = 5;
+  google.protobuf.Timestamp observed_at = 6;
+}
+
+message AlertCanaryDeliveryResultV1 {
+  string delivery_outbox_id = 1;
+  string destination_id = 2;
+  string destination_key = 3;
+  string destination_name = 4;
+  AlertDestinationKindV1 destination_kind = 5;
+  AlertCanaryDeliveryStatusV1 status = 6;
+  int32 provider_status_code = 7;
+  string provider_receipt = 8;
+  string error_message = 9;
+  string occurrence_kind = 10;
+  google.protobuf.Timestamp due_at = 11;
+  google.protobuf.Timestamp observed_at = 12;
+  string notification_policy_id = 13;
+  int64 notification_policy_revision = 14;
+  string notification_policy_name = 15;
+  string notification_route_id = 16;
+  string notification_route_key = 17;
+  string grouping_key = 18;
+}
+
 message TriggerCanaryResponse {
   bool ok = 1;
   string canary_run_id = 2;
@@ -3005,6 +3899,11 @@ message TriggerCanaryResponse {
   string receipt = 4;
   string status = 5;
   repeated string delivery_outbox_ids = 6;
+  repeated AlertCanaryStageV1 stages = 7;
+  repeated AlertCanaryDeliveryResultV1 deliveries = 8;
+  string error_message = 9;
+  google.protobuf.Timestamp started_at = 10;
+  google.protobuf.Timestamp completed_at = 11;
 }
 
 message GetCanaryRunRequest { string canary_run_id = 1; }
@@ -3319,6 +4218,7 @@ service AlertRuntimeService {
   rpc GetIncident(GetAlertIncidentRequest) returns (GetAlertIncidentResponse);
   rpc ListIncidentTimeline(ListAlertIncidentTimelineRequest) returns (ListAlertIncidentTimelineResponse);
   rpc AssignIncident(AssignAlertIncidentRequest) returns (AlertIncidentMutationResultV1);
+  rpc AttachIncidentThread(AttachAlertIncidentThreadRequest) returns (AlertIncidentMutationResultV1);
   rpc AddIncidentComment(AddAlertIncidentCommentRequest) returns (AlertIncidentCommentV1);
   rpc ListIncidentComments(ListAlertIncidentCommentsRequest) returns (ListAlertIncidentCommentsResponse);
   rpc RedactIncidentComment(RedactAlertIncidentCommentRequest) returns (AlertIncidentCommentV1);
@@ -3327,6 +4227,7 @@ service AlertRuntimeService {
   rpc AcknowledgeIncident(AcknowledgeAlertIncidentRequest) returns (AlertMutationResponse);
   rpc ListAudit(ListAlertAuditRequest) returns (ListAlertAuditResponse);
   rpc GetAudit(GetAlertAuditRequest) returns (GetAlertAuditResponse);
+  rpc GetAuditEffects(GetAlertAuditEffectsRequest) returns (GetAlertAuditEffectsResponse);
   rpc PreviewSuppression(PreviewAlertSuppressionRequest) returns (PreviewAlertSuppressionResponse);
   rpc ListEvalHistory(AlertIdRequest) returns (ListAlertEvalHistoryResponse);
   rpc ListStateHistory(AlertInstanceIdRequest) returns (ListAlertStateHistoryResponse);
@@ -3335,6 +4236,7 @@ service AlertRuntimeService {
   rpc Pause(PauseAlertRequest) returns (AlertMutationResponse);
   rpc Resume(ResumeAlertRequest) returns (AlertMutationResponse);
   rpc StreamOperatorEvents(StreamAlertOperatorEventsRequest) returns (stream AlertOperatorStreamEventV1);
+  rpc GetInvestigationContext(GetAlertInvestigationContextRequest) returns (GetAlertInvestigationContextResponse);
 }
 
 service AlertNotificationService {
@@ -3400,10 +4302,12 @@ service AlertNotificationService {
   rpc ListDeliveries(ListAlertDeliveriesRequest) returns (ListAlertDeliveriesResponse);
   rpc GetDelivery(GetAlertDeliveryRequest) returns (GetAlertDeliveryResponse);
   rpc ReplayDelivery(ReplayAlertDeliveryRequest) returns (ReplayAlertDeliveryResponse);
+  rpc TriggerAlertTestFire(TriggerAlertTestFireRequest) returns (TriggerAlertTestFireResponse);
 }
 
 service AlertPreviewService {
   rpc PreviewAlert(PreviewAlertRequest) returns (PreviewAlertResponse);
+  rpc PreviewPortableAlert(PreviewPortableAlertRequest) returns (PreviewAlertResponse);
   rpc ListPreviewHistory(AlertIdRequest) returns (ListPreviewHistoryResponse);
   rpc ActivateNotifyMode(ActivateNotifyModeRequest) returns (AlertDefinitionV1);
   rpc ActivateCandidateRevision(ActivateAlertRevisionRequest) returns (AlertDefinitionV1);
@@ -3439,6 +4343,7 @@ service AlertSloService {
   rpc ArchiveSli(ArchiveSliRequest) returns (AlertMutationResponse);
   rpc ListSliRevisions(ListSliRevisionsRequest) returns (ListSliRevisionsResponse);
   rpc PreviewSli(PreviewSliRequest) returns (SliPreviewV1);
+  rpc PreviewSliRevision(PreviewSliRevisionRequest) returns (SliPreviewV1);
 
   rpc CreateSlo(CreateSloRequest) returns (AlertSloV1);
   rpc UpdateSlo(UpdateSloRequest) returns (AlertSloV1);
@@ -3446,8 +4351,190 @@ service AlertSloService {
   rpc ListSlos(ListSlosRequest) returns (ListSlosResponse);
   rpc ArchiveSlo(ArchiveSloRequest) returns (AlertMutationResponse);
   rpc ListSloRevisions(ListSloRevisionsRequest) returns (ListSloRevisionsResponse);
+  rpc PreviewSloBurnAlertImpact(PreviewSloBurnAlertImpactRequest) returns (PreviewSloBurnAlertImpactResponse);
   rpc GetSloStatus(GetSloStatusRequest) returns (SloStatusV1);
   rpc GetSloBurndown(GetSloBurndownRequest) returns (GetSloBurndownResponse);
+  rpc GetSloBurndownBatch(GetSloBurndownBatchRequest) returns (GetSloBurndownBatchResponse);
   rpc ListSloHistory(ListSloHistoryRequest) returns (ListSloHistoryResponse);
+  rpc GetSloEvidence(GetSloEvidenceRequest) returns (GetSloEvidenceResponse);
+  rpc CompareSloPeriods(CompareSloPeriodsRequest) returns (CompareSloPeriodsResponse);
   rpc CreateRecommendedSloBurnAlert(CreateRecommendedSloBurnAlertRequest) returns (CreateRecommendedSloBurnAlertResponse);
+}
+
+// ---------------------------------------------------------------------------
+// Service telemetry profile (SLI authoring, tier 2 of the SLI telemetry
+// perspective spec).
+//
+// A trace service SLI that names no span kinds is given span_kinds=["server"].
+// For a service that serves no requests, that default excludes every span it
+// emits and the SLI can never match its own telemetry. These messages let the
+// authoring UI show the author what perspective a service actually has, before
+// the scope is saved.
+// ---------------------------------------------------------------------------
+
+message GetServiceTelemetryProfileRequest {
+  // The service to profile, as it appears in `service.name`.
+  string service_name = 1;
+  // Lookback in seconds. Zero means the authoring default of 24h. Requests are
+  // rounded up to a supported window so authoring sessions share one snapshot.
+  int64 window_seconds = 2;
+}
+
+// One span kind's presence in a service's telemetry.
+message ServiceTelemetrySpanKindV1 {
+  // The kind in the SLI scope's own vocabulary, so a client can compare it to
+  // AlertScopeV1.span_kinds without a mapping.
+  SliSpanKindV1 kind = 1;
+  // Display form of the same kind ("server", "client", ...), which is also the
+  // spelling the scope editor uses.
+  string kind_label = 2;
+  int64 span_count = 3;
+  // Fraction of the service's spans in the window, in [0, 1].
+  double share = 4;
+  // The normalized trace column's own spelling, e.g. "SPAN_KIND_CLIENT". Use
+  // this when correlating a profile against raw telemetry; use `kind` when
+  // comparing against an SLI scope.
+  string kind_wire_name = 5;
+  // Span duration quantiles for this kind over the window, in milliseconds. Unset
+  // when the window's files predate the stored duration.
+  optional double latency_p50_ms = 6;
+  optional double latency_p95_ms = 7;
+  optional double latency_p99_ms = 8;
+  // Spans of this kind the pipeline marked failed. With `span_count` it is the kind's observed success rate, and
+  // it adds across kinds, so a service-wide rate is a sum. Unset when the window's files carry no failure mark.
+  optional int64 error_count = 9;
+}
+
+// A semantic domain the service's spans belong to.
+message ServiceTelemetryDomainV1 {
+  // Open vocabulary drawn from the ingest classifier taxonomy: http, rpc,
+  // graphql, db, cache, messaging, gen_ai, faas, dns. A domain the classifier
+  // could not place is not reported at all.
+  string domain = 1;
+  // Concrete systems behind the domain — postgresql, redis, kafka, openai.
+  // Empty for domains that have no system attribute.
+  repeated string systems = 2;
+  int64 span_count = 3;
+}
+
+// What the profile was computed from.
+message ServiceTelemetrySampleV1 {
+  google.protobuf.Timestamp window_start = 1;
+  google.protobuf.Timestamp window_end = 2;
+  int64 window_seconds = 3;
+  // Age of the newest span seen for this service. Zero when the service emitted
+  // nothing in the window; read has_recent_telemetry to tell those apart.
+  int64 freshness_millis = 4;
+  int64 total_spans = 5;
+  // When the snapshot behind this answer was computed. Reads are served from a
+  // cached snapshot, so this trails the request by up to the snapshot TTL.
+  google.protobuf.Timestamp observed_at = 6;
+  // Age of that snapshot at the moment this response was built, so a client can
+  // render "as of 12s ago" without subtracting server time from its own clock.
+  // Always present and always >= 0; a fresh fill reads 0.
+  int64 snapshot_age_millis = 7;
+}
+
+// A scope the author could adopt, with the observation that motivates it.
+//
+// Never suggests "server": that is already the injected default, so offering it
+// tells the author nothing. Everything here names a perspective the default
+// would otherwise have hidden.
+message ServiceTelemetryScopeSuggestionV1 {
+  repeated SliSpanKindV1 span_kinds = 1;
+  // Renderable form of the fragment, e.g. `span_kinds=["client"]`. Empty when
+  // the suggestion is not a span-kind scope at all.
+  string scope_fragment = 2;
+  // End-customer language, e.g. "98% of this service's spans are client".
+  string reason = 3;
+  // Set when the suggestion is about what to measure rather than where to scope
+  // it, so a client never has to read `reason` to find out.
+  SliIndicatorKindV1 suggested_indicator_kind = 4;
+}
+
+// A service with no telemetry in the window is a valid answer, not an error:
+// every repeated field is empty and has_recent_telemetry is false.
+message GetServiceTelemetryProfileResponse {
+  string service_name = 1;
+  // Descending by span_count.
+  repeated ServiceTelemetrySpanKindV1 span_kinds = 2;
+  // Descending by span_count.
+  repeated ServiceTelemetryDomainV1 domains = 3;
+  ServiceTelemetrySampleV1 sampled = 4;
+  repeated ServiceTelemetryScopeSuggestionV1 suggestions = 5;
+  bool has_recent_telemetry = 6;
+}
+
+service AlertTelemetryProfileService {
+  rpc GetServiceTelemetryProfile(GetServiceTelemetryProfileRequest) returns (GetServiceTelemetryProfileResponse);
+}
+
+
+// The disposition an SLO mutation carries for the burn alerts that evaluate
+// against it. Exactly one of `all` or `entries` is set; `entries` must decide
+// every affected alert, because a partial list is the silence this contract
+// exists to remove.
+message SloBurnAlertDispositionV1 {
+  SloBurnAlertDispositionActionV1 all = 1;
+  repeated SloBurnAlertDispositionEntryV1 entries = 2;
+}
+
+message SloBurnAlertDispositionEntryV1 {
+  string alert_id = 1;
+  SloBurnAlertDispositionActionV1 action = 2;
+}
+
+enum SloBurnAlertDispositionActionV1 {
+  SLO_BURN_ALERT_DISPOSITION_ACTION_V1_UNSPECIFIED = 0;
+  // Re-pin to the new revision. The burn multipliers carry unchanged; only the
+  // frozen target/window/mode snapshot is rewritten.
+  SLO_BURN_ALERT_DISPOSITION_ACTION_V1_UPDATE = 1;
+  // Stop the alert evaluating. It keeps its definition and its history.
+  SLO_BURN_ALERT_DISPOSITION_ACTION_V1_DETACH = 2;
+  // Knowingly leave it on the superseded revision. Lands in needs-review.
+  SLO_BURN_ALERT_DISPOSITION_ACTION_V1_KEEP_PINNED = 3;
+}
+
+// One burn window's absolute trigger condition, computed server-side.
+message SloBurnThresholdPreviewV1 {
+  // "fast" or "slow".
+  string window_label = 1;
+  // The budget-relative multiplier the alert was authored with, e.g. 14.4.
+  double burn_rate_multiplier = 2;
+  // The absolute error rate that trips this condition, as a ratio.
+  double error_rate_threshold = 3;
+  int64 short_window_seconds = 4;
+  int64 long_window_seconds = 5;
+  // The rendered sentence. Server-authored so a refusal payload and a preview
+  // cannot describe the same threshold differently.
+  string summary = 6;
+}
+
+// What an SLO change means for one of its burn alerts.
+message SloBurnAlertImpactV1 {
+  string alert_id = 1;
+  string alert_name = 2;
+  string slo_id = 3;
+  string pinned_slo_revision_id = 4;
+  double current_target_ratio = 5;
+  int64 current_slo_window_seconds = 6;
+  repeated SloBurnThresholdPreviewV1 current_thresholds = 7;
+  // Empty when nothing is proposed — the SLO's own page asks what its alerts
+  // mean today, with no change in flight.
+  double proposed_target_ratio = 8;
+  int64 proposed_slo_window_seconds = 9;
+  repeated SloBurnThresholdPreviewV1 proposed_thresholds = 10;
+  // Mirrors AlertDefinitionRuntimeSummaryV1: empty unless already parked.
+  string needs_review_reason = 11;
+}
+
+message PreviewSloBurnAlertImpactRequest {
+  string slo_id = 1;
+  // Omit to describe the alerts as they stand; supply a proposed revision to
+  // get the before/after an operator confirms against.
+  SloRevisionInputV1 proposed_revision = 2;
+}
+
+message PreviewSloBurnAlertImpactResponse {
+  repeated SloBurnAlertImpactV1 alerts = 1;
 }
