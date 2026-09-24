@@ -35,6 +35,7 @@ resource "o11y_agent_quality_alert" "quality" {
     baseline_bad_outcome_rate = 0.02
     regression_multiplier     = 2.0
     evidence_limit            = 10
+    use_run_quality_facts     = false
   })
   paused = false
   notify = false
