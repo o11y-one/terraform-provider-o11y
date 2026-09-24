@@ -10,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 	"github.com/hashicorp/terraform-plugin-go/tfprotov6"
 	terraformresource "github.com/hashicorp/terraform-plugin-testing/helper/resource"
+	"github.com/hashicorp/terraform-plugin-testing/plancheck"
 	"github.com/hashicorp/terraform-plugin-testing/terraform"
 	alertsv1 "github.com/o11y-one/terraform-provider-o11y/internal/gen/proto/o11y_one/alerts/v1"
 	"google.golang.org/grpc"
@@ -75,6 +76,39 @@ func TestProviderProtocolAlertingLifecycle(t *testing.T) {
 			{ResourceName: "o11y_alert_maintenance_window.deploy", ImportState: true, ImportStateVerify: true},
 			{ResourceName: "o11y_alert_silence.provider", ImportState: true, ImportStateVerify: true},
 			{ResourceName: "o11y_agent_quality_alert.quality", ImportState: true, ImportStateVerify: true},
+		},
+	})
+}
+
+// Every apply step also fails on a non-empty plan after refresh; that is the convergence assertion.
+func TestProviderProtocolServerDerivedAlertFieldsConverge(t *testing.T) {
+	endpoint, service, cleanup := startProtocolTestServer(t)
+	defer cleanup()
+	checkout, payments := "019f7aa2-6c7f-7000-8000-000000000001", "019f7aa2-6c7f-7000-8000-000000000009"
+	service.slis[checkout] = testSLI(checkout, "checkout", "Checkout", "", &alertsv1.SliRevisionInputV1{Scope: &alertsv1.AlertScopeV1{
+		ServiceNames: []string{"checkout"}, SpanKinds: []alertsv1.SliSpanKindV1{alertsv1.SliSpanKindV1_SLI_SPAN_KIND_V1_SERVER},
+	}}, 1)
+	service.slis[payments] = testSLI(payments, "payments", "Payments", "", &alertsv1.SliRevisionInputV1{Scope: &alertsv1.AlertScopeV1{ServiceNames: []string{"payments"}}}, 1)
+
+	terraformresource.UnitTest(t, terraformresource.TestCase{
+		ProtoV6ProviderFactories: protocolProviderFactories(),
+		Steps: []terraformresource.TestStep{
+			{
+				Config: protocolServerDerivedAlertConfig(endpoint, checkout, 14.4, "POST"),
+				Check: terraformresource.TestCheckResourceAttr("o11y_slo_burn_alert.checkout", "scope_json",
+					`{"service_names":["checkout"],"span_kinds":["SLI_SPAN_KIND_V1_SERVER"]}`),
+			},
+			{
+				Config: protocolServerDerivedAlertConfig(endpoint, checkout, 10, "PUT"),
+				ConfigPlanChecks: terraformresource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{
+					plancheck.ExpectResourceAction("o11y_slo_burn_alert.checkout", plancheck.ResourceActionReplace),
+					plancheck.ExpectResourceAction("o11y_agent_quality_alert.filtered", plancheck.ResourceActionReplace),
+				}},
+			},
+			{
+				Config: protocolServerDerivedAlertConfig(endpoint, payments, 10, "PUT"),
+				Check:  terraformresource.TestCheckResourceAttr("o11y_slo_burn_alert.checkout", "scope_json", `{"service_names":["payments"]}`),
+			},
 		},
 	})
 }
@@ -258,6 +292,59 @@ resource "o11y_slo" "checkout" {
   %s
 }
 `, window)
+}
+
+// The SLO-burn alert configures only its inputs; the agent-quality filter omits source.
+func protocolServerDerivedAlertConfig(endpoint, sliID string, fastBurnThreshold float64, method string) string {
+	return protocolProviderConfig(endpoint) + fmt.Sprintf(`
+resource "o11y_slo" "checkout" {
+  slo_key = "checkout-availability"
+  name = "Checkout availability"
+  sli_id = %q
+  sli_revision_id = "019f7aa2-6c7f-7000-8000-000000000002"
+  target_ratio = 0.999
+  window_mode = "calendar"
+  calendar_period = "month"
+  calendar_timezone = "America/New_York"
+}
+
+resource "o11y_slo_burn_alert" "checkout" {
+  slug = "checkout-slo-burn"
+  name = "Checkout SLO burn"
+  description = "Terraform protocol acceptance"
+  severity = "critical"
+  owner_json = jsonencode({ team_id = "platform" })
+  action_json = jsonencode({})
+  evaluation_settings_json = jsonencode({})
+  sample_guard_json = jsonencode({})
+  recipe_config_json = jsonencode({
+    slo_id = o11y_slo.checkout.id
+    slo_revision_id = o11y_slo.checkout.current_revision_id
+    fast_burn_threshold = %v
+  })
+  paused = false
+  notify = false
+}
+
+resource "o11y_agent_quality_alert" "filtered" {
+  slug = "filtered-quality"
+  name = "Filtered quality"
+  description = "Terraform protocol acceptance"
+  severity = "warning"
+  scope_json = jsonencode({ telemetry_attribute_filters = [{
+    field = "http.request.method"
+    operator = "SLI_TELEMETRY_FILTER_OPERATOR_V1_EQUALS"
+    values = [%q]
+  }] })
+  owner_json = jsonencode({ team_id = "platform" })
+  action_json = jsonencode({})
+  evaluation_settings_json = jsonencode({})
+  sample_guard_json = jsonencode({})
+  recipe_config_json = jsonencode({ max_bad_outcome_rate = 0.1 })
+  paused = false
+  notify = false
+}
+`, sliID, fastBurnThreshold, method)
 }
 
 func protocolSLIConfig(endpoint, name string) string {
