@@ -21,6 +21,7 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
 type alertRecipe int
@@ -89,13 +90,19 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 	if r.recipe == recipeQueryThreshold {
 		alertClass = schema.StringAttribute{Required: true, Description: "Query-threshold classification: outcome, budget, or symptom."}
 	}
+	scope := schema.StringAttribute{Required: true, PlanModifiers: canonicalReplace, Description: "Exact AlertScopeV1 protobuf JSON."}
+	recipeConfig := "Exact recipe-specific detector protobuf JSON."
+	if r.recipe == recipeSLO {
+		scope = schema.StringAttribute{Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()}, Description: "AlertScopeV1 protobuf JSON the server copies from the referenced SLO's SLI revision."}
+		recipeConfig = "Exact SloBurnConfigV1 protobuf JSON. Requires slo_id and slo_revision_id (an o11y_slo's id and current_revision_id); the server copies the target and window from that revision, so they are refused here."
+	}
 	resp.Schema = schema.Schema{Description: "An Observe-mode O11y.one alert definition. Notify activation is intentionally unsupported and fails closed.", Attributes: map[string]schema.Attribute{
 		"id": schema.StringAttribute{Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()}}, "slug": schema.StringAttribute{Required: true, PlanModifiers: replace}, "name": schema.StringAttribute{Required: true}, "description": schema.StringAttribute{Required: true},
 		"alert_class": alertClass,
-		"severity":    schema.StringAttribute{Required: true, PlanModifiers: replace}, "scope_json": schema.StringAttribute{Required: true, PlanModifiers: canonicalReplace, Description: "Exact AlertScopeV1 protobuf JSON."},
+		"severity":    schema.StringAttribute{Required: true, PlanModifiers: replace}, "scope_json": scope,
 		"owner_json": schema.StringAttribute{Required: true, PlanModifiers: canonical, Description: "Exact AlertOwnerRefV1 protobuf JSON."}, "action_json": schema.StringAttribute{Required: true, PlanModifiers: canonical, Description: "Exact AlertActionV1 protobuf JSON."}, "evaluation_settings_json": schema.StringAttribute{Required: true, PlanModifiers: canonical, Description: "Exact AlertEvaluationSettingsV1 protobuf JSON."},
 		"evaluation_interval_seconds": schema.Int64Attribute{Optional: true, Computed: true, Default: int64default.StaticInt64(60), Description: "Evaluation schedule interval in seconds."},
-		"sample_guard_json":           schema.StringAttribute{Required: true, PlanModifiers: canonical, Description: "Exact AlertSampleGuardV1 protobuf JSON."}, "recipe_config_json": schema.StringAttribute{Optional: true, PlanModifiers: canonicalReplace, Description: "Exact recipe-specific detector protobuf JSON."},
+		"sample_guard_json":           schema.StringAttribute{Required: true, PlanModifiers: canonical, Description: "Exact AlertSampleGuardV1 protobuf JSON."}, "recipe_config_json": schema.StringAttribute{Optional: true, PlanModifiers: canonicalReplace, Description: recipeConfig},
 		"paused": schema.BoolAttribute{Required: true}, "notify": schema.BoolAttribute{Required: true, Description: "Must be false. Notify activation requires an out-of-band, audited API workflow."},
 		"mode": schema.StringAttribute{Computed: true, PlanModifiers: []planmodifier.String{stringplanmodifier.UseStateForUnknown()}}, "revision_id": schema.StringAttribute{Computed: true},
 	}}
@@ -204,6 +211,10 @@ func (r *alertResource) ValidateConfig(ctx context.Context, req resource.Validat
 		if target != nil {
 			if err := protoFromJSON(data.RecipeConfig, target); err != nil {
 				resp.Diagnostics.AddAttributeError(path.Root("recipe_config_json"), "Invalid typed detector configuration", err.Error())
+			} else if slo, ok := target.(*alertsv1.SloBurnConfigV1); ok {
+				if derived := clearSLOBurnDerived(slo); len(derived) > 0 {
+					resp.Diagnostics.AddAttributeError(path.Root("recipe_config_json"), "Server-derived SLO burn fields", strings.Join(derived, ", ")+" are copied from the referenced SLO revision; configure them on the o11y_slo.")
+				}
 			}
 		}
 	}
@@ -545,7 +556,9 @@ func detectorRecipeConfig(config *alertsv1.AlertDetectorConfigV1) proto.Message 
 	case *alertsv1.AlertDetectorConfigV1_CostPerSuccess:
 		return value.CostPerSuccess
 	case *alertsv1.AlertDetectorConfigV1_SloBurn:
-		return value.SloBurn
+		inputs := proto.Clone(value.SloBurn).(*alertsv1.SloBurnConfigV1)
+		clearSLOBurnDerived(inputs)
+		return inputs
 	case *alertsv1.AlertDetectorConfigV1_AdvancedSignal:
 		return value.AdvancedSignal
 	case *alertsv1.AlertDetectorConfigV1_QueryThreshold:
@@ -554,6 +567,24 @@ func detectorRecipeConfig(config *alertsv1.AlertDetectorConfigV1) proto.Message 
 		return nil
 	}
 }
+
+// create_slo_burn_alert overwrites these from the referenced SLO revision, so they are not inputs.
+var sloBurnDerivedFields = []protoreflect.Name{"slo_window_seconds", "target_percent", "window_mode", "calendar_period", "calendar_timezone", "revision_effective_from"}
+
+// clearSLOBurnDerived returns the names of the derived fields that were set.
+func clearSLOBurnDerived(config *alertsv1.SloBurnConfigV1) []string {
+	message := config.ProtoReflect()
+	var set []string
+	for _, name := range sloBurnDerivedFields {
+		field := message.Descriptor().Fields().ByName(name)
+		if message.Has(field) {
+			set = append(set, string(name))
+			message.Clear(field)
+		}
+	}
+	return set
+}
+
 func validQueryAlertClass(value string) bool {
 	switch strings.ToLower(strings.TrimSpace(value)) {
 	case "outcome", "budget", "symptom":

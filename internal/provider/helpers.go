@@ -91,10 +91,13 @@ func jsonFromProtoPreserving(configured types.String, value proto.Message) types
 }
 
 // The server stores one value list per filter and echoes it twice: its string
-// members as values and every member as typed_values.
+// members as values and every member as typed_values. An unset source is stored as fixed.
 // ponytail: a uint_value that fits int64 echoes as int_value and still diffs; map it if anyone authors uint_value.
 func echoScopeFilterValues(scope *alertsv1.AlertScopeV1) {
 	for _, filter := range scope.TelemetryAttributeFilters {
+		if filter.Source == alertsv1.SliTelemetryAttributeSourceV1_SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_UNSPECIFIED {
+			filter.Source = alertsv1.SliTelemetryAttributeSourceV1_SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_FIXED
+		}
 		if len(filter.TypedValues) == 0 {
 			for _, value := range filter.Values {
 				filter.TypedValues = append(filter.TypedValues, &alertsv1.AlertScalarValueV1{Value: &alertsv1.AlertScalarValueV1_StringValue{StringValue: value}})

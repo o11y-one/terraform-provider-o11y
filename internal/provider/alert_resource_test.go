@@ -41,8 +41,15 @@ func TestRecipeConfigFollowsServedContract(t *testing.T) {
 			t.Errorf("recipe_config_json with reserved %s was not refused by name; errors: %q", key, errors)
 		}
 	}
-	if errors := validateRecipeConfig(t, NewSLOAlertResource(), `{"target_percent":99.5}`); errors != "" {
+	if errors := validateRecipeConfig(t, NewSLOAlertResource(), `{"slo_id":"x","slo_revision_id":"y","fast_burn_threshold":14.4}`); errors != "" {
 		t.Errorf("valid SLO burn recipe refused: %s", errors)
+	}
+	derived := `{"slo_window_seconds":"3600","target_percent":99.5,"window_mode":"SLO_WINDOW_MODE_V1_CALENDAR","calendar_period":"SLO_CALENDAR_PERIOD_V1_MONTH","calendar_timezone":"UTC","revision_effective_from":"2030-01-01T00:00:00Z"}`
+	errors := validateRecipeConfig(t, NewSLOAlertResource(), derived)
+	for _, key := range []string{"slo_window_seconds", "target_percent", "window_mode", "calendar_period", "calendar_timezone", "revision_effective_from"} {
+		if !strings.Contains(errors, key) {
+			t.Errorf("recipe_config_json with server-derived %s was not refused by name; errors: %q", key, errors)
+		}
 	}
 	if errors := validateRecipeConfig(t, NewAgentQualityAlertResource(), `{"use_run_quality_facts":true}`); errors != "" {
 		t.Errorf("served agent-quality field refused: %s", errors)

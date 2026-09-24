@@ -578,7 +578,19 @@ func (s *alertTestServer) createAlert(ctx context.Context, base *alertsv1.AlertR
 	owner := proto.Clone(base.Owner).(*alertsv1.AlertOwnerRefV1)
 	owner.DisplayName = "Engineering"
 	owner.Active = true
-	item := &alertsv1.AlertDefinitionV1{Id: id, TenantId: testTenantID, OrgId: base.OrgId, Slug: base.Slug, Name: base.Name, Description: base.Description, Severity: base.Severity, Mode: alertsv1.AlertModeV1_ALERT_MODE_V1_OBSERVE, Scope: base.Scope, Owner: owner, Action: base.Action, EvaluationSettings: base.EvaluationSettings, SampleGuard: base.SampleGuard, CurrentRevisionId: "revision-1", DetectorKind: detectorKind, DetectorConfig: detectorConfig, EvaluationIntervalSeconds: base.EvaluationIntervalSeconds}
+	// Like scope_json then scope_proto: an unset source is stored as fixed, and string values come back as typed_values too.
+	scope := proto.Clone(base.Scope).(*alertsv1.AlertScopeV1)
+	for _, filter := range scope.GetTelemetryAttributeFilters() {
+		if filter.Source == alertsv1.SliTelemetryAttributeSourceV1_SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_UNSPECIFIED {
+			filter.Source = alertsv1.SliTelemetryAttributeSourceV1_SLI_TELEMETRY_ATTRIBUTE_SOURCE_V1_FIXED
+		}
+		if len(filter.TypedValues) == 0 {
+			for _, value := range filter.Values {
+				filter.TypedValues = append(filter.TypedValues, &alertsv1.AlertScalarValueV1{Value: &alertsv1.AlertScalarValueV1_StringValue{StringValue: value}})
+			}
+		}
+	}
+	item := &alertsv1.AlertDefinitionV1{Id: id, TenantId: testTenantID, OrgId: base.OrgId, Slug: base.Slug, Name: base.Name, Description: base.Description, Severity: base.Severity, Mode: alertsv1.AlertModeV1_ALERT_MODE_V1_OBSERVE, Scope: scope, Owner: owner, Action: base.Action, EvaluationSettings: base.EvaluationSettings, SampleGuard: base.SampleGuard, CurrentRevisionId: "revision-1", DetectorKind: detectorKind, DetectorConfig: detectorConfig, EvaluationIntervalSeconds: base.EvaluationIntervalSeconds}
 	s.definitions[id] = item
 	return &alertsv1.CreateAlertDefinitionResponse{Definition: item, RevisionId: "revision-1"}, nil
 }
@@ -588,8 +600,37 @@ func (s *alertTestServer) CreateAgentQualityRegressionAlert(ctx context.Context,
 func (s *alertTestServer) CreateCostPerSuccessAlert(ctx context.Context, req *alertsv1.CreateCostPerSuccessAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
 	return s.createAlert(ctx, req.Base, "cost_per_success_regression", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_CostPerSuccess{CostPerSuccess: req.RecipeConfig}})
 }
+
+// Like create_slo_burn_alert: the ids are required, the current SLO revision overwrites the objective fields,
+// and the SLO's SLI revision overwrites the scope.
 func (s *alertTestServer) CreateSloBurnAlert(ctx context.Context, req *alertsv1.CreateSloBurnAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
-	return s.createAlert(ctx, req.Base, "slo_burn", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_SloBurn{SloBurn: req.RecipeConfig}})
+	if err := s.authorize(ctx); err != nil {
+		return nil, err
+	}
+	config := proto.Clone(req.RecipeConfig).(*alertsv1.SloBurnConfigV1)
+	if config.GetSloId() == "" || config.GetSloRevisionId() == "" {
+		return nil, status.Error(codes.InvalidArgument, "detector_config.slo_id and detector_config.slo_revision_id are required")
+	}
+	s.mu.Lock()
+	slo := s.slos[config.SloId]
+	sli := s.slis[slo.GetCurrentRevision().GetSliId()]
+	s.mu.Unlock()
+	if slo == nil || sli == nil {
+		return nil, status.Error(codes.FailedPrecondition, "referenced SLO or its SLI revision is unavailable")
+	}
+	if slo.CurrentRevisionId != config.SloRevisionId {
+		return nil, status.Error(codes.FailedPrecondition, "SLO burn alerts must reference the current SLO revision")
+	}
+	revision := slo.CurrentRevision
+	config.SloWindowSeconds = proto.Int64(revision.MaximumWindowSeconds)
+	config.TargetPercent = proto.Float64(revision.TargetRatio * 100)
+	config.WindowMode = revision.WindowMode
+	config.CalendarPeriod = revision.CalendarPeriod
+	config.CalendarTimezone = revision.CalendarTimezone
+	config.RevisionEffectiveFrom = revision.EffectiveFrom
+	base := proto.Clone(req.Base).(*alertsv1.AlertRecipeBaseV1)
+	base.Scope = sli.CurrentRevision.Scope
+	return s.createAlert(ctx, base, "slo_burn", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_SloBurn{SloBurn: config}})
 }
 func (s *alertTestServer) CreateAdvancedSignalAlert(ctx context.Context, req *alertsv1.CreateAdvancedSignalAlertRequest) (*alertsv1.CreateAlertDefinitionResponse, error) {
 	return s.createAlert(ctx, req.Base, "advanced_signal", &alertsv1.AlertDetectorConfigV1{Config: &alertsv1.AlertDetectorConfigV1_AdvancedSignal{AdvancedSignal: req.Condition}})
@@ -763,8 +804,8 @@ func TestControlledGRPCLifecycle(t *testing.T) {
 		t.Fatal(err)
 	}
 	base.IdempotencyKey = "alert-slo"
-	if _, err = c.Definitions.CreateSloBurnAlert(ctx, &alertsv1.CreateSloBurnAlertRequest{Base: base, RecipeConfig: &alertsv1.SloBurnConfigV1{}}); err != nil {
-		t.Fatal(err)
+	if _, err = c.Definitions.CreateSloBurnAlert(ctx, &alertsv1.CreateSloBurnAlertRequest{Base: base, RecipeConfig: &alertsv1.SloBurnConfigV1{}}); status.Code(err) != codes.InvalidArgument {
+		t.Fatalf("SLO burn alert without slo_id: got %v, want invalid argument", err)
 	}
 	base.IdempotencyKey = "alert-symptom"
 	if _, err = c.Definitions.CreateAdvancedSignalAlert(ctx, &alertsv1.CreateAdvancedSignalAlertRequest{Base: base, Condition: &alertsv1.AdvancedSignalConfigV1{}}); err != nil {

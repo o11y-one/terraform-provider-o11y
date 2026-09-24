@@ -25,14 +25,13 @@ An Observe-mode O11y.one alert definition. Notify activation is intentionally un
 - `owner_json` (String) Exact AlertOwnerRefV1 protobuf JSON.
 - `paused` (Boolean)
 - `sample_guard_json` (String) Exact AlertSampleGuardV1 protobuf JSON.
-- `scope_json` (String) Exact AlertScopeV1 protobuf JSON.
 - `severity` (String)
 - `slug` (String)
 
 ### Optional
 
 - `evaluation_interval_seconds` (Number) Evaluation schedule interval in seconds.
-- `recipe_config_json` (String) Exact recipe-specific detector protobuf JSON.
+- `recipe_config_json` (String) Exact SloBurnConfigV1 protobuf JSON. Requires slo_id and slo_revision_id (an o11y_slo's id and current_revision_id); the server copies the target and window from that revision, so they are refused here.
 
 ### Read-Only
 
@@ -40,3 +39,4 @@ An Observe-mode O11y.one alert definition. Notify activation is intentionally un
 - `id` (String) The ID of this resource.
 - `mode` (String)
 - `revision_id` (String)
+- `scope_json` (String) AlertScopeV1 protobuf JSON the server copies from the referenced SLO's SLI revision.

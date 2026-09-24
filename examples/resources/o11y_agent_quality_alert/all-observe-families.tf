@@ -25,24 +25,25 @@ resource "o11y_cost_per_success_alert" "cost" {
   notify = false
 }
 
+# The server copies the scope, target, and window from the SLO's current revision.
+# o11y_slo.checkout is the o11y_slo example.
 resource "o11y_slo_burn_alert" "availability" {
   slug                        = "agent-slo-burn"
   name                        = "Agent SLO burn"
   description                 = "Detect SLO burn."
   severity                    = "critical"
-  scope_json                  = jsonencode({ service_names = ["agent-api"] })
   owner_json                  = jsonencode({ team_id = "019f7aa2-6c7f-7000-8000-000000000010" })
   action_json                 = jsonencode({ summary = "Inspect customer-impacting errors and latency." })
   evaluation_settings_json    = jsonencode({ pending_for_seconds = 120 })
   evaluation_interval_seconds = 60
   sample_guard_json           = jsonencode({ minimum_events = "100" })
   recipe_config_json = jsonencode({
+    slo_id                    = o11y_slo.checkout.id
+    slo_revision_id           = o11y_slo.checkout.current_revision_id
     fast_short_window_seconds = 300
     fast_long_window_seconds  = 3600
     slow_short_window_seconds = 1800
     slow_long_window_seconds  = 21600
-    slo_window_seconds        = 2592000
-    target_percent            = 99.5
     fast_burn_threshold       = 14.4
     slow_burn_threshold       = 6.0
     min_request_count         = "100"
@@ -63,7 +64,15 @@ resource "o11y_advanced_signal_alert" "latency" {
   evaluation_settings_json    = jsonencode({ pending_for_seconds = 300 })
   evaluation_interval_seconds = 60
   sample_guard_json           = jsonencode({ minimum_events = "100" })
-  recipe_config_json          = jsonencode({ min_log_errors = "10", max_log_error_rate = 0.05, evidence_limit = 10 })
-  paused                      = false
-  notify                      = false
+  recipe_config_json = jsonencode({
+    min_log_errors             = "10"
+    max_log_error_rate         = 0.05
+    min_tool_failures          = "5"
+    min_fallback_count         = "5"
+    max_cache_miss_rate        = 0.9
+    symptom_only_page_override = false
+    evidence_limit             = 10
+  })
+  paused = false
+  notify = false
 }
