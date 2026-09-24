@@ -15,7 +15,7 @@ resource "o11y_alert_destination" "sre_email" {
 }
 
 # List members in position order and set enabled on each: the server returns
-# them that way and any other form shows a change on the next plan.
+# them that way, and any other form fails the apply with an inconsistent result.
 resource "o11y_alert_notification_group" "platform" {
   group_key = "platform-oncall"
   name      = "Platform on-call"

@@ -3,9 +3,15 @@ variable "definition_id" {
   type        = string
 }
 
-# Replays the current revision over one day of history without notifying anyone.
+variable "revision_id" {
+  description = "revision_id of the same alert, for example o11y_agent_quality_alert.checkout.revision_id."
+  type        = string
+}
+
+# Replays that revision over one day of history without notifying anyone.
 data "o11y_alert_preview" "checkout" {
   definition_id  = var.definition_id
+  revision_id    = var.revision_id
   range_start    = "2030-01-14T00:00:00Z"
   range_end      = "2030-01-15T00:00:00Z"
   evidence_limit = 5

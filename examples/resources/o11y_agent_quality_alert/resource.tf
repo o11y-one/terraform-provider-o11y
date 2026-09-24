@@ -26,13 +26,10 @@ resource "o11y_agent_quality_alert" "checkout" {
     no_data_behavior       = "ALERT_NO_DATA_BEHAVIOR_V1_HOLD_STATE"
   })
   evaluation_interval_seconds = 300
-  sample_guard_json = jsonencode({
-    minimum_events            = "50"
-    require_complete_coverage = true
-  })
+  sample_guard_json           = jsonencode({ minimum_events = "50" })
 
-  # Every field is listed: the server fills any omitted one with its default
-  # and echoes it, which would plan a replacement on every run.
+  # Every field is listed: the server fills an omitted one with its default
+  # and returns it, and the apply fails with an inconsistent result.
   recipe_config_json = jsonencode({
     short_window_seconds      = "900"
     long_window_seconds       = "3600"
