@@ -2,6 +2,7 @@
 resource "o11y_alert_maintenance_window" "checkout_deploy" {
   window_key = "checkout-deploy-2030-01-15"
   name       = "Checkout deploy"
+  reason     = "Checkout deploy; notifications resume at 04:00 UTC"
 
   scope_json = jsonencode({
     service_names = ["checkout"]

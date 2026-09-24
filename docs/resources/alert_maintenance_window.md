@@ -10,10 +10,6 @@ description: |-
 
 An O11y.one alert maintenance window.
 
-## Known issue
-
-The server requires a `reason` for every maintenance window, and this provider version has no `reason` attribute and does not send one. Creating or updating a window fails with `reason is required` until the provider adds it. The example and reference below describe the intended configuration.
-
 ## Example Usage
 
 ```terraform
@@ -21,6 +17,7 @@ The server requires a `reason` for every maintenance window, and this provider v
 resource "o11y_alert_maintenance_window" "checkout_deploy" {
   window_key = "checkout-deploy-2030-01-15"
   name       = "Checkout deploy"
+  reason     = "Checkout deploy; notifications resume at 04:00 UTC"
 
   scope_json = jsonencode({
     service_names = ["checkout"]
@@ -39,6 +36,7 @@ resource "o11y_alert_maintenance_window" "checkout_deploy" {
 
 - `ends_at` (String)
 - `name` (String)
+- `reason` (String)
 - `scope_json` (String)
 - `starts_at` (String)
 - `window_key` (String)

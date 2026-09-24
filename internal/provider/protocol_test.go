@@ -135,6 +135,30 @@ func TestProviderProtocolRecipeExamplesConverge(t *testing.T) {
 	}
 }
 
+// The published example applies as written, and a new reason updates the window in place:
+// the server overwrites reason on conflict (appdb management.rs:3418).
+func TestProviderProtocolMaintenanceWindowExample(t *testing.T) {
+	example, err := os.ReadFile(filepath.Join("..", "..", "examples", "resources", "o11y_alert_maintenance_window", "resource.tf"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	endpoint, _, cleanup := startProtocolTestServer(t)
+	defer cleanup()
+	config := protocolProviderConfig(endpoint) + string(example)
+	window := "o11y_alert_maintenance_window.checkout_deploy"
+	terraformresource.UnitTest(t, terraformresource.TestCase{
+		ProtoV6ProviderFactories: protocolProviderFactories(),
+		Steps: []terraformresource.TestStep{
+			{Config: config},
+			{
+				Config:           regexp.MustCompile(`reason\s*=\s*"`).ReplaceAllString(config, `reason = "Rescheduled: `),
+				ConfigPlanChecks: terraformresource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{plancheck.ExpectResourceAction(window, plancheck.ResourceActionUpdate)}},
+				Check:            terraformresource.TestMatchResourceAttr(window, "reason", regexp.MustCompile(`^Rescheduled: `)),
+			},
+		},
+	})
+}
+
 func TestProviderProtocolSLOCalendarLifecycle(t *testing.T) {
 	endpoint, service, cleanup := startProtocolTestServer(t)
 	defer cleanup()
@@ -495,6 +519,7 @@ resource "o11y_alert_notification_policy" "default" {
 resource "o11y_alert_maintenance_window" "deploy" {
   window_key = "deploy-freeze"
   name = "Deploy freeze"
+  reason = "Checkout deploy"
   scope_json = jsonencode({ service_names = ["checkout"] })
   starts_at = "2030-01-01T00:00:00Z"
   ends_at = "2030-01-01T01:00:00Z"

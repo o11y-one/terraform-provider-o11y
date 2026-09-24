@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -493,14 +494,18 @@ func testNotificationTemplate(id string, req *alertsv1.UpsertAlertNotificationTe
 	return &alertsv1.AlertNotificationTemplateV1{Id: id, TemplateKey: req.TemplateKey, Name: req.Name, Description: req.Description, CurrentRevisionId: revisionID, PublishedRevisionId: publishedRevisionID, Revision: revision, Provenance: "terraform", ProvenanceRef: req.ProvenanceRef, CreatedAt: now, UpdatedAt: now, CurrentRevision: current, Kind: alertsv1.AlertNotificationTemplateKindV1_ALERT_NOTIFICATION_TEMPLATE_KIND_V1_USER}
 }
 
+// Like upsert_maintenance_window (grpc.rs:6199): create and update refuse a blank reason.
 func (s *alertTestServer) CreateMaintenanceWindow(ctx context.Context, req *alertsv1.UpsertMaintenanceWindowRequest) (*alertsv1.AlertMaintenanceWindowV1, error) {
 	if err := s.authorize(ctx); err != nil {
 		return nil, err
 	}
+	if strings.TrimSpace(req.Reason) == "" {
+		return nil, status.Error(codes.InvalidArgument, "reason is required")
+	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	id := s.id(req.IdempotencyKey)
-	item := &alertsv1.AlertMaintenanceWindowV1{Id: id, WindowKey: req.WindowKey, Name: req.Name, Scope: req.Scope, StartsAt: req.StartsAt, EndsAt: req.EndsAt}
+	item := &alertsv1.AlertMaintenanceWindowV1{Id: id, WindowKey: req.WindowKey, Name: req.Name, Reason: req.Reason, Scope: req.Scope, StartsAt: req.StartsAt, EndsAt: req.EndsAt}
 	s.windows[id] = item
 	return item, nil
 }
@@ -510,10 +515,13 @@ func (s *alertTestServer) UpdateMaintenanceWindow(ctx context.Context, req *aler
 	}
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if strings.TrimSpace(req.Reason) == "" {
+		return nil, status.Error(codes.InvalidArgument, "reason is required")
+	}
 	if s.windows[req.Id] == nil {
 		return nil, status.Error(codes.NotFound, "window")
 	}
-	item := &alertsv1.AlertMaintenanceWindowV1{Id: req.Id, WindowKey: req.WindowKey, Name: req.Name, Scope: req.Scope, StartsAt: req.StartsAt, EndsAt: req.EndsAt}
+	item := &alertsv1.AlertMaintenanceWindowV1{Id: req.Id, WindowKey: req.WindowKey, Name: req.Name, Reason: req.Reason, Scope: req.Scope, StartsAt: req.StartsAt, EndsAt: req.EndsAt}
 	s.windows[req.Id] = item
 	return item, nil
 }
