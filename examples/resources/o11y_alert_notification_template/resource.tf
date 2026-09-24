@@ -17,15 +17,32 @@ resource "o11y_alert_notification_template" "customer_impact" {
           markdown = { text_template = "*Customer impact*\n{{ incident.customer_impact }}\n\n*Why this fired*\n{{ hypothesis }}" }
         },
         {
+          key = "signal"
+          fields = {
+            title_template = "Signal"
+            fields = [
+              { label_template = "Severity", value_path = "incident.severity", format = "NOTIFICATION_TEMPLATE_VALUE_FORMAT_V1_TEXT" },
+              { label_template = "Confidence", value_path = "impact.confidence", format = "NOTIFICATION_TEMPLATE_VALUE_FORMAT_V1_PERCENT" },
+            ]
+          }
+        },
+        {
           key = "actions"
           actions = {
-            actions = [{
-              label_template = "Open alert"
-              link           = "NOTIFICATION_TEMPLATE_ACTION_LINK_V1_OPEN_ALERT"
-              style          = "NOTIFICATION_TEMPLATE_ACTION_STYLE_V1_PRIMARY"
-            }]
+            actions = [
+              {
+                label_template = "Open alert"
+                link           = "NOTIFICATION_TEMPLATE_ACTION_LINK_V1_OPEN_ALERT"
+                style          = "NOTIFICATION_TEMPLATE_ACTION_STYLE_V1_PRIMARY"
+              },
+              {
+                label_template = "View traces"
+                link           = "NOTIFICATION_TEMPLATE_ACTION_LINK_V1_VIEW_TRACES"
+                style          = "NOTIFICATION_TEMPLATE_ACTION_STYLE_V1_DEFAULT"
+              },
+            ]
           }
-        }
+        },
       ]
     }
     resolved = {
