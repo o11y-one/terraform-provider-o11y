@@ -159,6 +159,31 @@ func TestProviderProtocolMaintenanceWindowExample(t *testing.T) {
 	})
 }
 
+// UpdateObserveAlertRequest carries no class, so a new alert_class can only be applied by
+// replacing the alert; planned as an update, it never reaches the server and the apply fails.
+func TestProviderProtocolQueryAlertClassChangeReplaces(t *testing.T) {
+	t.Setenv("TF_VAR_owner_team_id", "019f7aa2-6c7f-7000-8000-000000000010")
+	example, err := os.ReadFile(filepath.Join("..", "..", "examples", "resources", "o11y_query_threshold_alert", "resource.tf"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	endpoint, _, cleanup := startProtocolTestServer(t)
+	defer cleanup()
+	config := protocolProviderConfig(endpoint) + string(example)
+	alert := "o11y_query_threshold_alert.checkout_errors"
+	terraformresource.UnitTest(t, terraformresource.TestCase{
+		ProtoV6ProviderFactories: protocolProviderFactories(),
+		Steps: []terraformresource.TestStep{
+			{Config: config},
+			{
+				Config:           strings.Replace(config, `alert_class = "symptom"`, `alert_class = "outcome"`, 1),
+				ConfigPlanChecks: terraformresource.ConfigPlanChecks{PreApply: []plancheck.PlanCheck{plancheck.ExpectResourceAction(alert, plancheck.ResourceActionReplace)}},
+				Check:            terraformresource.TestCheckResourceAttr(alert, "alert_class", "outcome"),
+			},
+		},
+	})
+}
+
 func TestProviderProtocolSLOCalendarLifecycle(t *testing.T) {
 	endpoint, service, cleanup := startProtocolTestServer(t)
 	defer cleanup()
