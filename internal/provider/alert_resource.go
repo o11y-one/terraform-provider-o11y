@@ -88,7 +88,7 @@ func (r *alertResource) Schema(_ context.Context, _ resource.SchemaRequest, resp
 	canonicalReplace := []planmodifier.String{canonicalJSONPlanModifier{}, stringplanmodifier.RequiresReplace()}
 	alertClass := schema.StringAttribute{Computed: true, Description: "Backend-owned outcome, budget, or symptom classification."}
 	if r.recipe == recipeQueryThreshold {
-		alertClass = schema.StringAttribute{Required: true, Description: "Query-threshold classification: outcome, budget, or symptom."}
+		alertClass = schema.StringAttribute{Required: true, PlanModifiers: replace, Description: "Query-threshold classification: outcome, budget, or symptom."}
 	}
 	scope := schema.StringAttribute{Required: true, PlanModifiers: canonicalReplace, Description: "Exact AlertScopeV1 protobuf JSON."}
 	recipeConfig := "Exact recipe-specific detector protobuf JSON."
